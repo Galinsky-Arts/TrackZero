@@ -16,6 +16,6 @@ test('offers fail closed on missing catalog, denied rights or malformed station 
   await assert.rejects(matchStationOffers(station,catalog,async()=>false),/not verified/);
   await assert.rejects(matchStationOffers(station,catalog),/verifier required/);
   await assert.rejects(matchStationOffers({...station,id:'?'},catalog,async()=>true),/Invalid station/);
-  await assert.rejects(matchStationOffers({...station,offers:[{...station.offers[0],type:'track'}]},catalog,async()=>true),/Invalid station/);
-  await assert.rejects(matchStationOffers({...station,offers:[station.offers[0],station.offers[0]]},catalog,async()=>true),/Invalid station/);
+  await assert.rejects(matchStationOffers({...station,offers:[{...station.offers[0],type:'track'}]},catalog,async()=>true),/Invalid complete-product offer/);
+  await assert.rejects(matchStationOffers({...station,offers:[station.offers[0],station.offers[0]]},catalog,async()=>true),/Duplicate station offer/);
 });
