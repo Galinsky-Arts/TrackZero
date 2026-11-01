@@ -46,9 +46,14 @@ export function rewardPreview(offer,wallet){
 }
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 export function renderRewardPreview(view){
-  if(!view||!id.test(view.id)||!id.test(view.artistId)||typeof view.title!=='string'||
+  if(!view||typeof view.id!=='string'||!id.test(view.id)||
+    typeof view.artistId!=='string'||!id.test(view.artistId)||typeof view.title!=='string'||
+    !view.title.trim()||view.title.length>200||
     !Number.isSafeInteger(view.version)||view.version<1||
-    view.canRequest!==(view.available&&whole(view.balance)>=whole(view.cost)))
+    typeof view.available!=='boolean'||typeof view.canRequest!=='boolean')
+    throw Error('invalid reward preview');
+  const balance=whole(view.balance),cost=whole(view.cost);
+  if(balance<0n||cost<1n||view.canRequest!==(view.available&&balance>=cost))
     throw Error('invalid reward preview');
   return `<article><h2>${esc(view.title)}</h2><p>Artist: ${esc(view.artistId)}</p>`+
     `<p>Offer version ${view.version}; cost ${esc(view.cost)} artist points; spendable balance ${esc(view.balance)}.</p>`+
