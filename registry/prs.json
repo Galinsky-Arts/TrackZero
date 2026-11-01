@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-10-12T16:28:22.377Z",
+  "observedAt": "2026-11-01T18:41:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -27,17 +27,30 @@
       "id": "TZ-02",
       "title": "Accounts and artist/label onboarding",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
+      "prs": [
+        7
+      ],
+      "dependsOn": [
+        "TZ-01"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "neophilism/Distributed-Radio-Engine",
+          "unitId": "DRE-02"
+        }
+      ],
       "externalPrerequisites": []
     },
     {
       "id": "TZ-03",
       "title": "Station identity and storefront shell",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
+      "prs": [
+        8
+      ],
+      "dependsOn": [
+        "TZ-02"
+      ],
       "externalDependencies": [],
       "externalPrerequisites": []
     },
@@ -251,6 +264,21 @@
   ],
   "pullRequests": [
     {
+      "id": 4912735715,
+      "number": 7,
+      "title": "TZ-02: Accounts and artist/label onboarding",
+      "url": "https://github.com/neophilism/TrackZero/pull/7",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T20:55:49Z",
+      "updatedAt": "2026-11-01T18:35:05Z",
+      "closedAt": "2026-11-01T18:35:04Z",
+      "mergedAt": "2026-11-01T18:35:04Z",
+      "headSha": "90567c0b0b3a0fb4cf42ec4376f59a8f8ed260a8",
+      "baseRef": "main",
+      "mergeCommitSha": "00540a878767d9708db1ca48064a238ae93a617d"
+    },
+    {
       "id": 4832051661,
       "number": 3,
       "title": "Port TrackZero roadmap and E2EESA integrity checks to CircleCI",
@@ -294,6 +322,21 @@
       "headSha": "981ec2d5aefc0b5de7ca0b9b03c0d61c3f266a9c",
       "baseRef": "main",
       "mergeCommitSha": "db1ff093103dffa09d659b0fc0698407db621ce1"
+    },
+    {
+      "id": 4913182105,
+      "number": 8,
+      "title": "TZ-03: Station identity and storefront shell",
+      "url": "https://github.com/neophilism/TrackZero/pull/8",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T21:58:50Z",
+      "updatedAt": "2026-11-01T18:40:38Z",
+      "closedAt": "2026-11-01T18:40:38Z",
+      "mergedAt": "2026-11-01T18:40:38Z",
+      "headSha": "8d5619fe9569ee55440db47e6d30d0a77db5b90e",
+      "baseRef": "main",
+      "mergeCommitSha": "4139942625be90a81ccd88bd0915bfa97a8ee845"
     }
   ]
 }
