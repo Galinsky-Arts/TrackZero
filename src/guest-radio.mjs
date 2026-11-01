@@ -1,5 +1,19 @@
 const token=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const artwork=/^https:\/\/[A-Za-z0-9.-]+(?:\/[A-Za-z0-9._~!$&'()*+,;=:@%/-]*)?$/;
+function artworkPolicy(origins){
+  if(!Array.isArray(origins)||origins.length>8||origins.some(value=>{
+    try{const url=new URL(value);return url.protocol!=='https:'||url.origin!==value||
+      !!url.username||!!url.password||!!url.port;}catch{return true;}
+  }))throw new Error('Trusted artwork origins required');
+  return origins;
+}
+function approvedArtwork(value,origins){
+  try{
+    const url=new URL(value);
+    return artwork.test(value)&&!value.includes('..')&&value.length<=2048&&
+      !url.username&&!url.password&&!url.port&&!url.hash&&origins.includes(url.origin);
+  }catch{return false;}
+}
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export class GuestError extends Error{constructor(code,status=400){super(code);this.code=code;this.status=status;}}
 function checkStation(station){
@@ -9,24 +23,24 @@ function checkStation(station){
     throw new GuestError('INVALID_STATION');
   return station;
 }
-function checkAlbum(album){
+function checkAlbum(album,origins){
   if(!album||typeof album!=='object'||!token.test(album.id)||
     typeof album.title!=='string'||!album.title.trim()||album.title.length>200||
     typeof album.artist!=='string'||!album.artist.trim()||album.artist.length>160||
     (album.artworkUrl!==null&&album.artworkUrl!==undefined&&
-      (typeof album.artworkUrl!=='string'||!artwork.test(album.artworkUrl)||
-       album.artworkUrl.includes('..')||album.artworkUrl.length>2048)))
+      (typeof album.artworkUrl!=='string'||!approvedArtwork(album.artworkUrl,origins))))
     throw new GuestError('INVALID_ALBUM');
   return album;
 }
 
 /** Public metadata only. Playback tokens, media URLs and private manifests never enter HTML. */
-export function renderStationPage(station,albums=[]){
+export function renderStationPage(station,albums=[],{artworkOrigins=[]}={}){
+  artworkPolicy(artworkOrigins);
   checkStation(station);
   if(!Array.isArray(albums)||albums.length>100)throw new GuestError('INVALID_ALBUMS');
   const seen=new Set();
   const cards=albums.map(item=>{
-    const album=checkAlbum(item);
+    const album=checkAlbum(item,artworkOrigins);
     if(seen.has(album.id))throw new GuestError('DUPLICATE_ALBUM');seen.add(album.id);
     const img=album.artworkUrl?`<img src="${esc(album.artworkUrl)}" alt="" loading="lazy">`:'';
     return `<li><article>${img}<h3>${esc(album.title)}</h3><p>${esc(album.artist)}</p>`+
@@ -40,8 +54,8 @@ export function renderStationPage(station,albums=[]){
     `<p>Playback joins the current broadcast. Songs cannot be selected or skipped.</p></section>`+
     `<section aria-labelledby="albums-title"><h2 id="albums-title">Complete albums</h2><ul>${cards}</ul></section></main></html>`;
 }
-export function renderAlbumPage(album){
-  checkAlbum(album);
+export function renderAlbumPage(album,{artworkOrigins=[]}={}){
+  artworkPolicy(artworkOrigins);checkAlbum(album,artworkOrigins);
   return `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">`+
     `<title>${esc(album.title)} album</title><main><a href="/">Stations</a><h1>${esc(album.title)}</h1><p>By ${esc(album.artist)}</p>`+
     `${album.artworkUrl?`<img src="${esc(album.artworkUrl)}" alt="" loading="lazy">`:''}`+
@@ -104,8 +118,9 @@ export function bindGuestControls(root,adapter){
   };
 }
 
-export function createGuestHandler({getStation,getAlbums,getAlbum}){
+export function createGuestHandler({getStation,getAlbums,getAlbum,artworkOrigins=[]}){
   if(![getStation,getAlbums,getAlbum].every(fn=>typeof fn==='function'))throw new Error('Public metadata providers required');
+  artworkPolicy(artworkOrigins);
   return async request=>{
     const url=new URL(request.url);
     if(request.method!=='GET')return new Response('Method not allowed',{status:405});
@@ -116,16 +131,16 @@ export function createGuestHandler({getStation,getAlbums,getAlbum}){
         if(!token.test(id))throw new GuestError('INVALID_STATION');
         const station=await getStation(id);
         if(!station||station.id!==id)return new Response('Not found',{status:404});
-        html=renderStationPage(station,await getAlbums(id));
+        html=renderStationPage(station,await getAlbums(id),{artworkOrigins});
       }else if(url.pathname.startsWith('/albums/')){
         const id=decodeURIComponent(url.pathname.slice('/albums/'.length));
         if(!token.test(id))throw new GuestError('INVALID_ALBUM');
         const album=await getAlbum(id);
         if(!album||album.id!==id)return new Response('Not found',{status:404});
-        html=renderAlbumPage(album);
+        html=renderAlbumPage(album,{artworkOrigins});
       }else return new Response('Not found',{status:404});
       return new Response(html,{headers:{'content-type':'text/html; charset=utf-8',
-        'cache-control':'public, max-age=60','content-security-policy':"default-src 'none'; script-src 'self'; img-src https:; style-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'",'x-content-type-options':'nosniff'}});
+        'cache-control':'public, max-age=60','content-security-policy':"default-src 'none'; script-src 'self'; img-src "+(artworkOrigins.join(' ')||"'none'")+"; style-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'",'x-content-type-options':'nosniff'}});
     }catch(error){return new Response(error instanceof GuestError?error.code:'Metadata unavailable',
       {status:error instanceof GuestError?error.status:503});}
   };

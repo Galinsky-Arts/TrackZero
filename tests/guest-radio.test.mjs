@@ -2,26 +2,33 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {renderStationPage,renderAlbumPage,GuestPlayer,bindGuestControls,createGuestHandler} from '../src/guest-radio.mjs';
 const station={id:'s1',name:'Radio <One>',description:'A live & linear station'};
 const album={id:'a1',title:'First <Album>',artist:'A & B',artworkUrl:'https://art.example/a.jpg'};
+const policy={artworkOrigins:['https://art.example']};
 test('public pages escape metadata, link complete albums, and expose no picker or media secrets',()=>{
-  const page=renderStationPage(station,[album]);
+  const page=renderStationPage(station,[album],policy);
   assert.match(page,/Radio &lt;One&gt;/);assert.match(page,/First &lt;Album&gt;/);
   assert.match(page,/\/albums\/a1/);assert.match(page,/joins the current broadcast/);
   assert.doesNotMatch(page,/<audio|track-picker|playback-token|manifest/);
-  assert.match(renderAlbumPage(album),/Complete-album information/);
+  assert.match(renderAlbumPage(album,policy),/Complete-album information/);
 });
 test('rejects hostile artwork, malformed ids and duplicate offers',()=>{
-  assert.throws(()=>renderStationPage(station,[{...album,artworkUrl:'javascript:alert(1)'}]));
-  assert.throws(()=>renderStationPage(station,[album,album]));
+  assert.throws(()=>renderStationPage(station,[{...album,artworkUrl:'javascript:alert(1)'}],policy));
+  assert.throws(()=>renderStationPage(station,[{...album,artworkUrl:'https://evil.example/a.jpg'}],policy));
+  assert.throws(()=>renderStationPage(station,[album,album],policy));
+  assert.throws(()=>renderAlbumPage(album));
+  assert.throws(()=>createGuestHandler({getStation:async()=>station,getAlbums:async()=>[album],
+    getAlbum:async()=>album,artworkOrigins:['https://art.example/extra']}));
   assert.throws(()=>renderStationPage({...station,id:'../other'},[]));
 });
 test('guest handler serves only exact public metadata and fails closed on provider outage',async()=>{
   const handler=createGuestHandler({getStation:async id=>id==='s1'?station:null,
-    getAlbums:async()=>[album],getAlbum:async id=>id==='a1'?album:null});
+    getAlbums:async()=>[album],getAlbum:async id=>id==='a1'?album:null,...policy});
   const response=await handler(new Request('https://example.test/stations/s1'));
   assert.equal(response.status,200);assert.match(response.headers.get('content-security-policy'),/default-src 'none'/);
+  assert.match(response.headers.get('content-security-policy'),/img-src https:\/\/art\.example;/);
+  assert.doesNotMatch(response.headers.get('content-security-policy'),/img-src https:;/);
   assert.equal((await handler(new Request('https://example.test/stations/s2'))).status,404);
   assert.equal((await handler(new Request('https://example.test/albums/a1',{method:'POST'}))).status,405);
-  const down=createGuestHandler({getStation:async()=>{throw Error('offline')},getAlbums:async()=>[],getAlbum:async()=>null});
+  const down=createGuestHandler({getStation:async()=>{throw Error('offline')},getAlbums:async()=>[],getAlbum:async()=>null,...policy});
   assert.equal((await down(new Request('https://example.test/stations/s1'))).status,503);
 });
 test('explicit play joins live once and stop closes endpoint session',async()=>{
