@@ -14,6 +14,7 @@ function fixture(rights = async () => true) {
   const dir = mkdtempSync(join(tmpdir(), 'tz03-')), file = join(dir, 'catalog.sqlite');
   const options = {verifyOfferRights: rights, artworkOrigins: ['https://assets.example.test']};
   const catalog = new StationCatalog(file, options);
+  catalog.provisionStationClaim({...artist, id: station.id, ownerSubject: artist.subject});
   return {catalog, file, options, cleanup() {this.catalog.close(); rmSync(dir, {recursive: true, force: true});}};
 }
 
@@ -45,9 +46,25 @@ test('listener, other owner, missing rights and hostile offers cannot publish', 
     await assert.rejects(f.catalog.publish(artist, {...station, offers:[{...station.offers[0],id:'album-denied'}]}), /RIGHTS_NOT_VERIFIED/);
     assert.equal(f.catalog.get({...artist, id:station.id}), null);
     await f.catalog.publish(artist, station);
-    await assert.rejects(f.catalog.publish(other, {...station,name:'Takeover'}), /STATION_OWNER_MISMATCH/);
+    await assert.rejects(f.catalog.publish(other, {...station,name:'Takeover'}), /STATION_CLAIM_REQUIRED/);
     assert.equal(f.catalog.get({...artist,id:station.id}).name, station.name);
     await assert.rejects(f.catalog.publish(artist, {...station, offers:[{...station.offers[0],type:'track'}]}), /INVALID_PUBLIC_METADATA/);
+  } finally {f.cleanup();}
+});
+
+test('first publication needs an operator claim and claim cannot be transferred', async () => {
+  let rightsCalls = 0;
+  const f = fixture(async () => {rightsCalls++; return true;});
+  try {
+    const unclaimed = {...station, id: 'unclaimed-station'};
+    await assert.rejects(f.catalog.publish(artist, unclaimed), /STATION_CLAIM_REQUIRED/);
+    assert.equal(rightsCalls, 0, 'unclaimed station cannot invoke the rights verifier');
+    assert.equal(f.catalog.get({...artist, id: unclaimed.id}), null);
+    assert.throws(() => f.catalog.provisionStationClaim({...artist,
+      id: station.id, ownerSubject: other.subject}));
+    assert.throws(() => f.catalog.provisionStationClaim({...artist,
+      id: '../invalid', ownerSubject: artist.subject}), /INVALID_STATION_CLAIM/);
+    assert.equal((await f.catalog.publish(artist, station)).id, station.id);
   } finally {f.cleanup();}
 });
 

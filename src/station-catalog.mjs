@@ -37,6 +37,11 @@ export class StationCatalog {
         artwork_url TEXT, published_at TEXT NOT NULL,
         PRIMARY KEY(tenant, application, id)
       );
+      CREATE TABLE IF NOT EXISTS station_claims (
+        tenant TEXT NOT NULL, application TEXT NOT NULL, station_id TEXT NOT NULL,
+        owner_subject TEXT NOT NULL,
+        PRIMARY KEY(tenant, application, station_id)
+      );
       CREATE TABLE IF NOT EXISTS station_offers (
         tenant TEXT NOT NULL, application TEXT NOT NULL, station_id TEXT NOT NULL,
         id TEXT NOT NULL, title TEXT NOT NULL, type TEXT NOT NULL CHECK(type='complete_product'),
@@ -45,6 +50,19 @@ export class StationCatalog {
       );`);
   }
   close() { this.db.close(); }
+
+  /** An operator must verify station ownership out of band before first
+   * publication. This is deliberately absent from the public HTTP handler.
+   * Claims cannot be silently transferred by re-provisioning.
+   */
+  provisionStationClaim({tenant, application, id, ownerSubject}) {
+    if (![tenant, application, ownerSubject].every(value =>
+      typeof value === 'string' && identityPattern.test(value)) ||
+      typeof id !== 'string' || !/^[a-z0-9-]{3,80}$/.test(id))
+      throw new CatalogError('INVALID_STATION_CLAIM');
+    this.db.prepare(`INSERT INTO station_claims(tenant,application,station_id,owner_subject)
+      VALUES(?,?,?,?)`).run(tenant, application, id, ownerSubject);
+  }
 
   get({tenant, application, id}) {
     if (![tenant, application, id].every(value => typeof value === 'string' && identityPattern.test(value)))
@@ -64,10 +82,20 @@ export class StationCatalog {
     let station;
     try { station = validateStationStorefront(record, {artworkOrigins: this.artworkOrigins}); }
     catch { throw new CatalogError('INVALID_PUBLIC_METADATA'); }
+    const priorClaim = this.db.prepare(`SELECT owner_subject FROM station_claims
+      WHERE tenant=? AND application=? AND station_id=?`)
+      .get(publisher.tenant, publisher.application, station.id);
+    if (!priorClaim || priorClaim.owner_subject !== publisher.subject)
+      throw new CatalogError('STATION_CLAIM_REQUIRED', 403);
     if (station.offers.length && await this.verifyOfferRights(publisher, station) !== true)
       throw new CatalogError('RIGHTS_NOT_VERIFIED', 403);
     this.db.exec('BEGIN IMMEDIATE');
     try {
+      const claim = this.db.prepare(`SELECT owner_subject FROM station_claims
+        WHERE tenant=? AND application=? AND station_id=?`)
+        .get(publisher.tenant, publisher.application, station.id);
+      if (!claim || claim.owner_subject !== publisher.subject)
+        throw new CatalogError('STATION_CLAIM_REQUIRED', 403);
       const owner = this.db.prepare('SELECT owner_subject FROM stations WHERE tenant=? AND application=? AND id=?')
         .get(publisher.tenant, publisher.application, station.id);
       if (owner && owner.owner_subject !== publisher.subject) throw new CatalogError('STATION_OWNER_MISMATCH', 403);

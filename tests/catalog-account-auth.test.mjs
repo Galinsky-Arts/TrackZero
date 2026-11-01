@@ -14,6 +14,7 @@ const post = body => new Request('https://app.example.test/v1/stations',
 test('provider role claims cannot publish without a matching local artist grant', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'tz03-role-'));
   const catalog = new StationCatalog(join(dir, 'catalog.sqlite'), {verifyOfferRights: async () => true});
+  catalog.provisionStationClaim({...principal, id: station.id, ownerSubject: principal.subject});
   try {
     let account = null;
     const authenticate = createCatalogPublisherAuthenticator(
