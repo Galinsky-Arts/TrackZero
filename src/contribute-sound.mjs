@@ -35,14 +35,26 @@ export class ContributionSetup{
       this.state=error?.name==='NotAllowedError'?'DENIED':'INTERRUPTED';this.notify();
     }
   }
+  async refreshRoute(){
+    if(this.state!=='READY')return;
+    const request=this.epoch;
+    try{
+      const route=await this.verifiedRoute();
+      if(request!==this.epoch||this.state!=='READY')return;
+      if(!route||route.verified!==true||route.active!==true||route.output!=='bluetooth_speaker')
+        this.interrupt();
+    }catch{
+      if(request===this.epoch&&this.state==='READY')this.interrupt();
+    }
+  }
   interrupt(){
     if(this.state==='OFF')return;
-    ++this.epoch;this.stream?.getTracks().forEach(track=>track.stop());this.stream=null;
-    this.state='INTERRUPTED';this.notify();
+    ++this.epoch;const stream=this.stream;this.stream=null;this.state='INTERRUPTED';
+    stream?.getTracks().forEach(track=>track.stop());this.notify();
   }
   disable(){
-    ++this.epoch;this.stream?.getTracks().forEach(track=>track.stop());this.stream=null;
-    this.state='OFF';this.notify();
+    ++this.epoch;const stream=this.stream;this.stream=null;this.state='OFF';
+    stream?.getTracks().forEach(track=>track.stop());this.notify();
   }
 }
 function esc(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -59,7 +71,7 @@ export function renderContributionSetup(view){
 }
 
 /** The host supplies the trusted route probe; UI never reads a user-supplied route claim. */
-export function bindContributionSetup(root,{requestMic,verifiedRoute}){
+export function bindContributionSetup(root,{requestMic,verifiedRoute,subscribeRouteChange}){
   const enable=root?.querySelector?.('[data-action="enable"]');
   const disable=root?.querySelector?.('[data-action="disable"]');
   const status=root?.querySelector?.('[role="status"]');
@@ -71,9 +83,14 @@ export function bindContributionSetup(root,{requestMic,verifiedRoute}){
   }});
   const onEnable=()=>{setup.enable().catch(()=>setup.interrupt());};
   const onDisable=()=>setup.disable();
+  if(typeof subscribeRouteChange!=='function')
+    throw new Error('Route subscription required');
+  const unsubscribe=subscribeRouteChange(()=>{setup.refreshRoute().catch(()=>setup.interrupt());});
+  if(typeof unsubscribe!=='function')throw new Error('Route unsubscribe required');
   enable.addEventListener('click',onEnable);disable.addEventListener('click',onDisable);
   return ()=>{
     enable.removeEventListener('click',onEnable);disable.removeEventListener('click',onDisable);
+    unsubscribe();
     setup.disable();
   };
 }

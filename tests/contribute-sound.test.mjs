@@ -34,6 +34,26 @@ test('disabling before asynchronous permission result stops late capture',async(
   const pending=setup.enable();setup.disable();resolve(mic);await pending;
   assert.equal(setup.state,'OFF');assert.equal(mic.tracks[0].stops,1);
 });
+test('trusted route loss after readiness stops capture and cannot be restored by a late probe',async()=>{
+  const mic=stream();let route={verified:true,active:true,output:'bluetooth_speaker'};
+  const setup=new ContributionSetup({requestMic:async()=>mic,
+    verifiedRoute:async()=>route,onChange:()=>{}});
+  await setup.enable();assert.equal(setup.state,'READY');
+  route={verified:true,active:true,output:'headphones'};
+  await setup.refreshRoute();assert.equal(setup.state,'INTERRUPTED');
+  assert.equal(mic.tracks[0].stops,1);
+  await setup.refreshRoute();assert.equal(setup.state,'INTERRUPTED');
+});
+test('disabling during a pending route probe keeps measurement off',async()=>{
+  const mic=stream();let probe=0,resolve;
+  const setup=new ContributionSetup({requestMic:async()=>mic,verifiedRoute:()=>{
+    probe++;return probe===1?Promise.resolve({verified:true,active:true,output:'bluetooth_speaker'}):
+      new Promise(r=>resolve=r);
+  },onChange:()=>{}});
+  await setup.enable();const pending=setup.refreshRoute();setup.disable();
+  resolve({verified:false,active:false,output:'headphones'});await pending;
+  assert.equal(setup.state,'OFF');assert.equal(mic.tracks[0].stops,1);
+});
 test('safe disclosure does not invent points from consent',()=>{
   const view={state:'READY',label:'Local measurement is on; contribution still requires verified output evidence',pointsEligible:false};
   const html=renderContributionSetup(view);
@@ -47,10 +67,17 @@ test('UI controls bind opt-in and stop capture on disposal',async()=>{
     click(){this.handlers.get('click')?.()}});
   const enable=element(),disable=element(),status=element(),mic=stream();
   const root={querySelector:s=>s.includes('enable')?enable:s.includes('disable')?disable:status};
+  assert.throws(()=>bindContributionSetup(root,{requestMic:async()=>mic,
+    verifiedRoute:async()=>({verified:true,active:true,output:'bluetooth_speaker'})}),/Route subscription required/);
+  let route={verified:true,active:true,output:'bluetooth_speaker'},routeChanged,unsubscribed=0;
   const dispose=bindContributionSetup(root,{requestMic:async()=>mic,
-    verifiedRoute:async()=>({verified:true,active:true,output:'bluetooth_speaker'})});
+    verifiedRoute:async()=>route,subscribeRouteChange:callback=>{routeChanged=callback;return ()=>unsubscribed++;}});
   assert.equal(status.textContent,'Off');enable.click();
   await new Promise(resolve=>setImmediate(resolve));
   assert.match(status.textContent,/Local measurement is on/);
+  route={verified:true,active:true,output:'headphones'};routeChanged();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(status.textContent,'Measurement interrupted');
   dispose();assert.equal(mic.tracks[0].stops,1);assert.equal(enable.handlers.size,0);
+  assert.equal(unsubscribed,1);
 });
