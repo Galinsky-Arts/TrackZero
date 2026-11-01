@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-01T18:32:00Z",
+  "observedAt": "2026-11-01T18:36:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -264,15 +264,15 @@
       "number": 7,
       "title": "TZ-02: Accounts and artist/label onboarding",
       "url": "https://github.com/neophilism/TrackZero/pull/7",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-18T20:55:49Z",
-      "updatedAt": "2026-11-01T18:31:59Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "6e553bc020c626e39d2e11becbec7317d8fef9c4",
+      "updatedAt": "2026-11-01T18:35:05Z",
+      "closedAt": "2026-11-01T18:35:04Z",
+      "mergedAt": "2026-11-01T18:35:04Z",
+      "headSha": "90567c0b0b3a0fb4cf42ec4376f59a8f8ed260a8",
       "baseRef": "main",
-      "mergeCommitSha": "c60931fd581efefc475b51394f630faf6f11b581"
+      "mergeCommitSha": "00540a878767d9708db1ca48064a238ae93a617d"
     },
     {
       "id": 4832051661,
