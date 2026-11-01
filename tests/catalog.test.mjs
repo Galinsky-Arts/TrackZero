@@ -9,6 +9,15 @@ test('projects complete albums only after a trusted verifier approves publicatio
   assert.deepEqual(result,[{id:'album_123',title:'A complete album',trackCount:12,kind:'complete_album'}]);
   assert.deepEqual(calls,['album_123']);
 });
+test('projects only allowlisted HTTPS album artwork',async()=>{
+  const artworkUrl='https://assets.example.test/albums/123.jpg';
+  assert.equal((await projectCompleteAlbums([{...album,artworkUrl}],async()=>true,
+    {artworkOrigins:['https://assets.example.test']}))[0].artworkUrl,artworkUrl);
+  for(const invalid of ['http://assets.example.test/a.jpg','https://other.example/a.jpg',
+    'https://assets.example.test/a.jpg#fragment'])
+    await assert.rejects(projectCompleteAlbums([{...album,artworkUrl:invalid}],async()=>true,
+      {artworkOrigins:['https://assets.example.test']}),/artwork/);
+});
 test('client-asserted rights and availability are not authorization',async()=>{
   await assert.rejects(projectCompleteAlbums([{...album,rightsVerified:true,available:true}]),/verifier required/);
   await assert.rejects(projectCompleteAlbums([{...album,rightsVerified:true,available:true}],async()=>false),/not verified/);
