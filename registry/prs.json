@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-01T18:45:00Z",
+  "observedAt": "2026-11-01T18:51:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -352,15 +352,15 @@
       "number": 9,
       "title": "TZ-04: Catalog and complete-album management",
       "url": "https://github.com/neophilism/TrackZero/pull/9",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-18T21:59:29Z",
-      "updatedAt": "2026-11-01T18:43:29Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "05e2092dc73a97ae376d1e33b9d04da58af6f5f0",
+      "updatedAt": "2026-11-01T18:50:10Z",
+      "closedAt": "2026-11-01T18:50:10Z",
+      "mergedAt": "2026-11-01T18:50:10Z",
+      "headSha": "67c7302004898a9bf968143bd34544946bd3607b",
       "baseRef": "main",
-      "mergeCommitSha": "37f11f36c25a72720a3ab9111c784c3a161dec67"
+      "mergeCommitSha": "4f187ef4bc93af81f8a29c6ffe7fbb1aae3a2056"
     }
   ]
 }
