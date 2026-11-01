@@ -7,6 +7,8 @@ const album = {id: 'album_123', title: 'Complete album', kind: 'album', trackCou
   trackIds: ['track:1', 'track:2'], artworkUrl: 'https://assets.example.test/a.jpg'};
 const media = id => ({id, tenantId: 'tenant-a', publisherId: 'artist-a',
   title: id, kind: 'music', assetRef: 'ciphertext:' + id});
+const project = (candidate, verify) => projectCompleteAlbums([candidate], verify,
+  {artworkOrigins: ['https://assets.example.test']});
 const makeVerifier = overrides => createDreAlbumVerifier({
   tenantId: 'tenant-a', publisherId: 'artist-a',
   lookupMedia: async query => media(query.id), verifyAlbumRights: async () => true,
@@ -19,8 +21,7 @@ test('adapts DRE-04 items and a trusted rights source to a complete album', asyn
     lookupMedia: async query => { calls.push(query); return media(query.id); },
     verifyAlbumRights: async context => { rights.push(context); return true; }
   });
-  assert.equal((await projectCompleteAlbums([album], verify,
-    {artworkOrigins: ['https://assets.example.test']}))[0].id, album.id);
+  assert.equal((await project(album, verify))[0].id, album.id);
   assert.deepEqual(calls, [{tenantId: 'tenant-a', id: 'track:1'},
     {tenantId: 'tenant-a', id: 'track:2'}]);
   assert.equal(rights[0].album.artworkUrl, album.artworkUrl);
@@ -30,15 +31,15 @@ test('fails closed for incomplete sets, duplicate tracks, rights and cross-scope
   for (const candidate of [
     {...album, trackIds: ['track:1']},
     {...album, trackIds: ['track:1', 'track:1']}
-  ]) await assert.rejects(projectCompleteAlbums([candidate], makeVerifier()), /not verified/);
-  await assert.rejects(projectCompleteAlbums([album],
+  ]) await assert.rejects(project(candidate, makeVerifier()), /not verified/);
+  await assert.rejects(project(album,
     makeVerifier({verifyAlbumRights: async () => false})), /not verified/);
   for (const override of [
     {tenantId: 'tenant-b'}, {publisherId: 'listener-a'}, {kind: 'episode'},
     {assetRef: 'https://plain.example/audio.wav'}
   ]) {
     const verify = makeVerifier({lookupMedia: async query => ({...media(query.id), ...override})});
-    await assert.rejects(projectCompleteAlbums([album], verify), /not verified/);
+    await assert.rejects(project(album, verify), /not verified/);
   }
 });
 
@@ -49,9 +50,9 @@ test('provider interruption rejects the projection without partial output', asyn
     if (query.id === 'track:2') throw new Error('DRE unavailable');
     return media(query.id);
   }});
-  await assert.rejects(projectCompleteAlbums([album], verify), /DRE unavailable/);
+  await assert.rejects(project(album, verify), /DRE unavailable/);
   assert.equal(calls, 2);
-  await assert.rejects(projectCompleteAlbums([album],
+  await assert.rejects(project(album,
     makeVerifier({verifyAlbumRights: async () => {throw new Error('rights unavailable');}})),
     /rights unavailable/);
 });
