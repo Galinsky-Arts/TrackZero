@@ -25,6 +25,8 @@ protocol LiveRadioEngine {
     @Published private(set) var state: State = .stopped
     private let engine: any LiveRadioEngine
     private var operation: Task<Void, Never>?
+    private var previousOperation: Task<Void, Never>?
+    private var closing: Task<Void, Never>?
     private var session: (any LiveRadioSession)?
     private var generation: UInt64 = 0
     init(engine: any LiveRadioEngine) { self.engine = engine }
@@ -38,9 +40,14 @@ protocol LiveRadioEngine {
         }
         stop()
         let request = generation
+        let predecessor = previousOperation
+        let priorClose = closing
         state = .connecting
         operation = Task { [engine] in
             do {
+                await predecessor?.value
+                await priorClose?.value
+                guard request == generation else { return }
                 let joined = try await engine.joinLive(stationId: stationId)
                 guard request == generation else { await joined.close(); return }
                 session = joined
@@ -57,9 +64,12 @@ protocol LiveRadioEngine {
     }
     func stop() {
         generation &+= 1
-        operation?.cancel(); operation = nil
+        operation?.cancel(); previousOperation = operation ?? previousOperation; operation = nil
         let old = session; session = nil
-        if let old { Task { await old.close() } }
+        if let old {
+            let priorClose = closing
+            closing = Task { await priorClose?.value; await old.close() }
+        }
         state = .stopped
     }
 }

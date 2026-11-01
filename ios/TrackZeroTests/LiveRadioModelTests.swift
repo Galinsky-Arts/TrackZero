@@ -4,8 +4,18 @@ import XCTest
 private final class FakeSession: LiveRadioSession {
     var starts = 0
     var closes = 0
+    var onClose: (() async -> Void)?
     func start() async throws { starts += 1 }
-    func close() async { closes += 1 }
+    func close() async { closes += 1; await onClose?() }
+}
+private actor CloseGate {
+    private var released = false
+    private var waiter: CheckedContinuation<Void, Never>?
+    func wait() async {
+        if released { return }
+        await withCheckedContinuation { waiter = $0 }
+    }
+    func release() { released = true; waiter?.resume(); waiter = nil }
 }
 private struct FakeEngine: LiveRadioEngine {
     let join: (String) async throws -> any LiveRadioSession
@@ -44,5 +54,24 @@ private struct FakeEngine: LiveRadioEngine {
         model.play(stationId: "s1")
         await Task.yield()
         XCTAssertNotEqual(model.state, .playing)
+    }
+    func testNextStationWaitsForPreviousSessionClose() async {
+        let first = FakeSession(), second = FakeSession(), gate = CloseGate()
+        first.onClose = { await gate.wait() }
+        var joins = 0
+        let model = LiveRadioModel(engine: FakeEngine(join: { _ in
+            joins += 1
+            return joins == 1 ? first : second
+        }))
+        model.play(stationId: "station-a")
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertEqual(joins, 1)
+        model.play(stationId: "station-b")
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertEqual(joins, 1)
+        await gate.release()
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertEqual(joins, 2)
+        XCTAssertEqual(first.closes, 1)
     }
 }
