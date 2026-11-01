@@ -1,0 +1,5 @@
+# TZ-20 privacy and complaints slice
+
+The draft stores a default-private profile visibility preference, scoped complaint history and operator-recorded account decisions with explanations in SQLite. The HTTP boundary derives tenant, application and subject from a trusted authentication adapter; users can read only their own records, change their visibility preference and submit a bounded complaint. Decision recording is not exposed through the public handler. Writes require the same public origin and cannot submit identity fields.
+
+`node --test tests/privacy-complaints.test.mjs` passes three local Node 24 tests for scoped persistence, cross-tenant denial, origin and identity-field rejection, and invalid complaint/decision handling. The privacy preference is not yet connected to other public profile renderers; moderation operations, retention policy, operator audit, production identity/storage and product CI remain open. The original plan depends on TZ-19 and DRE-26; neither provides verified moderation integration in this assignment. PR remains draft and is not a production privacy or complaint service.
