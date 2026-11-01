@@ -14,7 +14,7 @@ test('client-asserted rights and availability are not authorization',async()=>{
   await assert.rejects(projectCompleteAlbums([{...album,rightsVerified:true,available:true}],async()=>false),/not verified/);
 });
 test('rejects individual tracks, invalid data, and duplicate entries',async()=>{
-  for(const invalid of [{...album,kind:'track'},{...album,trackCount:0},{...album,id:'?'},null])
+  for(const invalid of [{...album,kind:'track'},{...album,trackCount:0},{...album,trackCount:501},{...album,id:'?'},null])
     await assert.rejects(projectCompleteAlbums([invalid],async()=>true));
   await assert.rejects(projectCompleteAlbums([album,album],async()=>true),/Invalid complete album/);
 });
