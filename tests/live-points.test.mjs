@@ -10,6 +10,8 @@ test('points remain provisional until issuer reports completed outro',()=>{
   const vested=model.ingestTrusted(event({sequence:3,phase:'VESTED',provisional:'0',spendable:'120',outroComplete:true}));
   assert.match(renderLivePoints(vested),/points vested/);
   assert.equal(vested.spendable,'120');
+  assert.throws(()=>model.ingestTrusted(event({occurrenceId:'o2',sequence:4,
+    phase:'VESTED',outroComplete:true,provisional:'1'})));
 });
 test('interruption forfeits provisional points and replay cannot restore them',()=>{
   const model=new LivePointsView();model.ingestTrusted(event());
@@ -22,9 +24,13 @@ test('artist wallets are distinct and unverified/headphone provisional credit is
   assert.equal(model.view('a2').spendable,'0');
   assert.throws(()=>model.ingestTrusted(event({artistId:'a2',speakerVerified:false})));
   assert.equal(model.view('a1').spendable,'100');
+  assert.throws(()=>{model.view('a1').spendable='999999';},TypeError);
+  assert.equal(model.view('a1').spendable,'100');
 });
 test('renderer escapes creator ID and avoids client-side grant claims',()=>{
   const model=new LivePointsView();
   const html=renderLivePoints(model.view('a1'));
   assert.match(html,/No verified point event/);assert.match(html,/Only the issuer can grant or spend/);
+  assert.throws(()=>renderLivePoints({...model.view('a1'),spendable:'100'}));
+  assert.throws(()=>renderLivePoints({...model.view('a1'),phase:'VESTED'}));
 });

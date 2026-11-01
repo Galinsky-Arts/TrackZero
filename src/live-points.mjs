@@ -9,8 +9,9 @@ function validate(v){
     typeof v.speakerVerified!=='boolean'||typeof v.outroComplete!=='boolean'||
     typeof v.interrupted!=='boolean')throw Error('invalid issuer event');
   const provisional=amount(v.provisional),spendable=amount(v.spendable);
-  if((v.phase==='VESTED'&&!v.outroComplete)||(v.phase==='FORFEITED'&&!v.interrupted)||
-    (!v.speakerVerified&&provisional!==0n)||(v.phase==='FORFEITED'&&provisional!==0n))
+  if((v.phase==='VESTED'&&(!v.outroComplete||provisional!==0n))||
+    (v.phase==='FORFEITED'&&(!v.interrupted||provisional!==0n))||
+    (!v.speakerVerified&&provisional!==0n))
     throw Error('inconsistent issuer event');
   return {provisional,spendable};
 }
@@ -26,15 +27,15 @@ export class LivePointsView{
     const priorWallet=this.byArtist.get(event.artistId);
     if(priorWallet&&event.sequence<=priorWallet.sequence)throw Error('stale artist wallet');
     this.occurrences.set(key,{phase:event.phase,sequence:event.sequence});
-    this.byArtist.set(event.artistId,{artistId:event.artistId,occurrenceId:event.occurrenceId,
+    this.byArtist.set(event.artistId,Object.freeze({artistId:event.artistId,occurrenceId:event.occurrenceId,
       phase:event.phase,provisional:provisional.toString(),spendable:spendable.toString(),
-      speakerVerified:event.speakerVerified,sequence:event.sequence});
+      speakerVerified:event.speakerVerified,sequence:event.sequence}));
     return this.view(event.artistId);
   }
   view(artistId){
     if(typeof artistId!=='string'||!id.test(artistId))throw Error('invalid artist');
-    return this.byArtist.get(artistId)??{artistId,occurrenceId:null,phase:'UNKNOWN',
-      provisional:'0',spendable:'0',speakerVerified:false,sequence:0};
+    return this.byArtist.get(artistId)??Object.freeze({artistId,occurrenceId:null,phase:'UNKNOWN',
+      provisional:'0',spendable:'0',speakerVerified:false,sequence:0});
   }
 }
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -42,6 +43,12 @@ export function renderLivePoints(view){
   if(!view||typeof view.artistId!=='string'||!id.test(view.artistId)||
     !new Set([...states,'UNKNOWN']).has(view.phase))throw Error('invalid view');
   const provisional=amount(view.provisional),spendable=amount(view.spendable);
+  if(typeof view.speakerVerified!=='boolean'||!Number.isSafeInteger(view.sequence)||
+    (view.phase==='UNKNOWN'?(view.occurrenceId!==null||view.sequence!==0||
+      provisional!==0n||spendable!==0n):
+      (typeof view.occurrenceId!=='string'||!id.test(view.occurrenceId)||view.sequence<1))||
+    ((view.phase==='VESTED'||view.phase==='FORFEITED')&&provisional!==0n)||
+    (!view.speakerVerified&&provisional!==0n))throw Error('invalid view');
   return `<section aria-labelledby="points-title"><h2 id="points-title">${esc(view.artistId)} artist points</h2>`+
     `<p>Provisional this broadcast: ${provisional}. Spendable: ${spendable}.</p>`+
     `<p role="status" aria-live="polite">${view.phase==='VESTED'?'Issuer reports outro complete and points vested':
