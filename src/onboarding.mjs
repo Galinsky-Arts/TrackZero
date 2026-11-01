@@ -1,4 +1,4 @@
-import {createHash, randomUUID} from 'node:crypto';
+import {createHash, randomBytes, randomUUID} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 
 const ROLES = new Set(['listener', 'artist', 'label']);
@@ -62,12 +62,14 @@ export class OnboardingStore {
   close() { this.db.close(); }
 
   /** Provisioning is deliberately separate from the public HTTP handler. */
-  provisionInvitation({tenant, application, role, token, expiresAt}) {
+  provisionInvitation({tenant, application, role, expiresAt}) {
     tenant = scope(tenant, 'TENANT'); application = scope(application, 'APPLICATION');
     if (role !== 'artist' && role !== 'label') throw new OnboardingError('INVALID_INVITATION_ROLE');
     if (!Number.isSafeInteger(expiresAt) || expiresAt <= Date.now()) throw new OnboardingError('INVALID_EXPIRY');
+    const token = randomBytes(32).toString('hex');
     this.db.prepare('INSERT INTO invitations(digest,tenant,application,role,expires_at) VALUES(?,?,?,?,?)')
       .run(digest(token), tenant, application, role, expiresAt);
+    return token;
   }
 
   account(verifiedPrincipal) {

@@ -13,7 +13,6 @@ function fixture() {
 }
 const alice = {tenant: 'tenant-a', application: 'trackzero', subject: 'provider:alice'};
 const bob = {...alice, subject: 'provider:bob'};
-const hex = c => c.repeat(64);
 
 test('listener onboarding is scoped, durable and idempotent after restart', () => {
   const f = fixture();
@@ -34,9 +33,11 @@ test('listener onboarding is scoped, durable and idempotent after restart', () =
 test('artist and label roles require distinct scoped one-time invitations', () => {
   const f = fixture();
   try {
-    const artistToken = hex('a'), labelToken = hex('b');
-    f.store.provisionInvitation({...alice, role: 'artist', token: artistToken, expiresAt: Date.now() + 60_000});
-    f.store.provisionInvitation({...alice, role: 'label', token: labelToken, expiresAt: Date.now() + 60_000});
+    const artistToken = f.store.provisionInvitation({...alice, role: 'artist', expiresAt: Date.now() + 60_000});
+    const labelToken = f.store.provisionInvitation({...alice, role: 'label', expiresAt: Date.now() + 60_000});
+    assert.match(artistToken, /^[a-f0-9]{64}$/);
+    assert.notEqual(artistToken, labelToken);
+    assert.equal(f.store.db.prepare('SELECT digest FROM invitations WHERE role=?').get('artist').digest === artistToken, false);
     assert.throws(() => f.store.onboard(bob, 'artist'), /INVITATION_REQUIRED/);
     assert.throws(() => f.store.onboard({...alice, tenant: 'tenant-b'}, 'artist', artistToken), /INVITATION_DENIED/);
     assert.equal(f.store.account({...alice, tenant: 'tenant-b'}), null, 'failed invitation rolls back account creation');
@@ -52,8 +53,7 @@ test('artist and label roles require distinct scoped one-time invitations', () =
 test('expired invitation and malformed identity fail closed without partial records', () => {
   const f = fixture();
   try {
-    const token = hex('c');
-    f.store.provisionInvitation({...alice, role: 'artist', token, expiresAt: Date.now() + 30_000});
+    const token = f.store.provisionInvitation({...alice, role: 'artist', expiresAt: Date.now() + 30_000});
     f.store.db.prepare('UPDATE invitations SET expires_at=? WHERE digest IS NOT NULL').run(Date.now() - 1);
     assert.throws(() => f.store.onboard(alice, 'artist', token), /INVITATION_DENIED/);
     assert.equal(f.store.account(alice), null);
