@@ -1,5 +1,7 @@
-# TZ-14 reward price and preview slice
+# TZ-14 reward price preview and ladder
 
-The bounded default ladder computes the integer ceiling of `base × (1 + gentle_growth × tier) × exp(acceleration × tier²)` with rational lower and upper bounds. It uses BigInt to avoid floating-point overflow and refuses an inconclusive interval. Artist-specific offer snapshots display exact cost, balance, availability and version without claiming that a preview reserves stock or performs redemption. Local Node 24 tests cover base/linear ceilings, exponential growth, invalid configurations, large integers, cross-artist denial and escaped text.
+The draft implements a bounded BigInt price curve with exact rational interval rounding, and renders an artist-specific versioned offer with exact cost and spendable balance. The default starts slowly and rises sharply at higher tiers; the UI does not convert a display snapshot into a reservation, unlock or spend. An issuer must recheck offer version, inventory, artist balance and atomic redemption.
 
-The DRE-17 issuer, creator configuration authority, actual wallet and inventory providers, long-tail economic simulations and atomic redemption remain unintegrated. This UI cannot assert real availability or points; product tests are not in repository CI.
+The render boundary now rejects forged non-boolean availability, malformed identifiers, negative balances, zero costs and inconsistent request eligibility. `node --test tests/*.test.mjs` passes five local Node 24 tests, including early/late curve growth, large integer handling, exact one-point-short preview and cross-artist denial.
+
+No DRE-17 trusted artist pricing authority, versioned offer issuer, live wallet or inventory has been verified in this assignment. The original plan also depends on TZ-05 and TZ-13, which remain draft. The planning CI does not run this product suite, and the 1000-speaker/all-day economic model needs real accrual policy data before it can be simulated faithfully. PR #19 remains draft; no redemption or release is claimed.
