@@ -27,12 +27,14 @@ test('introspection derives only verified provider scope and does not adopt prov
     assert.equal(options.method, 'POST');
     assert.equal(options.redirect, 'manual');
     assert.equal(options.headers.get('authorization'), 'Basic fixture');
-    assert.equal(options.body.get('token'), 'opaque.token');
+    assert.equal(options.body.get('token'), calls === 1 ? 'opaque.token' : 'padded.token==');
     return response(claims());
   });
   assert.deepEqual(await auth(request('Bearer opaque.token')),
     {tenant: 'tenant-a', application: 'trackzero', subject: 'provider:alice'});
-  assert.equal(calls, 1);
+  assert.deepEqual(await auth(request('Bearer padded.token==')),
+    {tenant: 'tenant-a', application: 'trackzero', subject: 'provider:alice'});
+  assert.equal(calls, 2);
 });
 
 test('missing and malformed bearer tokens never reach provider', async () => {

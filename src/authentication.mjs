@@ -25,7 +25,7 @@ export function createIntrospectionAuthenticator({endpoint, issuer, audience, ap
 
   return async function authenticate(request) {
     const header = request.headers.get('authorization');
-    const match = /^Bearer ([A-Za-z0-9._~+\/-]{1,8192})$/.exec(header || '');
+    const match = /^Bearer ([A-Za-z0-9._~+\/-]{1,8190}={0,2})$/.exec(header || '');
     if (!match) throw new OnboardingError('UNAUTHENTICATED', 401);
 
     let response;
