@@ -1,5 +1,7 @@
-# TZ-13 Contribute Sound consent and evidence UI
+# TZ-13 Contribute Sound setup and evidence UI
 
-This opt-in control asks for microphone access only after an explicit action, stops capture on disable, interruption, disposal or an unsupported route, and presents conservative route status from a trusted provider. The UI states that headphones, inactive/unsupported routes and consent alone earn no speaker points. It does not calculate acoustic energy, issue points or upload raw microphone data. Local Node 24 tests cover consent, denial, inactive/headphone/self-declared routes, late permission resolution, disclosure and control binding.
+The draft provides explicit microphone opt-in, conservative route status and accessible controls. Listening works without capture. The UI never grants points: consent, a connected speaker or a route assertion alone is not qualified output evidence, and complete-broadcast vesting remains with Distributed Radio Engine.
 
-Actual DRE-13 evidence policy, calibrated native output observations, local acoustic processing, complete-broadcast vesting, browser/device permission behavior and field safety thresholds are not integrated or verified. Product tests are not in repository CI.
+The host must supply a trusted route probe and a route-change subscription. The UI rechecks the trusted probe after every route signal; switching away from a verified active Bluetooth speaker or losing the route stops microphone tracks and interrupts measurement. Disabling during a pending permission or route response invalidates that response. The subscription is removed on disposal. These are local safety controls, not calibrated acoustic evidence or a point issuer.
+
+`node --test tests/*.test.mjs` passes eight local Node 24 tests for opt-in, denied permission, unverified/headphone/inactive routes, route loss, delayed results, cleanup and disclosure. Product tests are not run by the planning CI. The original TZ-13 plan depends on TZ-12 and DRE-13; their native attestation, calibrated processing and issuer interfaces are not independently verified in this assignment. No device or field qualification is claimed; PR #18 remains draft.
