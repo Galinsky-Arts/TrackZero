@@ -53,6 +53,21 @@ test('adapter failure reports interruption without leaving a live session',async
   await assert.rejects(player.play('s1'));
   assert.equal(player.state,'INTERRUPTED');assert.equal(closed,1);
 });
+test('close failure cannot retain a session or leave controls falsely playing',async()=>{
+  const player=new GuestPlayer({joinLive:async()=>({start:async()=>{},close:()=>{throw Error('close failed')}})},()=>{});
+  await player.play('s1');player.stop();
+  assert.equal(player.current,null);
+  assert.equal(player.state,'INTERRUPTED');
+  await player.play('s1');
+  assert.equal(player.state,'PLAYING');
+});
+test('asynchronous close failure reports interruption only for the stopped session',async()=>{
+  const player=new GuestPlayer({joinLive:async()=>({start:async()=>{},close:()=>Promise.reject(Error('close failed'))})},()=>{});
+  await player.play('s1');player.stop();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(player.state,'INTERRUPTED');
+  assert.equal(player.current,null);
+});
 test('accessible controls bind explicit play and stop without route navigation',async()=>{
   const element=()=>({disabled:false,textContent:'',dataset:{station:'s1'},handlers:new Map(),
     addEventListener(type,fn){this.handlers.set(type,fn)},removeEventListener(type){this.handlers.delete(type)},

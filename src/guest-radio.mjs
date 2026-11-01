@@ -62,6 +62,10 @@ export function renderAlbumPage(album,{artworkOrigins=[]}={}){
     `<p>Complete-album information. Live radio playback has no song selection.</p></main></html>`;
 }
 
+function closeQuietly(session){
+  try{session?.close?.()?.catch?.(()=>{});}catch{}
+}
+
 /** Transport is an injected authenticated, endpoint-encrypted DRE playback adapter. */
 export class GuestPlayer{
   constructor(adapter,onState){
@@ -76,23 +80,30 @@ export class GuestPlayer{
     this.current={controller,session:null};this.emit('CONNECTING');
     try{
       const session=await this.adapter.joinLive(stationId,{signal:controller.signal});
-      if(epoch!==this.epoch){session?.close?.();return;}
+      if(epoch!==this.epoch){closeQuietly(session);return;}
       if(!session||typeof session.close!=='function'||typeof session.start!=='function')
         throw new GuestError('INVALID_PLAYBACK_SESSION',503);
       this.current.session=session;
       await session.start();
-      if(epoch!==this.epoch){session.close();return;}
+      if(epoch!==this.epoch){closeQuietly(session);return;}
       this.emit('PLAYING');
     }catch(error){
       if(epoch!==this.epoch)return;
-      this.current?.session?.close();this.current=null;
+      closeQuietly(this.current?.session);this.current=null;
       this.emit('INTERRUPTED');
       throw error;
     }
   }
   stop(){
-    ++this.epoch;this.current?.controller.abort();this.current?.session?.close();
-    this.current=null;this.emit('STOPPED');
+    ++this.epoch;const current=this.current;this.current=null;
+    current?.controller.abort();
+    try{
+      const closing=current?.session?.close();
+      const epoch=this.epoch;
+      closing?.then?.(undefined,()=>{if(this.epoch===epoch)this.emit('INTERRUPTED');});
+      this.emit('STOPPED');
+    }
+    catch{this.emit('INTERRUPTED');}
   }
 }
 
