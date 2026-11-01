@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-01T18:36:00Z",
+  "observedAt": "2026-11-01T18:39:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -45,8 +45,12 @@
       "id": "TZ-03",
       "title": "Station identity and storefront shell",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
+      "prs": [
+        8
+      ],
+      "dependsOn": [
+        "TZ-02"
+      ],
       "externalDependencies": [],
       "externalPrerequisites": []
     },
@@ -318,6 +322,21 @@
       "headSha": "981ec2d5aefc0b5de7ca0b9b03c0d61c3f266a9c",
       "baseRef": "main",
       "mergeCommitSha": "db1ff093103dffa09d659b0fc0698407db621ce1"
+    },
+    {
+      "id": 4913182105,
+      "number": 8,
+      "title": "TZ-03: Station identity and storefront shell",
+      "url": "https://github.com/neophilism/TrackZero/pull/8",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-18T21:58:50Z",
+      "updatedAt": "2026-11-01T18:37:59Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "0f64b4bdc0f384cf64a487445dc32a8b81256272",
+      "baseRef": "main",
+      "mergeCommitSha": "a654ab50571ab1e53abd0cf80950cecbc23193a4"
     }
   ]
 }
