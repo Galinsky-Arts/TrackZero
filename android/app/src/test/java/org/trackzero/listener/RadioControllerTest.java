@@ -43,4 +43,42 @@ public final class RadioControllerTest {
         controller.play("s1");
         assertEquals(RadioController.State.INTERRUPTED, controller.state());
     }
+    @Test public void closeFailureDoesNotRetainSessionOrPretendPlaybackContinues() {
+        AtomicInteger closes = new AtomicInteger();
+        RadioController.Session faulty = new RadioController.Session() {
+            public void start() { }
+            public void close() { closes.incrementAndGet(); throw new IllegalStateException("close failed"); }
+        };
+        RadioController controller = new RadioController(id -> CompletableFuture.completedFuture(faulty), state -> {});
+        controller.play("s1");
+        controller.stop();
+        assertEquals(RadioController.State.INTERRUPTED, controller.state());
+        controller.stop();
+        assertEquals(1, closes.get());
+        assertEquals(RadioController.State.INTERRUPTED, controller.state());
+    }
+    @Test public void lateCloseFailureIsReportedAsInterrupted() {
+        CompletableFuture<RadioController.Session> future = new CompletableFuture<>();
+        RadioController controller = new RadioController(id -> future, state -> {});
+        controller.play("s1"); controller.stop();
+        future.complete(new RadioController.Session() {
+            public void start() { fail("late session started"); }
+            public void close() { throw new IllegalStateException("close failed"); }
+        });
+        assertEquals(RadioController.State.INTERRUPTED, controller.state());
+    }
+    @Test public void failedClosePreventsStartingAnotherStation() {
+        AtomicInteger joins = new AtomicInteger();
+        RadioController.Session faulty = new RadioController.Session() {
+            public void start() { }
+            public void close() { throw new IllegalStateException("could still be audible"); }
+        };
+        RadioController controller = new RadioController(id -> {
+            joins.incrementAndGet(); return CompletableFuture.completedFuture(faulty);
+        }, state -> {});
+        controller.play("station-a");
+        controller.play("station-b");
+        assertEquals(1, joins.get());
+        assertEquals(RadioController.State.INTERRUPTED, controller.state());
+    }
 }

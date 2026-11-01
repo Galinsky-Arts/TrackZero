@@ -19,6 +19,7 @@ public final class RadioController {
     private final Consumer<State> listener;
     private long epoch;
     private Session session;
+    private boolean closeUncertain;
     private State state = State.STOPPED;
 
     public RadioController(Engine engine, Consumer<State> listener) {
@@ -32,7 +33,9 @@ public final class RadioController {
     public synchronized void play(String stationId) {
         if (stationId == null || !stationId.matches("[A-Za-z0-9][A-Za-z0-9._:-]{0,127}"))
             throw new IllegalArgumentException("Invalid station ID");
+        if (closeUncertain) { setState(State.INTERRUPTED); return; }
         stop();
+        if (closeUncertain) return; // prior session may still be audible
         final long request = epoch;
         setState(State.CONNECTING);
         final CompletableFuture<Session> pending;
@@ -40,19 +43,28 @@ public final class RadioController {
         catch (RuntimeException error) { setState(State.INTERRUPTED); return; }
         pending.whenComplete((joined, error) -> {
             synchronized (RadioController.this) {
-                if (request != epoch) { if (joined != null) joined.close(); return; }
+                if (request != epoch) {
+                    if (joined != null) { try { joined.close(); }
+                        catch (RuntimeException ignored) { closeUncertain = true; stop(); } }
+                    return;
+                }
                 if (error != null || joined == null) { setState(State.INTERRUPTED); return; }
                 session = joined;
                 try { joined.start(); setState(State.PLAYING); }
                 catch (Exception failure) {
-                    joined.close(); session = null; setState(State.INTERRUPTED);
+                    try { joined.close(); } catch (RuntimeException ignored) { closeUncertain = true; }
+                    session = null; setState(State.INTERRUPTED);
                 }
             }
         });
     }
     public synchronized void stop() {
         epoch++;
-        if (session != null) { session.close(); session = null; }
-        setState(State.STOPPED);
+        Session closing = session;
+        session = null;
+        try {
+            if (closing != null) closing.close();
+            setState(closeUncertain ? State.INTERRUPTED : State.STOPPED);
+        } catch (RuntimeException error) { closeUncertain = true; setState(State.INTERRUPTED); }
     }
 }
