@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-01T18:41:00Z",
+  "observedAt": "2026-11-01T18:45:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -58,9 +58,18 @@
       "id": "TZ-04",
       "title": "Catalog and complete-album management",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
+      "prs": [
+        9
+      ],
+      "dependsOn": [
+        "TZ-03"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "neophilism/Distributed-Radio-Engine",
+          "unitId": "DRE-04"
+        }
+      ],
       "externalPrerequisites": []
     },
     {
@@ -337,6 +346,21 @@
       "headSha": "8d5619fe9569ee55440db47e6d30d0a77db5b90e",
       "baseRef": "main",
       "mergeCommitSha": "4139942625be90a81ccd88bd0915bfa97a8ee845"
+    },
+    {
+      "id": 4913186834,
+      "number": 9,
+      "title": "TZ-04: Catalog and complete-album management",
+      "url": "https://github.com/neophilism/TrackZero/pull/9",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-18T21:59:29Z",
+      "updatedAt": "2026-11-01T18:43:29Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "05e2092dc73a97ae376d1e33b9d04da58af6f5f0",
+      "baseRef": "main",
+      "mergeCommitSha": "37f11f36c25a72720a3ab9111c784c3a161dec67"
     }
   ]
 }
