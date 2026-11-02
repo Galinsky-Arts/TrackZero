@@ -16,9 +16,10 @@ function actor(value){
 /** Local optimistic schedule store. Authorization is rechecked inside each
  * write transaction; actual DRE scheduling and rights checks remain external. */
 export class ProgramStore{
-  constructor(filename,{authorizeStation}={}){
-    if(typeof filename!=='string'||!filename||typeof authorizeStation!=='function')throw new Error('Store and station authorizer required');
+  constructor(filename,{authorizeStation,authorizeItem}={}){
+    if(typeof filename!=='string'||!filename||typeof authorizeStation!=='function'||typeof authorizeItem!=='function')throw new Error('Store, station and item authorizers required');
     this.authorizeStation=authorizeStation;
+    this.authorizeItem=authorizeItem;
     this.db=new DatabaseSync(filename);
     this.db.exec(`CREATE TABLE IF NOT EXISTS programs(
       tenant TEXT NOT NULL,application TEXT NOT NULL,station_id TEXT NOT NULL,
@@ -45,6 +46,7 @@ export class ProgramStore{
     this.db.exec('BEGIN IMMEDIATE');
     try{
       const scope=this.#authorize(verifiedActor,stationId);
+      if(normalized.some(item=>this.authorizeItem(scope,stationId,item)!==true))throw new ProgramError('PROGRAM_ITEM_DENIED',403);
       const previous=this.db.prepare('SELECT version FROM programs WHERE tenant=? AND application=? AND station_id=?')
         .get(scope.tenant,scope.application,stationId);
       if((previous?.version??0)!==expectedVersion)throw new ProgramError('VERSION_CONFLICT',409);
@@ -69,7 +71,7 @@ export function createProgramHandler(store,authenticate){
       if(request.method==='GET')return respond(200,store.read(identity,stationId));
       if(request.method!=='PUT')return respond(405,{error:'METHOD_NOT_ALLOWED'});
       if(request.headers.get('origin')!==url.origin)throw new ProgramError('ORIGIN_DENIED',403);
-      const text=await request.text();if(text.length>100_000)throw new ProgramError('BODY_TOO_LARGE',413);
+      const text=await request.text();if(Buffer.byteLength(text,'utf8')>100_000)throw new ProgramError('BODY_TOO_LARGE',413);
       let body;try{body=JSON.parse(text);}catch{throw new ProgramError('INVALID_JSON');}
       if(!body||typeof body!=='object'||Array.isArray(body)||
         ['tenant','application','subject','roles'].some(key=>key in body))throw new ProgramError('CLIENT_IDENTITY_FORBIDDEN',403);
