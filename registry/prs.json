@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:13:00Z",
+  "observedAt": "2026-11-02T00:16:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -94,9 +94,18 @@
       "id": "TZ-06",
       "title": "Drag-and-drop program sequencing",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
+      "prs": [
+        11
+      ],
+      "dependsOn": [
+        "TZ-05"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "neophilism/Distributed-Radio-Engine",
+          "unitId": "DRE-07"
+        }
+      ],
       "externalPrerequisites": []
     },
     {
@@ -385,6 +394,21 @@
       "headSha": "ad87f3233026d1ce7f6673c8976f28627a6d59a0",
       "baseRef": "main",
       "mergeCommitSha": "5afc188c6348de9ad20c3babc0502dcc9009307f"
+    },
+    {
+      "id": 4913195306,
+      "number": 11,
+      "title": "TZ-06: Drag-and-drop program sequencing",
+      "url": "https://github.com/neophilism/TrackZero/pull/11",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-18T22:00:35Z",
+      "updatedAt": "2026-11-02T00:15:13Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "e28a7b5d632432f7a9163f7db1730cf137439753",
+      "baseRef": "main",
+      "mergeCommitSha": "2b98ce96570032548e12bbe97726a248d596b4d0"
     }
   ]
 }
