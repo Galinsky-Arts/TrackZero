@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:23:00Z",
+  "observedAt": "2026-11-02T00:26:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -130,9 +130,18 @@
       "id": "TZ-08",
       "title": "Sponsor uploads and placements",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
+      "prs": [
+        13
+      ],
+      "dependsOn": [
+        "TZ-07"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "neophilism/Distributed-Radio-Engine",
+          "unitId": "DRE-09"
+        }
+      ],
       "externalPrerequisites": []
     },
     {
@@ -433,6 +442,21 @@
       "headSha": "cb0ab8b80d2e2575916a3eb37825ff21319d7c4f",
       "baseRef": "main",
       "mergeCommitSha": "03c5a77507b76d6c75493537acf91fce3980d1f1"
+    },
+    {
+      "id": 4914364265,
+      "number": 13,
+      "title": "TZ-08: Sponsor uploads and placements",
+      "url": "https://github.com/neophilism/TrackZero/pull/13",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:01:40Z",
+      "updatedAt": "2026-11-02T00:25:48Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "d0d153af8b49b7d5dc19ed1b19e7ffd4f2a7f549",
+      "baseRef": "main",
+      "mergeCommitSha": "c587e6aebb76ad943d6cd2a51d81c1e1d6aa6466"
     }
   ]
 }
