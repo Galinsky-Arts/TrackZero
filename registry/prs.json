@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:26:00Z",
+  "observedAt": "2026-11-02T00:28:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -448,15 +448,15 @@
       "number": 13,
       "title": "TZ-08: Sponsor uploads and placements",
       "url": "https://github.com/neophilism/TrackZero/pull/13",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:01:40Z",
-      "updatedAt": "2026-11-02T00:25:48Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "d0d153af8b49b7d5dc19ed1b19e7ffd4f2a7f549",
+      "updatedAt": "2026-11-02T00:27:04Z",
+      "closedAt": "2026-11-02T00:27:04Z",
+      "mergedAt": "2026-11-02T00:27:04Z",
+      "headSha": "b63d1b052dafa7fc1f18e41cb05d412eda5a00f6",
       "baseRef": "main",
-      "mergeCommitSha": "c587e6aebb76ad943d6cd2a51d81c1e1d6aa6466"
+      "mergeCommitSha": "042ea3c034104ddc73d10fde8cddba02d5fd932e"
     }
   ]
 }
