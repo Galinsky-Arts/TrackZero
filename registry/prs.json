@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:18:00Z",
+  "observedAt": "2026-11-02T00:22:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -112,9 +112,18 @@
       "id": "TZ-07",
       "title": "Artist interstitial studio",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
+      "prs": [
+        12
+      ],
+      "dependsOn": [
+        "TZ-06"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "neophilism/Distributed-Radio-Engine",
+          "unitId": "DRE-08"
+        }
+      ],
       "externalPrerequisites": []
     },
     {
@@ -409,6 +418,21 @@
       "headSha": "7634a66106eeb1e83d56398b904530210c65158f",
       "baseRef": "main",
       "mergeCommitSha": "7d1b8ce8f17c826ebf449427bc8d603e848d3b96"
+    },
+    {
+      "id": 4913404727,
+      "number": 12,
+      "title": "TZ-07: Artist interstitial studio",
+      "url": "https://github.com/neophilism/TrackZero/pull/12",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-18T22:32:02Z",
+      "updatedAt": "2026-11-02T00:21:05Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "ecadb0d1707fcabe97b55104e0d5116ec1f78045",
+      "baseRef": "main",
+      "mergeCommitSha": "5d865e9d566b5525ddc8f4beac083fb0e11cfa2a"
     }
   ]
 }
