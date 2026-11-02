@@ -4,6 +4,7 @@ import {randomUUID} from 'node:crypto';
 const id = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const digest = /^sha256:[a-f0-9]{64}$/;
 const audioRef = /^ciphertext:[A-Za-z0-9][A-Za-z0-9._:-]{0,117}$/;
+const validId = value => typeof value === 'string' && id.test(value);
 
 export class PlacementError extends Error {
   constructor(code, status = 400) { super(code); this.code = code; this.status = status; }
@@ -23,8 +24,7 @@ function campaignInput(value, nowMs) {
   const expected = ['audioRef', 'campaignId', 'endsAtMs', 'programDigest', 'rateMinor', 'startsAtMs', 'stationId'];
   if (!value || typeof value !== 'object' || Array.isArray(value) ||
       Object.keys(value).sort().join(',') !== expected.join(',') ||
-      !['stationId', 'campaignId'].every(key =>
-        typeof value[key] === 'string' && id.test(value[key])) ||
+      !['stationId', 'campaignId'].every(key => validId(value[key])) ||
       typeof value.audioRef !== 'string' || !audioRef.test(value.audioRef) ||
       typeof value.programDigest !== 'string' || !digest.test(value.programDigest) ||
       !Number.isSafeInteger(value.rateMinor) || value.rateMinor < 0 ||
@@ -117,7 +117,7 @@ export class SponsorPlacementStore {
   }
   approve(verifiedBroadcaster, {stationId, campaignId}, nowMs = Date.now()) {
     const scope = principal(verifiedBroadcaster, 'broadcaster');
-    if (!id.test(stationId) || !id.test(campaignId) || !Number.isSafeInteger(nowMs)) {
+    if (!validId(stationId) || !validId(campaignId) || !Number.isSafeInteger(nowMs)) {
       throw new PlacementError('INVALID_CAMPAIGN');
     }
     this.db.exec('BEGIN IMMEDIATE');
@@ -146,7 +146,7 @@ export class SponsorPlacementStore {
     }
     const role = verifiedActor.roles.includes('broadcaster') ? 'broadcaster' : 'sponsor';
     const scope = principal(verifiedActor, role);
-    if (!id.test(stationId) || !id.test(campaignId) || !Number.isSafeInteger(nowMs)) {
+    if (!validId(stationId) || !validId(campaignId) || !Number.isSafeInteger(nowMs)) {
       throw new PlacementError('INVALID_CAMPAIGN');
     }
     this.db.exec('BEGIN IMMEDIATE');
@@ -172,7 +172,7 @@ export class SponsorPlacementStore {
   }
   active(verifiedBroadcaster, stationId, nowMs = Date.now()) {
     const scope = principal(verifiedBroadcaster, 'broadcaster');
-    if (!id.test(stationId) || this.authorizeStation(scope, stationId) !== true) {
+    if (!validId(stationId) || this.authorizeStation(scope, stationId) !== true) {
       throw new PlacementError('STATION_ACCESS_DENIED', 403);
     }
     return this.db.prepare(`SELECT * FROM sponsor_campaigns
