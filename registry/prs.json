@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:22:00Z",
+  "observedAt": "2026-11-02T00:23:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -424,15 +424,15 @@
       "number": 12,
       "title": "TZ-07: Artist interstitial studio",
       "url": "https://github.com/neophilism/TrackZero/pull/12",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-18T22:32:02Z",
-      "updatedAt": "2026-11-02T00:21:05Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "ecadb0d1707fcabe97b55104e0d5116ec1f78045",
+      "updatedAt": "2026-11-02T00:22:29Z",
+      "closedAt": "2026-11-02T00:22:29Z",
+      "mergedAt": "2026-11-02T00:22:29Z",
+      "headSha": "cb0ab8b80d2e2575916a3eb37825ff21319d7c4f",
       "baseRef": "main",
-      "mergeCommitSha": "5d865e9d566b5525ddc8f4beac083fb0e11cfa2a"
+      "mergeCommitSha": "03c5a77507b76d6c75493537acf91fce3980d1f1"
     }
   ]
 }
