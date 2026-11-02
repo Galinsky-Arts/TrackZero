@@ -1,0 +1,5 @@
+# TZ-08 sponsor placement status
+
+The branch adds a metadata-only sponsor placement ledger. A server-verified sponsor can submit a station-scoped digest, duration and bounded time window. A separate server-verified broadcaster must approve it after an injected media verifier confirms the digest. Revocation, expiry or a later verifier denial withholds it from the active metadata projection. An HTTP boundary rejects client identity claims, raw media, keys and cross-origin writes. SQLite transactions keep state and audit events together. `node --test tests/*.test.mjs` covers normal placement, cross-role and cross-tenant denial, media rejection, revocation, restart recovery and an interrupted approval locally.
+
+No sponsor audio is uploaded, stored, decrypted, played or scheduled by this code. The original plan depends on TZ-07 and DRE-09; neither is accepted by the empty imported dependency arrays. Before actual placement, verify the encrypted media endpoint, sponsor contract, broadcaster authorization, rights and DRE-09 scheduler API, then run product CI and end-to-end tests. Planning CI does not validate this product code.
