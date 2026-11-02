@@ -5,6 +5,7 @@ import {mayPublishCatalogItem} from './rights-review.mjs';
 const id = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const version = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 const sha256 = /^[a-f0-9]{64}$/i;
+const allowedUses = Object.freeze(['broadcast','cache','reward','sale']);
 export class RightsError extends Error {
   constructor(code, status = 400) {super(code); this.code = code; this.status = status;}
 }
@@ -33,6 +34,7 @@ export class RightsRegistry {
     this.db.exec(`CREATE TABLE IF NOT EXISTS rights_cases (
       tenant TEXT NOT NULL, application TEXT NOT NULL, item_id TEXT NOT NULL, region TEXT NOT NULL,
       owner_subject TEXT NOT NULL, license_version TEXT NOT NULL, evidence_digest TEXT NOT NULL,
+      granted_uses TEXT NOT NULL, rights_valid_from_ms INTEGER NOT NULL, rights_valid_until_ms INTEGER NOT NULL,
       state TEXT NOT NULL CHECK(state IN ('PENDING','APPROVED','DENIED','WITHDRAWN')),
       reviewed_by TEXT, reviewed_at_ms INTEGER, valid_until_ms INTEGER, withdrawn_at_ms INTEGER,
       PRIMARY KEY(tenant,application,item_id,region)
@@ -48,21 +50,27 @@ export class RightsRegistry {
     return this.db.prepare('SELECT * FROM rights_cases WHERE tenant=? AND application=? AND item_id=? AND region=?')
       .get(scope.tenant,scope.application,itemId,area);
   }
+  #lastEventMs(scope,itemId,area) {
+    return this.db.prepare('SELECT MAX(occurred_at_ms) AS value FROM rights_events WHERE tenant=? AND application=? AND item_id=? AND region=?')
+      .get(scope.tenant,scope.application,itemId,area).value;
+  }
   #event(scope,itemId,area,kind,nowMs) {
     this.db.prepare('INSERT INTO rights_events(event_id,tenant,application,item_id,region,kind,actor_subject,occurred_at_ms) VALUES(?,?,?,?,?,?,?,?)')
       .run(randomUUID(),scope.tenant,scope.application,itemId,area,kind,scope.subject,nowMs);
   }
-  submitClaim(verifiedActor,{itemId,region:area,licenseVersion,evidenceDigest},nowMs=Date.now()) {
+  submitClaim(verifiedActor,{itemId,region:area,licenseVersion,evidenceDigest,uses,rightsValidFromMs,rightsValidUntilMs},nowMs=Date.now()) {
     const scope=principal(verifiedActor, verifiedActor?.roles?.includes('artist') ? 'artist' : 'label');
     itemId=item(itemId);area=region(area);
     if(typeof licenseVersion!=='string'||!version.test(licenseVersion)||
        typeof evidenceDigest!=='string'||!sha256.test(evidenceDigest)||
+       !Array.isArray(uses)||uses.length===0||uses.some(use=>!allowedUses.includes(use))||new Set(uses).size!==uses.length||
+       !Number.isSafeInteger(rightsValidFromMs)||!Number.isSafeInteger(rightsValidUntilMs)||rightsValidFromMs<=0||rightsValidUntilMs<=rightsValidFromMs||
        !Number.isSafeInteger(nowMs)||nowMs<=0)throw new RightsError('INVALID_CLAIM');
     this.db.exec('BEGIN IMMEDIATE');
     try {
       if(this.#case(scope,itemId,area))throw new RightsError('CLAIM_EXISTS',409);
-      this.db.prepare(`INSERT INTO rights_cases(tenant,application,item_id,region,owner_subject,license_version,evidence_digest,state)
-        VALUES(?,?,?,?,?,?,?,'PENDING')`).run(scope.tenant,scope.application,itemId,area,scope.subject,licenseVersion,evidenceDigest.toLowerCase());
+      this.db.prepare(`INSERT INTO rights_cases(tenant,application,item_id,region,owner_subject,license_version,evidence_digest,granted_uses,rights_valid_from_ms,rights_valid_until_ms,state)
+        VALUES(?,?,?,?,?,?,?,?,?,?,'PENDING')`).run(scope.tenant,scope.application,itemId,area,scope.subject,licenseVersion,evidenceDigest.toLowerCase(),JSON.stringify([...uses].sort()),rightsValidFromMs,rightsValidUntilMs);
       this.#event(scope,itemId,area,'SUBMITTED',nowMs);
       this.db.exec('COMMIT');return {itemId,region:area,state:'PENDING'};
     }catch(error){this.db.exec('ROLLBACK');throw error;}
@@ -76,6 +84,7 @@ export class RightsRegistry {
     try {
       const claim=this.#case(scope,itemId,area);
       if(!claim||claim.state!=='PENDING')throw new RightsError('PENDING_CLAIM_REQUIRED',409);
+      if(nowMs<this.#lastEventMs(scope,itemId,area))throw new RightsError('NON_MONOTONIC_EVENT',409);
       if(claim.owner_subject===scope.subject)throw new RightsError('SELF_REVIEW_DENIED',403);
       this.db.prepare('UPDATE rights_cases SET state=?,reviewed_by=?,reviewed_at_ms=?,valid_until_ms=? WHERE tenant=? AND application=? AND item_id=? AND region=?')
         .run(approved?'APPROVED':'DENIED',scope.subject,nowMs,approved?validUntilMs:null,scope.tenant,scope.application,itemId,area);
@@ -94,6 +103,7 @@ export class RightsRegistry {
     try {
       const claim=this.#case(scope,itemId,area);
       if(!claim)throw new RightsError('CLAIM_NOT_FOUND',404);
+      if(nowMs<this.#lastEventMs(scope,itemId,area))throw new RightsError('NON_MONOTONIC_EVENT',409);
       if(scope.subject!==claim.owner_subject&&!verifiedActor.roles.includes('rights_reviewer'))
         throw new RightsError('OWNER_OR_REVIEWER_REQUIRED',403);
       if(claim.state==='WITHDRAWN'){this.db.exec('COMMIT');return {itemId,region:area,state:'WITHDRAWN',replay:true};}
@@ -103,11 +113,15 @@ export class RightsRegistry {
       this.db.exec('COMMIT');return {itemId,region:area,state:'WITHDRAWN',replay:false};
     }catch(error){this.db.exec('ROLLBACK');throw error;}
   }
-  canPublish({tenant,application,itemId,region:area},nowMs=Date.now()) {
+  canPublish({tenant,application,itemId,region:area,use},nowMs=Date.now()) {
     if(![tenant,application].every(value=>typeof value==='string'&&id.test(value)))return false;
     try{itemId=item(itemId);area=region(area);}catch{return false;}
+    if(!allowedUses.includes(use))return false;
     const claim=this.#case({tenant,application},itemId,area);
-    if(!claim||claim.state!=='APPROVED'||!claim.reviewed_by||claim.owner_subject===claim.reviewed_by)return false;
+    if(!claim||claim.state!=='APPROVED'||!claim.reviewed_by||claim.owner_subject===claim.reviewed_by||
+       nowMs<claim.rights_valid_from_ms||nowMs>=claim.rights_valid_until_ms)return false;
+    let uses;try{uses=JSON.parse(claim.granted_uses);}catch{return false;}
+    if(!Array.isArray(uses)||!uses.includes(use))return false;
     return mayPublishCatalogItem({ownerVerified:true,rightsReviewed:true,rightsApproved:true,
       regionApproved:true,sourceVerified:true,withdrawn:claim.withdrawn_at_ms!==null,
       licenseVersion:claim.license_version,reviewedAtMs:claim.reviewed_at_ms,
@@ -126,7 +140,7 @@ export function createRightsHandler(registry,authenticate){
       if(request.method==='GET'&&url.pathname.startsWith('/v1/rights/decisions/')){
         const itemId=url.pathname.slice('/v1/rights/decisions/'.length);
         return respond(200,{publishable:registry.canPublish({itemId,tenant:url.searchParams.get('tenant'),
-          application:url.searchParams.get('application'),region:url.searchParams.get('region')})});
+          application:url.searchParams.get('application'),region:url.searchParams.get('region'),use:url.searchParams.get('use')})});
       }
       if(request.method!=='POST'||!['/v1/rights/claims','/v1/rights/reviews','/v1/rights/withdrawals'].includes(url.pathname))
         return respond(404,{error:'NOT_FOUND'});
@@ -134,7 +148,7 @@ export function createRightsHandler(registry,authenticate){
       const actor=await authenticate(request);
       if(!actor)throw new RightsError('UNAUTHENTICATED',401);
       const text=await request.text();
-      if(text.length>4096)throw new RightsError('BODY_TOO_LARGE',413);
+      if(Buffer.byteLength(text,'utf8')>4096)throw new RightsError('BODY_TOO_LARGE',413);
       let body;try{body=JSON.parse(text);}catch{throw new RightsError('INVALID_JSON');}
       if(!body||typeof body!=='object'||Array.isArray(body)||
           ['tenant','application','subject','roles','reviewer'].some(key=>key in body))
