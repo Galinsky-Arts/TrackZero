@@ -1,7 +1,7 @@
 export function validateProgram(items){
- if(!Array.isArray(items)||items.length>1000||!items.every(x=>x&&typeof x.id==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(x.id)&&['song','ad','intro','block'].includes(x.kind)))throw new Error('Invalid program');
+ if(!Array.isArray(items)||items.length<1||items.length>1000||!items.every(x=>x&&typeof x.id==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(x.id)&&['song','ad','intro','block'].includes(x.kind)))throw new Error('Invalid program');
  const ids=items.map(x=>x.id);if(new Set(ids).size!==ids.length)throw new Error('Duplicate item id');
- return [...items];
+ return items.map(item=>Object.freeze({id:item.id,kind:item.kind}));
 }
 export function reorderProgram(items, from, to){
  const result=validateProgram(items);
@@ -11,7 +11,7 @@ export function reorderProgram(items, from, to){
 
 function escapeHtml(value){return value.replace(/[&<>"']/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));}
 
-export function renderProgramEditor(items,{editable=true,announcement=''}={}){
+export function renderProgramEditor(items,{editable=true,announcement='',canUndo=false}={}){
   const sequence=validateProgram(items);
   const rows=sequence.map((item,index)=>{
     const label=escapeHtml(item.kind+' '+item.id),id=escapeHtml(item.id);
@@ -22,7 +22,7 @@ export function renderProgramEditor(items,{editable=true,announcement=''}={}){
   return `<section aria-labelledby="program-title"><h2 id="program-title">Program sequence</h2>`+
     `<p>Use Move up or Move down with a keyboard; pointer users may drag a row.</p>`+
     `<ol>${rows}</ol><p role="status" aria-live="polite">${escapeHtml(announcement)}</p>`+
-    `<button type="button" data-action="undo" ${editable?'':'disabled'}>Undo</button>`+
+    `<button type="button" data-action="undo" ${editable&&canUndo?'':'disabled'}>Undo</button>`+
     `<button type="button" data-action="save" ${editable?'':'disabled'}>Save sequence</button></section>`;
 }
 
@@ -60,9 +60,10 @@ export function createProgramController(items,{save,version,editable=true}){
         const result=await save({items:[...current],expectedVersion:version});
         if(!result||!Number.isSafeInteger(result.version)||result.version<=version)
           throw new Error('Save did not confirm a new schedule version');
-        version=result.version;history=[];announcement='Sequence saved.';return snapshot();
+        version=result.version;history=[];announcement='Sequence saved.';
       }catch(error){announcement='Save failed; sequence remains unsaved.';throw error;}
       finally{saving=false;}
+      return snapshot();
     }
   };
 }
@@ -72,7 +73,7 @@ export function createProgramController(items,{save,version,editable=true}){
 export function mountProgramEditor(container,controller){
   if(!container||typeof container.addEventListener!=='function'||!controller||typeof controller.snapshot!=='function')
     throw new Error('Editor container and controller required');
-  const render=()=>{const state=controller.snapshot();container.innerHTML=renderProgramEditor(state.items,{editable:state.editable&&!state.saving,announcement:state.announcement});};
+  const render=()=>{const state=controller.snapshot();container.innerHTML=renderProgramEditor(state.items,{editable:state.editable&&!state.saving,announcement:state.announcement,canUndo:state.canUndo});};
   let dragging=null;
   container.addEventListener('click',async event=>{
     const button=event.target.closest?.('button[data-action]');if(!button||!container.contains(button))return;
