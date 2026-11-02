@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:16:00Z",
+  "observedAt": "2026-11-02T00:18:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -400,15 +400,15 @@
       "number": 11,
       "title": "TZ-06: Drag-and-drop program sequencing",
       "url": "https://github.com/neophilism/TrackZero/pull/11",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-18T22:00:35Z",
-      "updatedAt": "2026-11-02T00:15:13Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "e28a7b5d632432f7a9163f7db1730cf137439753",
+      "updatedAt": "2026-11-02T00:17:04Z",
+      "closedAt": "2026-11-02T00:17:04Z",
+      "mergedAt": "2026-11-02T00:17:04Z",
+      "headSha": "7634a66106eeb1e83d56398b904530210c65158f",
       "baseRef": "main",
-      "mergeCommitSha": "2b98ce96570032548e12bbe97726a248d596b4d0"
+      "mergeCommitSha": "7d1b8ce8f17c826ebf449427bc8d603e848d3b96"
     }
   ]
 }
