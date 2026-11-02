@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:11:00Z",
+  "observedAt": "2026-11-02T00:12:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -376,15 +376,15 @@
       "number": 10,
       "title": "TZ-05: Rights review and publishing checks",
       "url": "https://github.com/neophilism/TrackZero/pull/10",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-18T22:00:04Z",
-      "updatedAt": "2026-11-02T00:09:46Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "715815cfae0596a08650427a67668ad4e417b759",
+      "updatedAt": "2026-11-02T00:11:30Z",
+      "closedAt": "2026-11-02T00:11:30Z",
+      "mergedAt": "2026-11-02T00:11:30Z",
+      "headSha": "ad87f3233026d1ce7f6673c8976f28627a6d59a0",
       "baseRef": "main",
-      "mergeCommitSha": "e24df28caa33344c6b6957c56813aa7583a5d14c"
+      "mergeCommitSha": "5afc188c6348de9ad20c3babc0502dcc9009307f"
     }
   ]
 }
