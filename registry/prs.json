@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-01T18:51:00Z",
+  "observedAt": "2026-11-02T00:11:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -76,9 +76,18 @@
       "id": "TZ-05",
       "title": "Rights review and publishing checks",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
+      "prs": [
+        10
+      ],
+      "dependsOn": [
+        "TZ-04"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "neophilism/Distributed-Radio-Engine",
+          "unitId": "DRE-05"
+        }
+      ],
       "externalPrerequisites": []
     },
     {
@@ -361,6 +370,21 @@
       "headSha": "67c7302004898a9bf968143bd34544946bd3607b",
       "baseRef": "main",
       "mergeCommitSha": "4f187ef4bc93af81f8a29c6ffe7fbb1aae3a2056"
+    },
+    {
+      "id": 4913191192,
+      "number": 10,
+      "title": "TZ-05: Rights review and publishing checks",
+      "url": "https://github.com/neophilism/TrackZero/pull/10",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-18T22:00:04Z",
+      "updatedAt": "2026-11-02T00:09:46Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "715815cfae0596a08650427a67668ad4e417b759",
+      "baseRef": "main",
+      "mergeCommitSha": "e24df28caa33344c6b6957c56813aa7583a5d14c"
     }
   ]
 }
