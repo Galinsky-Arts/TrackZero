@@ -27,8 +27,8 @@ export function prepareInterstitialDraft(input, nowMs = Date.now()) {
 /** Shape the exact DRE-08 record without treating a ciphertext reference as proof. */
 export function prepareDreInterstitial(draft, audioRef) {
   if (!draft || draft.reviewState !== 'quarantined' || draft.publishable !== false ||
-      typeof audioRef !== 'string' || !audioRef.startsWith('ciphertext:') ||
-      !opaqueId.test(audioRef)) throw new Error('Invalid published audio reference');
+      typeof audioRef !== 'string' ||
+      !/^ciphertext:[A-Za-z0-9][A-Za-z0-9._:-]{0,117}$/.test(audioRef)) throw new Error('Invalid published audio reference');
   return Object.freeze({
     stationId: draft.stationId,
     contentRef: draft.contentRef,
