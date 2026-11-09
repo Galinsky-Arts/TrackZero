@@ -16,3 +16,11 @@ jobs:
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;35.0.0"'
       - name: Compile, lint and run actual JUnit controller tests
         run: sh android/build.sh
+  swift:
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Compile SwiftUI library and run actual XCTest
+        working-directory: ios
+        run: swift test
