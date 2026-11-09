@@ -1,5 +1,5 @@
 {
-  "repository": "neophilism/TrackZero",
+  "repository": "Galinsky-Arts/TrackZero",
   "title": "TrackZero",
   "planVerified": true,
   "plannedPrCount": 26,
@@ -9,8 +9,8 @@
   ],
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
-  "roadmapVersion": 2,
-  "observedAt": "2026-11-01T18:39:00Z",
+  "roadmapVersion": 3,
+  "observedAt": "2026-11-09T23:10:35Z",
   "units": [
     {
       "id": "TZ-01",
@@ -20,8 +20,16 @@
         1
       ],
       "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-01"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Consumer radio app using Distributed Radio Engine. TrackZero references the hidden bonus track before track one; no on-demand song selector or venue coordination.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-02",
@@ -35,11 +43,14 @@
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-02"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Give artists, labels and listeners scoped recoverable identities.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-03",
@@ -52,222 +63,805 @@
         "TZ-02"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Present broadcaster branding, station information and complete-product offers.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-04",
       "title": "Catalog and complete-album management",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        9
+      ],
+      "dependsOn": [
+        "TZ-03"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-04"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Manage full albums and artwork through radio-engine catalog adapters.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-05",
       "title": "Rights review and publishing checks",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        10
+      ],
+      "dependsOn": [
+        "TZ-04"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-05"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Explain and enforce required publishing permissions.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-06",
       "title": "Drag-and-drop program sequencing",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        11
+      ],
+      "dependsOn": [
+        "TZ-05"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-07"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Let the broadcaster arrange content, ads, introductions and recurring blocks.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-07",
       "title": "Artist interstitial studio",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        12
+      ],
+      "dependsOn": [
+        "TZ-06"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-08"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Record or upload broadcaster-controlled station and content identifications.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-08",
       "title": "Sponsor uploads and placements",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        13,
+        28
+      ],
+      "dependsOn": [
+        "TZ-07"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-09"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Place approved sponsor audio in the common station sequence.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-09",
       "title": "Always-on station operations",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        14
+      ],
+      "dependsOn": [
+        "TZ-08"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-10"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Show station scheduling, fallback and recovery independently of the creator phone.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-10",
       "title": "Guest web player and album pages",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        15
+      ],
+      "dependsOn": [
+        "TZ-09"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-11"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Allow free guest live playback and complete-album browsing.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-11",
       "title": "Android listening application",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        16
+      ],
+      "dependsOn": [
+        "TZ-10"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Audio-Engine",
+          "unitId": "DAE-09"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Integrate the native Android listening and active-output SDK.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-12",
       "title": "iOS listening application",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        17
+      ],
+      "dependsOn": [
+        "TZ-10"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Audio-Engine",
+          "unitId": "DAE-10"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Integrate the native iOS listening and active-output SDK.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-13",
       "title": "Contribute Sound setup and evidence UI",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        18
+      ],
+      "dependsOn": [
+        "TZ-12"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-13"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Explain consent, output qualification and unsupported measurement modes.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-14",
       "title": "Artist reward prices and exponential ladder UX",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        19
+      ],
+      "dependsOn": [
+        "TZ-05",
+        "TZ-13"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-17"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Artist-selected point prices and configurable slow-then-exponential defaults. Show exact costs, available balance and preview; high rewards remain difficult even for sustained large-speaker networks.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-15",
       "title": "Live points, outro vesting and reward spending",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        20
+      ],
+      "dependsOn": [
+        "TZ-14"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-18"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Single artist-specific metric UI, provisional song meter, post-outro spendable grant and atomic unlock. Cross-artist stations show the appropriate balance for each content creator; headphone listening earns no speaker points.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-16",
       "title": "Album checkout and payout experience",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        21
+      ],
+      "dependsOn": [
+        "TZ-15"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-24"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Support receipts, purchase access and artist settlement.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-17",
       "title": "Fan library and reward downloads",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        22
+      ],
+      "dependsOn": [
+        "TZ-15",
+        "TZ-16"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-23"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Fan library for purchased works, point-redemptions and separately earned Unlocked Grooves. Download only under creator-authorized rights; playback in this app remains linear station radio.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-18",
       "title": "Artist and sponsor reporting",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        24
+      ],
+      "dependsOn": [
+        "TZ-17"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-25"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Present actual output contributions, transactions and campaign delivery.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-19",
       "title": "Additional voluntary revenue",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
+      "prs": [
+        25
+      ],
+      "dependsOn": [
+        "TZ-18"
+      ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Offer voluntary tips, complete-album gifts and sponsor support.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-20",
       "title": "Privacy, moderation and complaints",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "prs": [
+        26
+      ],
+      "dependsOn": [
+        "TZ-19"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-26"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Provide privacy controls, reporting and explainable account decisions.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-21",
       "title": "Discovery and station sharing",
       "origin": "original",
-      "prs": [],
-      "dependsOn": [],
+      "prs": [
+        27
+      ],
+      "dependsOn": [
+        "TZ-20"
+      ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Share current radio stations without becoming an event coordination product.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-22",
       "title": "Accessibility and battery/recovery qualification",
       "origin": "original",
       "prs": [],
-      "dependsOn": [],
+      "dependsOn": [
+        "TZ-21"
+      ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Measure accessible playback, mobile battery use and interruption recovery.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-23",
       "title": "Integrated radio pilot",
       "origin": "original",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-22",
+        "TZ-25",
+        "TZ-26"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-27"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Validate creator programming, listening, rewards and commerce together.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-24",
       "title": "Production rollout and creator runbook",
       "origin": "original",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-23"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-28"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Deliver launch evidence and clear creator/support procedures.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-25",
       "title": "Unlocked Groove creator settings and separate bonus catalog",
       "origin": "addition",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-14"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-19"
+        },
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-20"
+        },
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-21"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Upload alternate takes and app-exclusive recordings; configure x-to-y-song cadence, rarity, completion gates and stock. Keep these recordings separate from paid/points catalogs.",
+      "acceptance": "Creator preview shows eligibility and disclosure; inconsistent catalog memberships/cadence cannot publish.",
+      "gate": "Software"
     },
     {
       "id": "TZ-26",
       "title": "LOCKED to UNLOCKED GROOVE reveal",
       "origin": "addition",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-17",
+        "TZ-25"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-23"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "At the shared outro-to-next-intro marker display LOCKED GROOVE and animate LOCKED into UNLOCKED; accessible reduced-motion equivalent. Both headphones and speakers qualify; reveal never pauses program.",
+      "acceptance": "One reveal per granted opportunity; exact transition timing tested, screen reader and reduced-motion support, no personalized radio insertion.",
+      "gate": "Software"
     }
   ],
   "pullRequests": [
     {
+      "id": 5113085766,
+      "number": 28,
+      "title": "TZ-08: Sponsor uploads and placements",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/28",
+      "state": "closed",
+      "draft": true,
+      "createdAt": "2026-11-02T00:27:19Z",
+      "updatedAt": "2026-11-02T00:28:56Z",
+      "closedAt": "2026-11-02T00:28:56Z",
+      "mergedAt": null,
+      "headSha": "c9e685c229cde7bd3acf335d2bd7e1b5a7d1d001",
+      "baseRef": "main",
+      "mergeCommitSha": null
+    },
+    {
+      "id": 5110414569,
+      "number": 27,
+      "title": "TZ-21: Discovery and station sharing",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/27",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:43:37Z",
+      "updatedAt": "2026-11-01T18:43:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "f5bd84259542e65bf70fd163b488eb446d9327b5",
+      "baseRef": "main",
+      "mergeCommitSha": "e2c3973f9313a28f839cd36d68d92667a83d77d6"
+    },
+    {
+      "id": 5110394173,
+      "number": 26,
+      "title": "TZ-20: Privacy, moderation and complaints",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/26",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:41:26Z",
+      "updatedAt": "2026-11-01T18:41:26Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "c29ff82c878ba8c2e4fc48d15c3c30909bdd1204",
+      "baseRef": "main",
+      "mergeCommitSha": "b066bcc61369c5bf0707ee41a5a04be2dad1c3fb"
+    },
+    {
+      "id": 5110372883,
+      "number": 25,
+      "title": "TZ-19: Additional voluntary revenue",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/25",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:39:17Z",
+      "updatedAt": "2026-11-01T18:39:17Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "6521e48bc831aaec29e44cb6cdb91e76e569a40e",
+      "baseRef": "main",
+      "mergeCommitSha": "16ed98bd6247ec54ed10b4d86963a5e5229b00fe"
+    },
+    {
+      "id": 5110349263,
+      "number": 24,
+      "title": "TZ-18: Artist and sponsor reporting",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/24",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:36:54Z",
+      "updatedAt": "2026-11-01T18:36:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "e9594915f8f98a1708c7b6e0d8eb8f4f04e0c961",
+      "baseRef": "main",
+      "mergeCommitSha": "e7908794b61059f017252872b0719ea7fc2e5080"
+    },
+    {
+      "id": 4941651434,
+      "number": 23,
+      "title": "Integrate Development Deployment Monitor (inventory-only)",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/23",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-20T19:57:53Z",
+      "updatedAt": "2026-10-20T20:02:25Z",
+      "closedAt": "2026-10-20T20:02:25Z",
+      "mergedAt": "2026-10-20T20:02:25Z",
+      "headSha": "6ec95b96d9a2a32f0acaa86c61b122fe10f3f4a0",
+      "baseRef": "main",
+      "mergeCommitSha": "ad27861cfbfeaae8f8728d0fd71918634004e1d8"
+    },
+    {
+      "id": 4914504908,
+      "number": 22,
+      "title": "TZ-17: Fan library and reward downloads",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/22",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:21:23Z",
+      "updatedAt": "2026-11-01T18:34:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "4700a94172d422811965b0ca0a124ea15909b3d5",
+      "baseRef": "main",
+      "mergeCommitSha": "18393156e9b367f6ca3bba9643914b059a10f5f4"
+    },
+    {
+      "id": 4914496785,
+      "number": 21,
+      "title": "TZ-16: Album checkout and payout experience",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/21",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:19:57Z",
+      "updatedAt": "2026-11-01T18:32:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "1f2f868a3419321886149b92e94be97e984bdcbe",
+      "baseRef": "main",
+      "mergeCommitSha": "024dec3dd71177e00f988011eda7d674d561f0ba"
+    },
+    {
+      "id": 4914485167,
+      "number": 20,
+      "title": "TZ-15: Live points, outro vesting and reward spending",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/20",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:18:24Z",
+      "updatedAt": "2026-11-09T22:49:30Z",
+      "closedAt": "2026-11-09T22:49:30Z",
+      "mergedAt": "2026-11-09T22:49:30Z",
+      "headSha": "1cc184dfc6538581a38a241810718f6e9695284b",
+      "baseRef": "main",
+      "mergeCommitSha": "b47625d007f4f273ee8b766ca0022d8d995abb0b"
+    },
+    {
+      "id": 4914472484,
+      "number": 19,
+      "title": "TZ-14: Artist reward prices and exponential ladder UX",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/19",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:16:54Z",
+      "updatedAt": "2026-11-09T22:44:59Z",
+      "closedAt": "2026-11-09T22:44:59Z",
+      "mergedAt": "2026-11-09T22:44:59Z",
+      "headSha": "bce64e45f4a8cce35451cf94ea799e0b34bd2e9b",
+      "baseRef": "main",
+      "mergeCommitSha": "ec4eced3f9508fafa7bc5b15f18022a6e48c03c5"
+    },
+    {
+      "id": 4914452460,
+      "number": 18,
+      "title": "TZ-13: Contribute Sound setup and evidence UI",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/18",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:14:15Z",
+      "updatedAt": "2026-11-09T22:39:01Z",
+      "closedAt": "2026-11-09T22:39:01Z",
+      "mergedAt": "2026-11-09T22:39:01Z",
+      "headSha": "6c19516413d129e2d7f269eada1e67e1074d4dfc",
+      "baseRef": "main",
+      "mergeCommitSha": "6493855400808ca93c8595815aa7f3539a528689"
+    },
+    {
+      "id": 4914440392,
+      "number": 17,
+      "title": "TZ-12: iOS listening application",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/17",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:12:36Z",
+      "updatedAt": "2026-11-09T22:34:21Z",
+      "closedAt": "2026-11-09T22:34:21Z",
+      "mergedAt": "2026-11-09T22:34:21Z",
+      "headSha": "fd0203b2ec02752d4fb9ff6da2a0f6a59b5297e1",
+      "baseRef": "main",
+      "mergeCommitSha": "add89dbeb83ae3ebe50627571b873413748c5082"
+    },
+    {
+      "id": 4914428308,
+      "number": 16,
+      "title": "TZ-11: Android listening application",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/16",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:10:56Z",
+      "updatedAt": "2026-11-09T22:28:06Z",
+      "closedAt": "2026-11-09T22:28:06Z",
+      "mergedAt": "2026-11-09T22:28:06Z",
+      "headSha": "01071564ad1e70e758259414cad897ab2c557369",
+      "baseRef": "main",
+      "mergeCommitSha": "c26a4f6a987064820199bf33deb2e46de54c078d"
+    },
+    {
+      "id": 4914406001,
+      "number": 15,
+      "title": "TZ-10: Guest web player and album pages",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/15",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:07:51Z",
+      "updatedAt": "2026-11-09T22:21:38Z",
+      "closedAt": "2026-11-09T22:21:38Z",
+      "mergedAt": "2026-11-09T22:21:38Z",
+      "headSha": "febc95e9dfb8cbb46f49000511b7f51781190585",
+      "baseRef": "main",
+      "mergeCommitSha": "930ad47e967bbcf0871f1e8b0ff7437655adbe32"
+    },
+    {
+      "id": 4914387499,
+      "number": 14,
+      "title": "TZ-09: Always-on station operations",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/14",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:05:14Z",
+      "updatedAt": "2026-11-09T22:17:50Z",
+      "closedAt": "2026-11-09T22:17:50Z",
+      "mergedAt": "2026-11-09T22:17:50Z",
+      "headSha": "9f6e9d2a35f2b9971b9dde591dad75d10185bcad",
+      "baseRef": "main",
+      "mergeCommitSha": "7854fe041564c3edc051a7fa1e8ade62f48e8b7c"
+    },
+    {
+      "id": 4914364265,
+      "number": 13,
+      "title": "TZ-08: Sponsor uploads and placements",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/13",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:01:40Z",
+      "updatedAt": "2026-11-02T00:27:04Z",
+      "closedAt": "2026-11-02T00:27:04Z",
+      "mergedAt": "2026-11-02T00:27:04Z",
+      "headSha": "b63d1b052dafa7fc1f18e41cb05d412eda5a00f6",
+      "baseRef": "main",
+      "mergeCommitSha": "042ea3c034104ddc73d10fde8cddba02d5fd932e"
+    },
+    {
+      "id": 4913404727,
+      "number": 12,
+      "title": "TZ-07: Artist interstitial studio",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/12",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T22:32:02Z",
+      "updatedAt": "2026-11-02T00:22:29Z",
+      "closedAt": "2026-11-02T00:22:29Z",
+      "mergedAt": "2026-11-02T00:22:29Z",
+      "headSha": "cb0ab8b80d2e2575916a3eb37825ff21319d7c4f",
+      "baseRef": "main",
+      "mergeCommitSha": "03c5a77507b76d6c75493537acf91fce3980d1f1"
+    },
+    {
+      "id": 4913195306,
+      "number": 11,
+      "title": "TZ-06: Drag-and-drop program sequencing",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/11",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T22:00:35Z",
+      "updatedAt": "2026-11-02T00:17:04Z",
+      "closedAt": "2026-11-02T00:17:04Z",
+      "mergedAt": "2026-11-02T00:17:04Z",
+      "headSha": "7634a66106eeb1e83d56398b904530210c65158f",
+      "baseRef": "main",
+      "mergeCommitSha": "7d1b8ce8f17c826ebf449427bc8d603e848d3b96"
+    },
+    {
+      "id": 4913191192,
+      "number": 10,
+      "title": "TZ-05: Rights review and publishing checks",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/10",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T22:00:04Z",
+      "updatedAt": "2026-11-02T00:11:30Z",
+      "closedAt": "2026-11-02T00:11:30Z",
+      "mergedAt": "2026-11-02T00:11:30Z",
+      "headSha": "ad87f3233026d1ce7f6673c8976f28627a6d59a0",
+      "baseRef": "main",
+      "mergeCommitSha": "5afc188c6348de9ad20c3babc0502dcc9009307f"
+    },
+    {
+      "id": 4913186834,
+      "number": 9,
+      "title": "TZ-04: Catalog and complete-album management",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/9",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T21:59:29Z",
+      "updatedAt": "2026-11-01T18:50:10Z",
+      "closedAt": "2026-11-01T18:50:10Z",
+      "mergedAt": "2026-11-01T18:50:10Z",
+      "headSha": "67c7302004898a9bf968143bd34544946bd3607b",
+      "baseRef": "main",
+      "mergeCommitSha": "4f187ef4bc93af81f8a29c6ffe7fbb1aae3a2056"
+    },
+    {
+      "id": 4913182105,
+      "number": 8,
+      "title": "TZ-03: Station identity and storefront shell",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/8",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T21:58:50Z",
+      "updatedAt": "2026-11-01T18:41:15Z",
+      "closedAt": "2026-11-01T18:40:38Z",
+      "mergedAt": "2026-11-01T18:40:38Z",
+      "headSha": "8d5619fe9569ee55440db47e6d30d0a77db5b90e",
+      "baseRef": "main",
+      "mergeCommitSha": "4139942625be90a81ccd88bd0915bfa97a8ee845"
+    },
+    {
       "id": 4912735715,
       "number": 7,
       "title": "TZ-02: Accounts and artist/label onboarding",
-      "url": "https://github.com/neophilism/TrackZero/pull/7",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/7",
       "state": "closed",
       "draft": false,
       "createdAt": "2026-10-18T20:55:49Z",
@@ -279,10 +873,55 @@
       "mergeCommitSha": "00540a878767d9708db1ca48064a238ae93a617d"
     },
     {
+      "id": 4848590092,
+      "number": 6,
+      "title": "Standardize canonical PR registry for Boardroom and Engine Room",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/6",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-13T19:47:05Z",
+      "updatedAt": "2026-10-16T15:17:33Z",
+      "closedAt": "2026-10-16T15:17:33Z",
+      "mergedAt": "2026-10-16T15:17:33Z",
+      "headSha": "e3c577dc9b6bfd458357731350dcaf8a196b2ae1",
+      "baseRef": "main",
+      "mergeCommitSha": "574f93c75ed1b76348ee4bf700ddc2075397d18c"
+    },
+    {
+      "id": 4848085298,
+      "number": 5,
+      "title": "Owner policy: proceed with AI security review; defer external audit",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/5",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-13T19:02:49Z",
+      "updatedAt": "2026-10-13T20:30:37Z",
+      "closedAt": "2026-10-13T20:30:36Z",
+      "mergedAt": "2026-10-13T20:30:36Z",
+      "headSha": "755ea620525a7e18a1d84a440359012e6df70028",
+      "baseRef": "main",
+      "mergeCommitSha": "2cbc92ac770620caf3bd79638dac48eae6d59f66"
+    },
+    {
+      "id": 4832218214,
+      "number": 4,
+      "title": "Map documented foundation work to verified merged PRs",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/4",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-12T16:28:31Z",
+      "updatedAt": "2026-10-12T16:28:49Z",
+      "closedAt": "2026-10-12T16:28:48Z",
+      "mergedAt": "2026-10-12T16:28:48Z",
+      "headSha": "caaab2ae3221e2a82276a702ad41bef6eca53454",
+      "baseRef": "main",
+      "mergeCommitSha": "663203938587cb81144c5caab2feab3808d0ffd5"
+    },
+    {
       "id": 4832051661,
       "number": 3,
       "title": "Port TrackZero roadmap and E2EESA integrity checks to CircleCI",
-      "url": "https://github.com/neophilism/TrackZero/pull/3",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/3",
       "state": "open",
       "draft": false,
       "createdAt": "2026-10-12T16:12:49Z",
@@ -297,7 +936,7 @@
       "id": 4830266059,
       "number": 2,
       "title": "Track E2EESA implementation, full testing and independent expert review",
-      "url": "https://github.com/neophilism/TrackZero/pull/2",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/2",
       "state": "closed",
       "draft": false,
       "createdAt": "2026-10-12T13:42:15Z",
@@ -312,7 +951,7 @@
       "id": 4805783025,
       "number": 1,
       "title": "TrackZero: specification, E2EESA policy and revised development plan",
-      "url": "https://github.com/neophilism/TrackZero/pull/1",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/1",
       "state": "closed",
       "draft": false,
       "createdAt": "2026-10-09T20:57:05Z",
@@ -322,21 +961,6 @@
       "headSha": "981ec2d5aefc0b5de7ca0b9b03c0d61c3f266a9c",
       "baseRef": "main",
       "mergeCommitSha": "db1ff093103dffa09d659b0fc0698407db621ce1"
-    },
-    {
-      "id": 4913182105,
-      "number": 8,
-      "title": "TZ-03: Station identity and storefront shell",
-      "url": "https://github.com/neophilism/TrackZero/pull/8",
-      "state": "open",
-      "draft": true,
-      "createdAt": "2026-10-18T21:58:50Z",
-      "updatedAt": "2026-11-01T18:37:59Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "0f64b4bdc0f384cf64a487445dc32a8b81256272",
-      "baseRef": "main",
-      "mergeCommitSha": "a654ab50571ab1e53abd0cf80950cecbc23193a4"
     }
   ]
 }
