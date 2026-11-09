@@ -58,8 +58,8 @@ test('close failure cannot retain a session or leave controls falsely playing',a
   await player.play('s1');player.stop();
   assert.equal(player.current,null);
   assert.equal(player.state,'INTERRUPTED');
-  await player.play('s1');
-  assert.equal(player.state,'PLAYING');
+  await assert.rejects(player.play('s1'),/PLAYBACK_CLEANUP_FAILED/);
+  assert.equal(player.state,'INTERRUPTED');
 });
 test('asynchronous close failure reports interruption only for the stopped session',async()=>{
   const player=new GuestPlayer({joinLive:async()=>({start:async()=>{},close:()=>Promise.reject(Error('close failed'))})},()=>{});

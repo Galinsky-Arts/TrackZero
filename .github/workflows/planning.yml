@@ -14,5 +14,14 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24.19.0'
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Galinsky-Arts/Distributed-Radio-Engine
+          ref: 79e9cb919813769a79f9a8bdabbe560a10f48ab8
+          path: .deps/radio
+          persist-credentials: false
       - run: node scripts/check-roadmap.mjs
+      - run: node scripts/validate-pr-registry.mjs
       - run: node --test registry/pr-contract.test.mjs tests/*.test.mjs
+        env:
+          DRE_PLAYBACK_MODULE: ${{ github.workspace }}/.deps/radio/src/radio-playback.mjs

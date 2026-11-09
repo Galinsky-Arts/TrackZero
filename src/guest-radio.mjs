@@ -62,49 +62,115 @@ export function renderAlbumPage(album,{artworkOrigins=[]}={}){
     `<p>Complete-album information. Live radio playback has no song selection.</p></main></html>`;
 }
 
-function closeQuietly(session){
-  try{session?.close?.()?.catch?.(()=>{});}catch{}
-}
-
-/** Transport is an injected authenticated, endpoint-encrypted DRE playback adapter. */
+/** Transport requires start() readiness, close() completion and optional terminal subscription. */
 export class GuestPlayer{
   constructor(adapter,onState){
     if(!adapter||typeof adapter.joinLive!=='function'||typeof onState!=='function')
       throw new Error('Live playback adapter and state callback required');
-    this.adapter=adapter;this.onState=onState;this.current=null;this.epoch=0;this.state='STOPPED';
+    this.adapter=adapter;this.onState=onState;this.current=null;this.epoch=0;
+    this.state='STOPPED';this.closing=null;this.sealed=false;
   }
-  emit(state){this.state=state;this.onState(state);}
+  emit(state){this.state=state;try{this.onState(state);}catch{}}
+  closeSession(session){
+    try{
+      const result=session?.close?.();
+      if(!result||typeof result.then!=='function')return null;
+      const task=Promise.resolve(result).catch(()=>{this.sealed=true;this.emit('INTERRUPTED');});
+      this.closing=task;
+      task.finally(()=>{if(this.closing===task)this.closing=null;});
+      return task;
+    }catch{this.sealed=true;this.emit('INTERRUPTED');return null;}
+  }
   async play(stationId){
     if(typeof stationId!=='string'||!token.test(stationId))throw new GuestError('INVALID_STATION');
-    this.stop();const epoch=this.epoch;const controller=new AbortController();
+    this.stop();const epoch=this.epoch;
+    if(this.closing)await this.closing;
+    if(epoch!==this.epoch)return;
+    if(this.sealed)throw new GuestError('PLAYBACK_CLEANUP_FAILED',503);
+    const controller=new AbortController();
     this.current={controller,session:null};this.emit('CONNECTING');
     try{
       const session=await this.adapter.joinLive(stationId,{signal:controller.signal});
-      if(epoch!==this.epoch){closeQuietly(session);return;}
+      if(epoch!==this.epoch){this.closeSession(session);return;}
       if(!session||typeof session.close!=='function'||typeof session.start!=='function')
         throw new GuestError('INVALID_PLAYBACK_SESSION',503);
       this.current.session=session;
+      if(typeof session.subscribe==='function')this.current.unsubscribe=session.subscribe(state=>{
+        if(epoch===this.epoch&&state==='INTERRUPTED'){this.emit('INTERRUPTED');this.current?.controller.abort();}
+      });
       await session.start();
-      if(epoch!==this.epoch){closeQuietly(session);return;}
+      if(epoch!==this.epoch)return;
+      if(controller.signal.aborted)throw new GuestError('PLAYBACK_INTERRUPTED',503);
       this.emit('PLAYING');
     }catch(error){
       if(epoch!==this.epoch)return;
-      closeQuietly(this.current?.session);this.current=null;
+      this.current?.controller.abort();this.current?.unsubscribe?.();
+      this.closeSession(this.current?.session);this.current=null;
       this.emit('INTERRUPTED');
-      throw error;
+      throw new GuestError('PLAYBACK_INTERRUPTED',503);
     }
   }
   stop(){
     ++this.epoch;const current=this.current;this.current=null;
-    current?.controller.abort();
-    try{
-      const closing=current?.session?.close();
-      const epoch=this.epoch;
-      closing?.then?.(undefined,()=>{if(this.epoch===epoch)this.emit('INTERRUPTED');});
-      this.emit('STOPPED');
-    }
-    catch{this.emit('INTERRUPTED');}
+    current?.unsubscribe?.();current?.controller.abort();
+    if(!this.sealed)this.emit('STOPPED');
+    if(current?.session)this.closeSession(current.session);
+    return this.closing;
   }
+}
+
+/** Bridge the DRE-11 lifetime-promise SDK to UI readiness and terminal reports.
+ * createPlayback and optionsForStation are trusted application integrations.
+ */
+export function createDreGuestAdapter({createPlayback,optionsForStation}){
+  if(typeof createPlayback!=='function'||typeof optionsForStation!=='function')
+    throw new Error('DRE factory and station adapters required');
+  return {async joinLive(stationId,{signal}){
+    if(typeof stationId!=='string'||!token.test(stationId))throw new GuestError('INVALID_STATION');
+    const options=await optionsForStation(stationId),listeners=new Set();
+    let readyResolve,readyReject,run,closing,closed=false,ready=false;
+    const readiness=new Promise((resolve,reject)=>{readyResolve=resolve;readyReject=reject;});
+    readiness.catch(()=>{});
+    if(typeof options?.station?.read!=='function'||typeof options?.station?.verify!=='function')
+      throw new GuestError('INVALID_STATION_ADAPTER',503);
+    const station={...options.station,read:async context=>{
+      const snapshot=await options.station.read(context);
+      if(snapshot?.program?.stationId!==stationId)throw new GuestError('STATION_SCOPE_MISMATCH',403);
+      return snapshot;
+    }};
+    const sdk=createPlayback({...options,station,onStatus:status=>{
+      if(status.state==='playing'&&!closed){ready=true;readyResolve();}
+      if(status.state==='unavailable'){
+        if(!ready)readyReject(new GuestError('PLAYBACK_UNAVAILABLE',503));
+        for(const listener of listeners)listener('INTERRUPTED');
+      }
+    }});
+    const close=()=>{
+      if(closing)return closing;
+      closed=true;readyReject(new GuestError('PLAYBACK_STOPPED',503));
+      signal.removeEventListener('abort',onAbort);
+      closing=Promise.resolve().then(()=>sdk.stop()).then(async status=>{
+        if(run)await run;
+        if(status.sealed||sdk.status().sealed)throw new GuestError('PLAYBACK_CLEANUP_FAILED',503);
+      });
+      return closing;
+    };
+    const onAbort=()=>{close().catch(()=>{});};
+    signal.addEventListener('abort',onAbort,{once:true});
+    if(signal.aborted)onAbort();
+    return {subscribe(listener){listeners.add(listener);return ()=>listeners.delete(listener);},
+      start(){
+        if(closed)return Promise.reject(new GuestError('PLAYBACK_STOPPED',503));
+        if(!run){
+          run=sdk.start();
+          run.then(()=>{if(!ready)readyReject(new GuestError('PLAYBACK_UNAVAILABLE',503));},()=>{
+            readyReject(new GuestError('PLAYBACK_UNAVAILABLE',503));
+            for(const listener of listeners)listener('INTERRUPTED');
+          });
+        }
+        return readiness;
+      },close};
+  }};
 }
 
 /** Attach the transport-neutral controller to the station page's accessible controls. */

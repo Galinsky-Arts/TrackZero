@@ -1,5 +1,5 @@
 {
-  "repository": "neophilism/TrackZero",
+  "repository": "Galinsky-Arts/TrackZero",
   "title": "TrackZero",
   "planVerified": true,
   "plannedPrCount": 26,
@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 2,
-  "observedAt": "2026-11-02T00:28:00Z",
+  "observedAt": "2026-11-09T22:20:46Z",
   "units": [
     {
       "id": "TZ-01",
@@ -35,7 +35,7 @@
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-02"
         }
       ],
@@ -66,7 +66,7 @@
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-04"
         }
       ],
@@ -84,7 +84,7 @@
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-05"
         }
       ],
@@ -102,7 +102,7 @@
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-07"
         }
       ],
@@ -120,7 +120,7 @@
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-08"
         }
       ],
@@ -131,14 +131,15 @@
       "title": "Sponsor uploads and placements",
       "origin": "original",
       "prs": [
-        13
+        13,
+        28
       ],
       "dependsOn": [
         "TZ-07"
       ],
       "externalDependencies": [
         {
-          "repository": "neophilism/Distributed-Radio-Engine",
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
           "unitId": "DRE-09"
         }
       ],
@@ -148,7 +149,9 @@
       "id": "TZ-09",
       "title": "Always-on station operations",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        14
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -157,7 +160,9 @@
       "id": "TZ-10",
       "title": "Guest web player and album pages",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        15
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -166,7 +171,9 @@
       "id": "TZ-11",
       "title": "Android listening application",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        16
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -175,7 +182,9 @@
       "id": "TZ-12",
       "title": "iOS listening application",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        17
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -184,7 +193,9 @@
       "id": "TZ-13",
       "title": "Contribute Sound setup and evidence UI",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        18
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -193,7 +204,9 @@
       "id": "TZ-14",
       "title": "Artist reward prices and exponential ladder UX",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        19
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -202,7 +215,9 @@
       "id": "TZ-15",
       "title": "Live points, outro vesting and reward spending",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        20
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -211,7 +226,9 @@
       "id": "TZ-16",
       "title": "Album checkout and payout experience",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        21
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -220,7 +237,9 @@
       "id": "TZ-17",
       "title": "Fan library and reward downloads",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        22
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -229,7 +248,9 @@
       "id": "TZ-18",
       "title": "Artist and sponsor reporting",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        24
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -238,7 +259,9 @@
       "id": "TZ-19",
       "title": "Additional voluntary revenue",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        25
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -247,7 +270,9 @@
       "id": "TZ-20",
       "title": "Privacy, moderation and complaints",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        26
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -256,7 +281,9 @@
       "id": "TZ-21",
       "title": "Discovery and station sharing",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        27
+      ],
       "dependsOn": [],
       "externalDependencies": [],
       "externalPrerequisites": []
@@ -309,10 +336,325 @@
   ],
   "pullRequests": [
     {
+      "id": 5113085766,
+      "number": 28,
+      "title": "TZ-08: Sponsor uploads and placements",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/28",
+      "state": "closed",
+      "draft": true,
+      "createdAt": "2026-11-02T00:27:19Z",
+      "updatedAt": "2026-11-02T00:28:56Z",
+      "closedAt": "2026-11-02T00:28:56Z",
+      "mergedAt": null,
+      "headSha": "c9e685c229cde7bd3acf335d2bd7e1b5a7d1d001",
+      "baseRef": "main",
+      "mergeCommitSha": null
+    },
+    {
+      "id": 5110414569,
+      "number": 27,
+      "title": "TZ-21: Discovery and station sharing",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/27",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:43:37Z",
+      "updatedAt": "2026-11-01T18:43:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "f5bd84259542e65bf70fd163b488eb446d9327b5",
+      "baseRef": "main",
+      "mergeCommitSha": "e2c3973f9313a28f839cd36d68d92667a83d77d6"
+    },
+    {
+      "id": 5110394173,
+      "number": 26,
+      "title": "TZ-20: Privacy, moderation and complaints",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/26",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:41:26Z",
+      "updatedAt": "2026-11-01T18:41:26Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "c29ff82c878ba8c2e4fc48d15c3c30909bdd1204",
+      "baseRef": "main",
+      "mergeCommitSha": "b066bcc61369c5bf0707ee41a5a04be2dad1c3fb"
+    },
+    {
+      "id": 5110372883,
+      "number": 25,
+      "title": "TZ-19: Additional voluntary revenue",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/25",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:39:17Z",
+      "updatedAt": "2026-11-01T18:39:17Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "6521e48bc831aaec29e44cb6cdb91e76e569a40e",
+      "baseRef": "main",
+      "mergeCommitSha": "16ed98bd6247ec54ed10b4d86963a5e5229b00fe"
+    },
+    {
+      "id": 5110349263,
+      "number": 24,
+      "title": "TZ-18: Artist and sponsor reporting",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/24",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-11-01T18:36:54Z",
+      "updatedAt": "2026-11-01T18:36:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "e9594915f8f98a1708c7b6e0d8eb8f4f04e0c961",
+      "baseRef": "main",
+      "mergeCommitSha": "e7908794b61059f017252872b0719ea7fc2e5080"
+    },
+    {
+      "id": 4941651434,
+      "number": 23,
+      "title": "Integrate Development Deployment Monitor (inventory-only)",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/23",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-20T19:57:53Z",
+      "updatedAt": "2026-10-20T20:02:25Z",
+      "closedAt": "2026-10-20T20:02:25Z",
+      "mergedAt": "2026-10-20T20:02:25Z",
+      "headSha": "6ec95b96d9a2a32f0acaa86c61b122fe10f3f4a0",
+      "baseRef": "main",
+      "mergeCommitSha": "ad27861cfbfeaae8f8728d0fd71918634004e1d8"
+    },
+    {
+      "id": 4914504908,
+      "number": 22,
+      "title": "TZ-17: Fan library and reward downloads",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/22",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:21:23Z",
+      "updatedAt": "2026-11-01T18:34:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "4700a94172d422811965b0ca0a124ea15909b3d5",
+      "baseRef": "main",
+      "mergeCommitSha": "18393156e9b367f6ca3bba9643914b059a10f5f4"
+    },
+    {
+      "id": 4914496785,
+      "number": 21,
+      "title": "TZ-16: Album checkout and payout experience",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/21",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:19:57Z",
+      "updatedAt": "2026-11-01T18:32:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "1f2f868a3419321886149b92e94be97e984bdcbe",
+      "baseRef": "main",
+      "mergeCommitSha": "024dec3dd71177e00f988011eda7d674d561f0ba"
+    },
+    {
+      "id": 4914485167,
+      "number": 20,
+      "title": "TZ-15: Live points, outro vesting and reward spending",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/20",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:18:24Z",
+      "updatedAt": "2026-11-01T18:29:34Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "f0f23a941e4c0bb2e730dcfb26b07807827d66e0",
+      "baseRef": "main",
+      "mergeCommitSha": "38dd899c677cd631845282b42a6bfcb7d9778b57"
+    },
+    {
+      "id": 4914472484,
+      "number": 19,
+      "title": "TZ-14: Artist reward prices and exponential ladder UX",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/19",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:16:54Z",
+      "updatedAt": "2026-11-01T18:27:15Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "e63eaf9dbf8be016a79f7e264870464ebe258483",
+      "baseRef": "main",
+      "mergeCommitSha": "af6f3507eea7c44ee7c9a0823e41e8343b2b6dec"
+    },
+    {
+      "id": 4914452460,
+      "number": 18,
+      "title": "TZ-13: Contribute Sound setup and evidence UI",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/18",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:14:15Z",
+      "updatedAt": "2026-11-01T18:24:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "9b5709e417ebe4572c0910aec23eea7cfd24a5fb",
+      "baseRef": "main",
+      "mergeCommitSha": "cb05f3c7be59454288eb3bb923b63a17ab0db442"
+    },
+    {
+      "id": 4914440392,
+      "number": 17,
+      "title": "TZ-12: iOS listening application",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/17",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:12:36Z",
+      "updatedAt": "2026-11-01T18:21:33Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "85669b56322e557bb0184fe33597df1e59c951e1",
+      "baseRef": "main",
+      "mergeCommitSha": "a077e9dd319ea1919d7a9843eb881f20b71345ce"
+    },
+    {
+      "id": 4914428308,
+      "number": 16,
+      "title": "TZ-11: Android listening application",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/16",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:10:56Z",
+      "updatedAt": "2026-11-01T18:18:32Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "c7241d275e2d5295c7a7d26c85e8e730efe0bace",
+      "baseRef": "main",
+      "mergeCommitSha": "af2a297ba09fb773477fb90aa2ea9b02278a2172"
+    },
+    {
+      "id": 4914406001,
+      "number": 15,
+      "title": "TZ-10: Guest web player and album pages",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/15",
+      "state": "open",
+      "draft": true,
+      "createdAt": "2026-10-19T01:07:51Z",
+      "updatedAt": "2026-11-01T18:15:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "505e64509c7f206a682b273dfa3a6b15f358352d",
+      "baseRef": "main",
+      "mergeCommitSha": "9c557a7a8cf380d7f4786d8f47b87af4ac384cea"
+    },
+    {
+      "id": 4914387499,
+      "number": 14,
+      "title": "TZ-09: Always-on station operations",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/14",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:05:14Z",
+      "updatedAt": "2026-11-09T22:17:50Z",
+      "closedAt": "2026-11-09T22:17:50Z",
+      "mergedAt": "2026-11-09T22:17:50Z",
+      "headSha": "9f6e9d2a35f2b9971b9dde591dad75d10185bcad",
+      "baseRef": "main",
+      "mergeCommitSha": "7854fe041564c3edc051a7fa1e8ade62f48e8b7c"
+    },
+    {
+      "id": 4914364265,
+      "number": 13,
+      "title": "TZ-08: Sponsor uploads and placements",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/13",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-19T01:01:40Z",
+      "updatedAt": "2026-11-02T00:27:04Z",
+      "closedAt": "2026-11-02T00:27:04Z",
+      "mergedAt": "2026-11-02T00:27:04Z",
+      "headSha": "b63d1b052dafa7fc1f18e41cb05d412eda5a00f6",
+      "baseRef": "main",
+      "mergeCommitSha": "042ea3c034104ddc73d10fde8cddba02d5fd932e"
+    },
+    {
+      "id": 4913404727,
+      "number": 12,
+      "title": "TZ-07: Artist interstitial studio",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/12",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T22:32:02Z",
+      "updatedAt": "2026-11-02T00:22:29Z",
+      "closedAt": "2026-11-02T00:22:29Z",
+      "mergedAt": "2026-11-02T00:22:29Z",
+      "headSha": "cb0ab8b80d2e2575916a3eb37825ff21319d7c4f",
+      "baseRef": "main",
+      "mergeCommitSha": "03c5a77507b76d6c75493537acf91fce3980d1f1"
+    },
+    {
+      "id": 4913195306,
+      "number": 11,
+      "title": "TZ-06: Drag-and-drop program sequencing",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/11",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T22:00:35Z",
+      "updatedAt": "2026-11-02T00:17:04Z",
+      "closedAt": "2026-11-02T00:17:04Z",
+      "mergedAt": "2026-11-02T00:17:04Z",
+      "headSha": "7634a66106eeb1e83d56398b904530210c65158f",
+      "baseRef": "main",
+      "mergeCommitSha": "7d1b8ce8f17c826ebf449427bc8d603e848d3b96"
+    },
+    {
+      "id": 4913191192,
+      "number": 10,
+      "title": "TZ-05: Rights review and publishing checks",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/10",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T22:00:04Z",
+      "updatedAt": "2026-11-02T00:11:30Z",
+      "closedAt": "2026-11-02T00:11:30Z",
+      "mergedAt": "2026-11-02T00:11:30Z",
+      "headSha": "ad87f3233026d1ce7f6673c8976f28627a6d59a0",
+      "baseRef": "main",
+      "mergeCommitSha": "5afc188c6348de9ad20c3babc0502dcc9009307f"
+    },
+    {
+      "id": 4913186834,
+      "number": 9,
+      "title": "TZ-04: Catalog and complete-album management",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/9",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T21:59:29Z",
+      "updatedAt": "2026-11-01T18:50:10Z",
+      "closedAt": "2026-11-01T18:50:10Z",
+      "mergedAt": "2026-11-01T18:50:10Z",
+      "headSha": "67c7302004898a9bf968143bd34544946bd3607b",
+      "baseRef": "main",
+      "mergeCommitSha": "4f187ef4bc93af81f8a29c6ffe7fbb1aae3a2056"
+    },
+    {
+      "id": 4913182105,
+      "number": 8,
+      "title": "TZ-03: Station identity and storefront shell",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/8",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-18T21:58:50Z",
+      "updatedAt": "2026-11-01T18:41:15Z",
+      "closedAt": "2026-11-01T18:40:38Z",
+      "mergedAt": "2026-11-01T18:40:38Z",
+      "headSha": "8d5619fe9569ee55440db47e6d30d0a77db5b90e",
+      "baseRef": "main",
+      "mergeCommitSha": "4139942625be90a81ccd88bd0915bfa97a8ee845"
+    },
+    {
       "id": 4912735715,
       "number": 7,
       "title": "TZ-02: Accounts and artist/label onboarding",
-      "url": "https://github.com/neophilism/TrackZero/pull/7",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/7",
       "state": "closed",
       "draft": false,
       "createdAt": "2026-10-18T20:55:49Z",
@@ -324,10 +666,55 @@
       "mergeCommitSha": "00540a878767d9708db1ca48064a238ae93a617d"
     },
     {
+      "id": 4848590092,
+      "number": 6,
+      "title": "Standardize canonical PR registry for Boardroom and Engine Room",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/6",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-13T19:47:05Z",
+      "updatedAt": "2026-10-16T15:17:33Z",
+      "closedAt": "2026-10-16T15:17:33Z",
+      "mergedAt": "2026-10-16T15:17:33Z",
+      "headSha": "e3c577dc9b6bfd458357731350dcaf8a196b2ae1",
+      "baseRef": "main",
+      "mergeCommitSha": "574f93c75ed1b76348ee4bf700ddc2075397d18c"
+    },
+    {
+      "id": 4848085298,
+      "number": 5,
+      "title": "Owner policy: proceed with AI security review; defer external audit",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/5",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-13T19:02:49Z",
+      "updatedAt": "2026-10-13T20:30:37Z",
+      "closedAt": "2026-10-13T20:30:36Z",
+      "mergedAt": "2026-10-13T20:30:36Z",
+      "headSha": "755ea620525a7e18a1d84a440359012e6df70028",
+      "baseRef": "main",
+      "mergeCommitSha": "2cbc92ac770620caf3bd79638dac48eae6d59f66"
+    },
+    {
+      "id": 4832218214,
+      "number": 4,
+      "title": "Map documented foundation work to verified merged PRs",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/4",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-12T16:28:31Z",
+      "updatedAt": "2026-10-12T16:28:49Z",
+      "closedAt": "2026-10-12T16:28:48Z",
+      "mergedAt": "2026-10-12T16:28:48Z",
+      "headSha": "caaab2ae3221e2a82276a702ad41bef6eca53454",
+      "baseRef": "main",
+      "mergeCommitSha": "663203938587cb81144c5caab2feab3808d0ffd5"
+    },
+    {
       "id": 4832051661,
       "number": 3,
       "title": "Port TrackZero roadmap and E2EESA integrity checks to CircleCI",
-      "url": "https://github.com/neophilism/TrackZero/pull/3",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/3",
       "state": "open",
       "draft": false,
       "createdAt": "2026-10-12T16:12:49Z",
@@ -342,7 +729,7 @@
       "id": 4830266059,
       "number": 2,
       "title": "Track E2EESA implementation, full testing and independent expert review",
-      "url": "https://github.com/neophilism/TrackZero/pull/2",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/2",
       "state": "closed",
       "draft": false,
       "createdAt": "2026-10-12T13:42:15Z",
@@ -357,7 +744,7 @@
       "id": 4805783025,
       "number": 1,
       "title": "TrackZero: specification, E2EESA policy and revised development plan",
-      "url": "https://github.com/neophilism/TrackZero/pull/1",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/1",
       "state": "closed",
       "draft": false,
       "createdAt": "2026-10-09T20:57:05Z",
@@ -367,96 +754,6 @@
       "headSha": "981ec2d5aefc0b5de7ca0b9b03c0d61c3f266a9c",
       "baseRef": "main",
       "mergeCommitSha": "db1ff093103dffa09d659b0fc0698407db621ce1"
-    },
-    {
-      "id": 4913182105,
-      "number": 8,
-      "title": "TZ-03: Station identity and storefront shell",
-      "url": "https://github.com/neophilism/TrackZero/pull/8",
-      "state": "closed",
-      "draft": false,
-      "createdAt": "2026-10-18T21:58:50Z",
-      "updatedAt": "2026-11-01T18:40:38Z",
-      "closedAt": "2026-11-01T18:40:38Z",
-      "mergedAt": "2026-11-01T18:40:38Z",
-      "headSha": "8d5619fe9569ee55440db47e6d30d0a77db5b90e",
-      "baseRef": "main",
-      "mergeCommitSha": "4139942625be90a81ccd88bd0915bfa97a8ee845"
-    },
-    {
-      "id": 4913186834,
-      "number": 9,
-      "title": "TZ-04: Catalog and complete-album management",
-      "url": "https://github.com/neophilism/TrackZero/pull/9",
-      "state": "closed",
-      "draft": false,
-      "createdAt": "2026-10-18T21:59:29Z",
-      "updatedAt": "2026-11-01T18:50:10Z",
-      "closedAt": "2026-11-01T18:50:10Z",
-      "mergedAt": "2026-11-01T18:50:10Z",
-      "headSha": "67c7302004898a9bf968143bd34544946bd3607b",
-      "baseRef": "main",
-      "mergeCommitSha": "4f187ef4bc93af81f8a29c6ffe7fbb1aae3a2056"
-    },
-    {
-      "id": 4913191192,
-      "number": 10,
-      "title": "TZ-05: Rights review and publishing checks",
-      "url": "https://github.com/neophilism/TrackZero/pull/10",
-      "state": "closed",
-      "draft": false,
-      "createdAt": "2026-10-18T22:00:04Z",
-      "updatedAt": "2026-11-02T00:11:30Z",
-      "closedAt": "2026-11-02T00:11:30Z",
-      "mergedAt": "2026-11-02T00:11:30Z",
-      "headSha": "ad87f3233026d1ce7f6673c8976f28627a6d59a0",
-      "baseRef": "main",
-      "mergeCommitSha": "5afc188c6348de9ad20c3babc0502dcc9009307f"
-    },
-    {
-      "id": 4913195306,
-      "number": 11,
-      "title": "TZ-06: Drag-and-drop program sequencing",
-      "url": "https://github.com/neophilism/TrackZero/pull/11",
-      "state": "closed",
-      "draft": false,
-      "createdAt": "2026-10-18T22:00:35Z",
-      "updatedAt": "2026-11-02T00:17:04Z",
-      "closedAt": "2026-11-02T00:17:04Z",
-      "mergedAt": "2026-11-02T00:17:04Z",
-      "headSha": "7634a66106eeb1e83d56398b904530210c65158f",
-      "baseRef": "main",
-      "mergeCommitSha": "7d1b8ce8f17c826ebf449427bc8d603e848d3b96"
-    },
-    {
-      "id": 4913404727,
-      "number": 12,
-      "title": "TZ-07: Artist interstitial studio",
-      "url": "https://github.com/neophilism/TrackZero/pull/12",
-      "state": "closed",
-      "draft": false,
-      "createdAt": "2026-10-18T22:32:02Z",
-      "updatedAt": "2026-11-02T00:22:29Z",
-      "closedAt": "2026-11-02T00:22:29Z",
-      "mergedAt": "2026-11-02T00:22:29Z",
-      "headSha": "cb0ab8b80d2e2575916a3eb37825ff21319d7c4f",
-      "baseRef": "main",
-      "mergeCommitSha": "03c5a77507b76d6c75493537acf91fce3980d1f1"
-    },
-    {
-      "id": 4914364265,
-      "number": 13,
-      "title": "TZ-08: Sponsor uploads and placements",
-      "url": "https://github.com/neophilism/TrackZero/pull/13",
-      "state": "closed",
-      "draft": false,
-      "createdAt": "2026-10-19T01:01:40Z",
-      "updatedAt": "2026-11-02T00:27:04Z",
-      "closedAt": "2026-11-02T00:27:04Z",
-      "mergedAt": "2026-11-02T00:27:04Z",
-      "headSha": "b63d1b052dafa7fc1f18e41cb05d412eda5a00f6",
-      "baseRef": "main",
-      "mergeCommitSha": "042ea3c034104ddc73d10fde8cddba02d5fd932e"
     }
   ]
 }
