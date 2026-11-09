@@ -1,3 +1,5 @@
+import {createPrivateBoundary} from './private-endpoint.mjs';
+import {BoundaryError} from './http-boundary.mjs';
 const ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const valid=value=>typeof value==='string'&&ID.test(value);
 const kinds=new Set(['TIP','ALBUM_GIFT','SPONSOR_SUPPORT']);
@@ -6,10 +8,11 @@ export class SupportError extends Error{constructor(code,status=400){super(code)
 /** Initiates only a provider-owned pending intent. The client supplies an
  * explicit amount but cannot assert price, rights, recipient consent or payment.
  */
-export function createSupportHandler({authenticate,validateTarget,validateRecipient,commerce}){
-  if([authenticate,validateTarget,validateRecipient].some(fn=>typeof fn!=='function')||
+export function createSupportHandler({authenticate,validateTarget,validateRecipient,commerce,decodeControl,encodeResponse,authorizeSupport}){
+  if([authenticate,validateTarget,validateRecipient,authorizeSupport].some(fn=>typeof fn!=='function')||
       !commerce||typeof commerce.startSupportIntent!=='function')
     throw Error('Trusted support providers required');
+  const boundary=createPrivateBoundary({decodeControl,encodeResponse});
   return async request=>{
     const url=new URL(request.url);
     const respond=(status,value)=>new Response(JSON.stringify(value),{status,
@@ -23,9 +26,7 @@ export function createSupportHandler({authenticate,validateTarget,validateRecipi
         throw new SupportError('AUTH_REQUIRED',401);
       const key=request.headers.get('idempotency-key');
       if(!valid(key)||key.length<20)throw new SupportError('IDEMPOTENCY_KEY_REQUIRED');
-      const raw=await request.text();
-      if(raw.length>2048)throw new SupportError('BODY_TOO_LARGE',413);
-      let body;try{body=JSON.parse(raw)}catch{throw new SupportError('INVALID_JSON')}
+      const body=await boundary.read(request,identity,{action:'voluntary-support',operationId:key});
       if(!body||typeof body!=='object'||Array.isArray(body)||
           Object.keys(body).sort().join(',')!=='amountMinor,currency,kind,recipientId,targetId'||
           !kinds.has(body.kind)||!valid(body.targetId)||
@@ -38,11 +39,14 @@ export function createSupportHandler({authenticate,validateTarget,validateRecipi
       if(await validateTarget(scope,body)!==true)throw new SupportError('TARGET_UNAVAILABLE',403);
       if(body.kind==='ALBUM_GIFT'&&await validateRecipient(scope,body.recipientId,body.targetId)!==true)
         throw new SupportError('RECIPIENT_NOT_AUTHORIZED',403);
-      const result=await commerce.startSupportIntent({...scope,...body,idempotencyKey:key});
+      const operation=Object.freeze({...scope,...body,idempotencyKey:key});
+      const proof=await authorizeSupport(identity,operation,request);
+      if(typeof proof!=='string'||!proof||proof.length>8192)throw new SupportError('TRANSACTION_NOT_AUTHORIZED',403);
+      const result=await commerce.startSupportIntent({...operation,proof});
       if(!result||!valid(result.intentId)||result.state!=='PENDING')
         throw new SupportError('COMMERCE_RESPONSE_INVALID',503);
-      return respond(200,{intentId:result.intentId,state:'PENDING'});
-    }catch(error){return error instanceof SupportError?respond(error.status,{error:error.code}):
+      return await boundary.respond(200,identity,{intentId:result.intentId,state:'PENDING'},{action:'support-intent-receipt',operationId:key});
+    }catch(error){return (error instanceof SupportError||error instanceof BoundaryError)?respond(error.status,{error:error.code}):
       respond(503,{error:'SUPPORT_UNAVAILABLE'});}
   };
 }
