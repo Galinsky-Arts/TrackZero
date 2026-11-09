@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-09T23:54:56Z",
+  "observedAt": "2026-11-09T23:57:11Z",
   "units": [
     {
       "id": "TZ-01",
@@ -563,29 +563,29 @@
       "title": "TZ-21: Discovery and station sharing",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/27",
       "state": "open",
-      "draft": true,
+      "draft": false,
       "createdAt": "2026-11-01T18:43:37Z",
-      "updatedAt": "2026-11-01T18:43:37Z",
+      "updatedAt": "2026-11-09T23:56:34Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "f5bd84259542e65bf70fd163b488eb446d9327b5",
+      "headSha": "f3e2b9aa86ad55c522f86989faa7113d9843d3c9",
       "baseRef": "main",
-      "mergeCommitSha": "e2c3973f9313a28f839cd36d68d92667a83d77d6"
+      "mergeCommitSha": "dd2e3b831965e0fec792617103fe9313cca507fb"
     },
     {
       "id": 5110394173,
       "number": 26,
       "title": "TZ-20: Privacy, moderation and complaints",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/26",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-11-01T18:41:26Z",
-      "updatedAt": "2026-11-09T23:53:42Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-11-09T23:55:16Z",
+      "closedAt": "2026-11-09T23:55:16Z",
+      "mergedAt": "2026-11-09T23:55:16Z",
       "headSha": "4ef09c53fe6be3e28de77147481b079a3a2c4233",
       "baseRef": "main",
-      "mergeCommitSha": "87c19d3d5786c311880de0c576b69eca95f94284"
+      "mergeCommitSha": "d26fcab58cf02f517ac1400a49cee4fa873ee969"
     },
     {
       "id": 5110372883,
