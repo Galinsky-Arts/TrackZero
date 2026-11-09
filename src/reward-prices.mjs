@@ -1,34 +1,21 @@
 const id=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
-function gcd(a,b){while(b){[a,b]=[b,a%b]}return a;}
-function q(n,d=1n){if(d<=0n)throw Error('invalid denominator');const g=gcd(n,d);return [n/g,d/g];}
-function add([a,b],[c,d]){return q(a*d+c*b,b*d);}
-function mul([a,b],[c,d]){return q(a*c,b*d);}
-function div([a,b],[c,d]){return q(a*d,b*c);}
-function ceil([a,b]){return (a+b-1n)/b;}
-function whole(value){if(typeof value!=='string'||!/^(0|[1-9][0-9]*)$/.test(value)||value.length>80)throw Error('invalid integer');return BigInt(value);}
+function whole(value){if(typeof value!=='string'||!/^(0|[1-9][0-9]*)$/.test(value)||value.length>1000)throw Error('invalid integer');return BigInt(value);}
 
-/** Exact integer ceiling of a bounded rational interval containing exp(x). */
-export function defaultRewardPrice({base,gentleBps,accelerationBps,tier}){
-  const b=whole(base);
-  if(b<1n||b>1_000_000_000_000n||![gentleBps,accelerationBps,tier].every(Number.isSafeInteger)||
-    gentleBps<0||gentleBps>1000||accelerationBps<0||accelerationBps>20||tier<0||tier>100)
-    throw Error('bounded price configuration required');
-  const x=q(BigInt(accelerationBps*tier*tier),10000n);
-  const prefix=q(b*(10000n+BigInt(gentleBps*tier)),10000n);
-  let sum=q(1n),term=q(1n);
-  for(let n=0;n<256;n++){
-    const next=mul(term,div(x,q(BigInt(n+1))));
-    const lower=mul(prefix,sum);
-    // Remaining terms after next are bounded by a geometric tail once ratio < 1.
-    const ratio=div(x,q(BigInt(n+2)));
-    if(ratio[0]<ratio[1]){
-      const tail=div(next,q(ratio[1]-ratio[0],ratio[1]));
-      const upper=mul(prefix,add(sum,tail));
-      if(ceil(lower)===ceil(upper))return ceil(lower);
-    }
-    sum=add(sum,next);term=next;
-  }
-  throw Error('price interval did not converge');
+/** DRE-17 owns price arithmetic. This adapter only maps creator configuration.
+ * A symbolic quote is displayable but never becomes an executable integer cost.
+ */
+export function createRewardPricing({createRewardPricePolicy,rewardPrice}){
+  if(typeof createRewardPricePolicy!=='function'||typeof rewardPrice!=='function')
+    throw Error('DRE price policy and quote functions required');
+  return ({artistId,version=1,base,gentleBps=500,accelerationBps=100,tier})=>{
+    if(typeof artistId!=='string'||!id.test(artistId)||!Number.isSafeInteger(version)||version<1||
+      ![gentleBps,accelerationBps].every(v=>Number.isSafeInteger(v)&&v>=0))throw Error('invalid creator price settings');
+    const policy=createRewardPricePolicy({creatorId:artistId,version,basePoints:whole(base),
+      gentleNumerator:BigInt(gentleBps),gentleDenominator:10000n,
+      accelerationNumerator:BigInt(accelerationBps),accelerationDenominator:10000n});
+    const level=typeof tier==='string'?whole(tier):tier;
+    return rewardPrice({policy,level});
+  };
 }
 
 export function rewardPreview(offer,wallet){

@@ -1,5 +1,11 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {defaultRewardPrice,rewardPreview,renderRewardPreview} from '../src/reward-prices.mjs';
+import {createRewardPricing,rewardPreview,renderRewardPreview} from '../src/reward-prices.mjs';
+const modulePath=process.env.DRE_PLAYBACK_MODULE;
+if(!modulePath)throw Error('Pinned DRE_PLAYBACK_MODULE required for price integration');
+const {pathToFileURL}=await import('node:url');
+const sdk=await import(new URL('./reward-ladder.mjs',pathToFileURL(modulePath)));
+const quote=createRewardPricing(sdk);
+const defaultRewardPrice=config=>{const result=quote({artistId:'artist-a',...config});assert.equal(result.kind,'quoted');return result.points;};
 test('base tier and linear factor use exact integer ceilings',()=>{
   assert.equal(defaultRewardPrice({base:'101',gentleBps:100,accelerationBps:0,tier:0}),101n);
   assert.equal(defaultRewardPrice({base:'101',gentleBps:100,accelerationBps:0,tier:1}),103n);
@@ -22,9 +28,10 @@ test('default curve begins slowly and grows sharply while preview uses exact spe
   assert.match(renderRewardPreview(short),new RegExp(`cost ${late} artist points`));
   assert.equal(rewardPreview(offer,{artistId:'artist-a',spendable:late.toString()}).canRequest,true);
 });
-test('rejects unbounded or malformed pricing settings',()=>{
+test('rejects malformed settings while large tiers remain symbolic without a business cap',()=>{
   assert.throws(()=>defaultRewardPrice({base:'1e3',gentleBps:0,accelerationBps:0,tier:0}));
-  assert.throws(()=>defaultRewardPrice({base:'1',gentleBps:0,accelerationBps:21,tier:100}));
+  const huge=quote({artistId:'artist-a',base:'1',tier:'999999999999999999999999999999999999'});
+  assert.equal(huge.kind,'symbolic');assert.equal(huge.points,null);assert.equal(huge.spendAuthorized,false);
   assert.throws(()=>defaultRewardPrice({base:'0',gentleBps:0,accelerationBps:0,tier:0}));
 });
 test('artist-specific snapshot never treats display as redemption',()=>{
