@@ -2,6 +2,12 @@ import {BoundaryError,readBoundedJson,encryptedControlEnvelope} from './http-bou
 const id=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 export class CheckoutError extends Error{constructor(code,status=400){super(code);this.code=code;this.status=status;}}
 function textId(v){return typeof v==='string'&&id.test(v);}
+function paymentUrl(value){
+  if(value===null||value===undefined)return null;
+  let url;try{url=new URL(value);}catch{throw new CheckoutError('COMMERCE_RESPONSE_INVALID',503);}
+  if(typeof value!=='string'||value.length>4096||url.origin!=='https://checkout.stripe.com'||url.username||url.password)throw new CheckoutError('COMMERCE_RESPONSE_INVALID',503);
+  return value;
+}
 function buyer(value){
   if(!value||![value.userId,value.tenant,value.application].every(textId)||value.role!=='listener')
     throw new CheckoutError('AUTH_REQUIRED',403);
@@ -38,7 +44,7 @@ export function createAlbumCheckout({authenticate,getOffer,commerce,decodeContro
         if(!result||!textId(result.checkoutId)||!['PENDING','COMPLETE'].includes(result.state))
           throw new CheckoutError('COMMERCE_RESPONSE_INVALID',503);
         return respond(200,encryptedControlEnvelope(await encodeResponse(identity,{checkoutId:result.checkoutId,state:result.state,
-          fulfillmentPending:result.fulfillmentPending===true},{action:'album-checkout-result',operationId:key})));
+          fulfillmentPending:result.fulfillmentPending===true,checkoutUrl:result.state==='PENDING'?paymentUrl(result.checkoutUrl):null},{action:'album-checkout-result',operationId:key})));
       }
       if(request.method==='GET'&&url.pathname.startsWith('/v1/album-checkouts/')&&url.pathname.endsWith('/receipt')){
         const checkoutId=url.pathname.slice('/v1/album-checkouts/'.length,-'/receipt'.length);
@@ -53,7 +59,8 @@ export function createAlbumCheckout({authenticate,getOffer,commerce,decodeContro
           !['PENDING','COMPLETE','FAILED'].includes(receipt.state))
           throw new CheckoutError('COMMERCE_RESPONSE_INVALID',503);
         return respond(200,encryptedControlEnvelope(await encodeResponse(identity,{checkoutId,state:receipt.state,albumId:receipt.albumId,
-          receiptId:receipt.state==='COMPLETE'?receipt.receiptId:null,fulfillmentPending:receipt.fulfillmentPending===true},
+          receiptId:receipt.state==='COMPLETE'?receipt.receiptId:null,fulfillmentPending:receipt.fulfillmentPending===true,
+          checkoutUrl:receipt.state==='PENDING'?paymentUrl(receipt.checkoutUrl):null},
           {action:'album-purchase-receipt',operationId:checkoutId})));
       }
       return respond(404,{error:'NOT_FOUND'});
@@ -72,7 +79,7 @@ export function createDreAlbumCommerce(wholeWorkCommerce){
     if(result.tenantId!==input.tenant||result.applicationId!==input.application||result.principalId!==input.userId)
       throw new CheckoutError('COMMERCE_RESPONSE_INVALID',503);
     return {tenant:result.tenantId,application:result.applicationId,userId:result.principalId,checkoutId:result.checkoutId,
-      albumId:result.productId,state:result.state,receiptId:result.receiptId,fulfillmentPending:result.fulfillmentPending};
+      albumId:result.productId,state:result.state,receiptId:result.receiptId,fulfillmentPending:result.fulfillmentPending,checkoutUrl:paymentUrl(result.checkoutUrl)};
   };
   return {async startCheckout(input){
     return receipt(await wholeWorkCommerce.startCheckout({...scope(input),productId:input.albumId,productRevision:input.offerVersion,

@@ -25,6 +25,7 @@ test('actual DAE settlement and DRE whole-work purchase compose through the scop
   commerceDigest:core.commerceDigest,resolveCompleteWork:async()=>({kind:'complete-album',creatorId:'artist',completeAssetIds:['complete-recording'],
    product:{id:'album',revision:1,assets:[{assetId:'complete-recording',rightsLayers:['recording']}],currency:{code:'USD',minorUnit:2},priceMinor:'1000',validUntilMs:100000}}),
   verifyCompleteWork:async()=>true,resolveBuyer:async()=>buyer,resolveMerchant:async()=>manager,authorizePurchase:async()=>true,
+  presentPendingOrder:async()=>({url:'https://checkout.stripe.com/c/pay/cs_test_fixture'}),paymentOrigins:['https://checkout.stripe.com'],
   authorizeRead:async()=>true,verifyFulfillment:async()=>true,territory:'US',now:()=>now});
  // Fixture envelope/codec only. Production must bind actual approved E2EE endpoint adapters.
  const packet={body:{version:'1.0.0',scope:{tenantId:'tenant',application:'distributed-radio',sessionId:'fixture'},keyId:'key',algorithm:'ALG-ED25519',
@@ -35,13 +36,13 @@ test('actual DAE settlement and DRE whole-work purchase compose through the scop
   encodeResponse:async(_identity,plain)=>{receipts.push(plain);return packet;}});
  const post=()=>new Request('https://app.test/v1/album-checkouts',{method:'POST',headers:{origin:'https://app.test','idempotency-key':'operation-000000000000000001'},body:JSON.stringify(packet)});
  assert.equal((await handler(post())).status,200);const checkoutId=receipts.at(-1).checkoutId;
- assert.equal(receipts.at(-1).state,'PENDING');assert.equal(requests,1);await handler(post());assert.equal(requests,1);
+ assert.equal(receipts.at(-1).state,'PENDING');assert.equal(receipts.at(-1).checkoutUrl,'https://checkout.stripe.com/c/pay/cs_test_fixture');assert.equal(requests,1);await handler(post());assert.equal(requests,1);
  const order=engine.readOrder(buyer,checkoutId,now);now=1500;
  event={scope,eventId:'settlement',providerId:'fixture',merchantAccountId:'account',checkoutId,buyerId:'buyer',
   productDigestHex:order.productDigestHex,providerPaymentId:'payment',currency:order.currency,amountMinor:order.amountMinor,occurredAtMs:now,status:'settled'};
  await whole.settle(new Uint8Array([1]),'fixture-auth');
  const response=await handler(new Request('https://app.test/v1/album-checkouts/'+checkoutId+'/receipt'));
  assert.equal(response.status,200);assert.equal(receipts.at(-1).state,'COMPLETE');assert.equal(receipts.at(-1).albumId,'album');
- assert.ok(receipts.at(-1).receiptId);assert.equal(ledger.access(buyer,'complete-recording','download',now).allowed,true);
+ assert.ok(receipts.at(-1).receiptId);assert.equal(receipts.at(-1).checkoutUrl,null);assert.equal(ledger.access(buyer,'complete-recording','download',now).allowed,true);
  assert.doesNotMatch(await response.text(),/receiptId|albumId|priceMinor/);
  });
