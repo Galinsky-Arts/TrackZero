@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: Galinsky-Arts/Distributed-Radio-Engine
-          ref: b5a2773e9273a555816f5800255feef5ead7902d
+          ref: aabd242f31da59658d75dc61f3bb85c1d7d79d5b
           path: .deps/radio
           persist-credentials: false
       - run: node scripts/check-roadmap.mjs
