@@ -19,3 +19,22 @@ export async function readBoundedJson(request,maxBytes=4096){
   if(!body||typeof body!=='object'||Array.isArray(body))throw new BoundaryError('INVALID_JSON');
   return body;
 }
+
+/** Structural envelope check only; the bound DAE endpoint authenticates and decrypts. */
+export function encryptedControlEnvelope(packet){
+  const fields=['version','scope','keyId','algorithm','epoch','sequence','issuedAtMs','expiresAtMs','action','payloadCiphertextBase64'];
+  if(!packet||typeof packet!=='object'||Array.isArray(packet)||Object.keys(packet).sort().join(',')!=='body,signatureHex'||
+    !packet.body||typeof packet.body!=='object'||Array.isArray(packet.body)||
+    Object.keys(packet.body).sort().join(',')!==fields.sort().join(',')||
+    !packet.body.scope||Object.keys(packet.body.scope).sort().join(',')!=='application,sessionId,tenantId'||
+    !['tenantId','sessionId'].every(k=>typeof packet.body.scope[k]==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(packet.body.scope[k]))||
+    !['distributed-radio','scenesignal'].includes(packet.body.scope.application)||packet.body.version!=='1.0.0'||
+    packet.body.algorithm!=='ALG-ED25519'||
+    !['keyId','action'].every(k=>typeof packet.body[k]==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(packet.body[k]))||
+    !['epoch','sequence','issuedAtMs','expiresAtMs'].every(k=>Number.isSafeInteger(packet.body[k])&&packet.body[k]>=0)||
+    packet.body.epoch<1||packet.body.sequence<1||packet.body.expiresAtMs<=packet.body.issuedAtMs||
+    typeof packet.body.payloadCiphertextBase64!=='string'||!packet.body.payloadCiphertextBase64||
+    packet.body.payloadCiphertextBase64.length>65536||typeof packet.signatureHex!=='string'||!/^[a-f0-9]{128}$/.test(packet.signatureHex)||
+    Buffer.byteLength(JSON.stringify(packet),'utf8')>8192)throw new BoundaryError('ENCRYPTED_CONTROL_REQUIRED');
+  return packet;
+}

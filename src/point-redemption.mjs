@@ -1,8 +1,8 @@
-import {BoundaryError,readBoundedJson} from './http-boundary.mjs';
+import {BoundaryError,readBoundedJson,encryptedControlEnvelope} from './http-boundary.mjs';
 const id=value=>typeof value==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(value);
 /** User-approved DRE-18 redemption; the UI cannot declare price, identity or grants. */
-export function createPointRedemptionHandler({authenticate,decodeControl,authorizeRequest,rewardsForPrincipal}){
-  if(![authenticate,decodeControl,authorizeRequest,rewardsForPrincipal].every(fn=>typeof fn==='function'))
+export function createPointRedemptionHandler({authenticate,decodeControl,encodeResponse,authorizeRequest,rewardsForPrincipal}){
+  if(![authenticate,decodeControl,encodeResponse,authorizeRequest,rewardsForPrincipal].every(fn=>typeof fn==='function'))
     throw Error('Identity, transaction authorization and atomic reward factory required');
   return async request=>{
     const url=new URL(request.url),headers={'content-type':'application/json','cache-control':'no-store','x-content-type-options':'nosniff'};
@@ -17,10 +17,7 @@ export function createPointRedemptionHandler({authenticate,decodeControl,authori
       const operationId=request.headers.get('idempotency-key');
       if(!id(operationId)||operationId.length<20)throw new BoundaryError('IDEMPOTENCY_KEY_REQUIRED');
       const identity=Object.freeze({tenant:actor.tenant,application:actor.application,subject:actor.subject});
-      const packet=await readBoundedJson(request,8192);
-      if(Object.keys(packet).sort().join(',')!=='body,signatureHex'||!packet.body||
-        typeof packet.body.payloadCiphertextBase64!=='string'||!packet.body.payloadCiphertextBase64||
-        typeof packet.signatureHex!=='string')throw new BoundaryError('ENCRYPTED_CONTROL_REQUIRED');
+      const packet=encryptedControlEnvelope(await readBoundedJson(request,8192));
       // The mandatory approved endpoint decoder authenticates/decrypts, checks
       // action, actor scope, counters, expiry and device membership. No plaintext fallback.
       const body=await decodeControl(identity,packet,{action:'redeem-points',operationId});
@@ -42,8 +39,9 @@ export function createPointRedemptionHandler({authenticate,decodeControl,authori
         (r.kind==='recording'?!id(r.recordingId):r.recordingId!==null)||
         typeof r.points!=='string'||!/^[1-9][0-9]{0,999}$/.test(r.points)||r.unit!=='micro-reference-seconds')
         throw new BoundaryError('ISSUER_RESPONSE_INVALID',503);
-      return respond(200,{applied:result.applied,offerId:r.offerId,offerVersion:r.offerVersion,
-        operationId:r.operationId,kind:r.kind,recordingId:r.recordingId,points:r.points,unit:r.unit});
+      const receipt={applied:result.applied,offerId:r.offerId,offerVersion:r.offerVersion,
+        operationId:r.operationId,kind:r.kind,recordingId:r.recordingId,points:r.points,unit:r.unit};
+      return respond(200,encryptedControlEnvelope(await encodeResponse(identity,receipt,{action:'point-redemption-receipt',operationId})));
     }catch(error){return error instanceof BoundaryError?respond(error.status,{error:error.code}):respond(503,{error:'REWARDS_UNAVAILABLE'});}
   };
 }

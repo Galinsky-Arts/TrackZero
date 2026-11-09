@@ -9,8 +9,8 @@
   ],
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
-  "roadmapVersion": 2,
-  "observedAt": "2026-11-09T22:20:46Z",
+  "roadmapVersion": 3,
+  "observedAt": "2026-11-09T23:10:35Z",
   "units": [
     {
       "id": "TZ-01",
@@ -20,8 +20,16 @@
         1
       ],
       "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-01"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Consumer radio app using Distributed Radio Engine. TrackZero references the hidden bonus track before track one; no on-demand song selector or venue coordination.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-02",
@@ -39,7 +47,10 @@
           "unitId": "DRE-02"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Give artists, labels and listeners scoped recoverable identities.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-03",
@@ -52,7 +63,10 @@
         "TZ-02"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Present broadcaster branding, station information and complete-product offers.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-04",
@@ -70,7 +84,10 @@
           "unitId": "DRE-04"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Manage full albums and artwork through radio-engine catalog adapters.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-05",
@@ -88,7 +105,10 @@
           "unitId": "DRE-05"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Explain and enforce required publishing permissions.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-06",
@@ -106,7 +126,10 @@
           "unitId": "DRE-07"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Let the broadcaster arrange content, ads, introductions and recurring blocks.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-07",
@@ -124,7 +147,10 @@
           "unitId": "DRE-08"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Record or upload broadcaster-controlled station and content identifications.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-08",
@@ -143,7 +169,10 @@
           "unitId": "DRE-09"
         }
       ],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Place approved sponsor audio in the common station sequence.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-09",
@@ -152,9 +181,19 @@
       "prs": [
         14
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-08"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-10"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Show station scheduling, fallback and recovery independently of the creator phone.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-10",
@@ -163,9 +202,19 @@
       "prs": [
         15
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-09"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-11"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Allow free guest live playback and complete-album browsing.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-11",
@@ -174,9 +223,19 @@
       "prs": [
         16
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-10"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Audio-Engine",
+          "unitId": "DAE-09"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Integrate the native Android listening and active-output SDK.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-12",
@@ -185,9 +244,19 @@
       "prs": [
         17
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-10"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Audio-Engine",
+          "unitId": "DAE-10"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Integrate the native iOS listening and active-output SDK.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-13",
@@ -196,9 +265,19 @@
       "prs": [
         18
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-12"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-13"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Explain consent, output qualification and unsupported measurement modes.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-14",
@@ -207,9 +286,20 @@
       "prs": [
         19
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-05",
+        "TZ-13"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-17"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Artist-selected point prices and configurable slow-then-exponential defaults. Show exact costs, available balance and preview; high rewards remain difficult even for sustained large-speaker networks.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-15",
@@ -218,9 +308,19 @@
       "prs": [
         20
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-14"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-18"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Single artist-specific metric UI, provisional song meter, post-outro spendable grant and atomic unlock. Cross-artist stations show the appropriate balance for each content creator; headphone listening earns no speaker points.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-16",
@@ -229,9 +329,19 @@
       "prs": [
         21
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-15"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-24"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Support receipts, purchase access and artist settlement.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-17",
@@ -240,9 +350,20 @@
       "prs": [
         22
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-15",
+        "TZ-16"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-23"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Fan library for purchased works, point-redemptions and separately earned Unlocked Grooves. Download only under creator-authorized rights; playback in this app remains linear station radio.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-18",
@@ -251,9 +372,19 @@
       "prs": [
         24
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-17"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-25"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Present actual output contributions, transactions and campaign delivery.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-19",
@@ -262,9 +393,14 @@
       "prs": [
         25
       ],
-      "dependsOn": [],
+      "dependsOn": [
+        "TZ-18"
+      ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Offer voluntary tips, complete-album gifts and sponsor support.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-20",
@@ -273,9 +409,19 @@
       "prs": [
         26
       ],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-19"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-26"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Provide privacy controls, reporting and explainable account decisions.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-21",
@@ -284,54 +430,115 @@
       "prs": [
         27
       ],
-      "dependsOn": [],
+      "dependsOn": [
+        "TZ-20"
+      ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Share current radio stations without becoming an event coordination product.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-22",
       "title": "Accessibility and battery/recovery qualification",
       "origin": "original",
       "prs": [],
-      "dependsOn": [],
+      "dependsOn": [
+        "TZ-21"
+      ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "scope": "Measure accessible playback, mobile battery use and interruption recovery.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-23",
       "title": "Integrated radio pilot",
       "origin": "original",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-22",
+        "TZ-25",
+        "TZ-26"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-27"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Validate creator programming, listening, rewards and commerce together.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-24",
       "title": "Production rollout and creator runbook",
       "origin": "original",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-23"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-28"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Deliver launch evidence and clear creator/support procedures.",
+      "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
+      "gate": "Actual field evidence for hardware/production claims"
     },
     {
       "id": "TZ-25",
       "title": "Unlocked Groove creator settings and separate bonus catalog",
       "origin": "addition",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-14"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-19"
+        },
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-20"
+        },
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-21"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "Upload alternate takes and app-exclusive recordings; configure x-to-y-song cadence, rarity, completion gates and stock. Keep these recordings separate from paid/points catalogs.",
+      "acceptance": "Creator preview shows eligibility and disclosure; inconsistent catalog memberships/cadence cannot publish.",
+      "gate": "Software"
     },
     {
       "id": "TZ-26",
       "title": "LOCKED to UNLOCKED GROOVE reveal",
       "origin": "addition",
       "prs": [],
-      "dependsOn": [],
-      "externalDependencies": [],
-      "externalPrerequisites": []
+      "dependsOn": [
+        "TZ-17",
+        "TZ-25"
+      ],
+      "externalDependencies": [
+        {
+          "repository": "Galinsky-Arts/Distributed-Radio-Engine",
+          "unitId": "DRE-23"
+        }
+      ],
+      "externalPrerequisites": [],
+      "scope": "At the shared outro-to-next-intro marker display LOCKED GROOVE and animate LOCKED into UNLOCKED; accessible reduced-motion equivalent. Both headphones and speakers qualify; reveal never pauses program.",
+      "acceptance": "One reveal per granted opportunity; exact transition timing tested, screen reader and reduced-motion support, no personalized radio insertion.",
+      "gate": "Software"
     }
   ],
   "pullRequests": [
@@ -460,90 +667,90 @@
       "number": 20,
       "title": "TZ-15: Live points, outro vesting and reward spending",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/20",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:18:24Z",
-      "updatedAt": "2026-11-01T18:29:34Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "f0f23a941e4c0bb2e730dcfb26b07807827d66e0",
+      "updatedAt": "2026-11-09T22:49:30Z",
+      "closedAt": "2026-11-09T22:49:30Z",
+      "mergedAt": "2026-11-09T22:49:30Z",
+      "headSha": "1cc184dfc6538581a38a241810718f6e9695284b",
       "baseRef": "main",
-      "mergeCommitSha": "38dd899c677cd631845282b42a6bfcb7d9778b57"
+      "mergeCommitSha": "b47625d007f4f273ee8b766ca0022d8d995abb0b"
     },
     {
       "id": 4914472484,
       "number": 19,
       "title": "TZ-14: Artist reward prices and exponential ladder UX",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/19",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:16:54Z",
-      "updatedAt": "2026-11-01T18:27:15Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "e63eaf9dbf8be016a79f7e264870464ebe258483",
+      "updatedAt": "2026-11-09T22:44:59Z",
+      "closedAt": "2026-11-09T22:44:59Z",
+      "mergedAt": "2026-11-09T22:44:59Z",
+      "headSha": "bce64e45f4a8cce35451cf94ea799e0b34bd2e9b",
       "baseRef": "main",
-      "mergeCommitSha": "af6f3507eea7c44ee7c9a0823e41e8343b2b6dec"
+      "mergeCommitSha": "ec4eced3f9508fafa7bc5b15f18022a6e48c03c5"
     },
     {
       "id": 4914452460,
       "number": 18,
       "title": "TZ-13: Contribute Sound setup and evidence UI",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/18",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:14:15Z",
-      "updatedAt": "2026-11-01T18:24:40Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "9b5709e417ebe4572c0910aec23eea7cfd24a5fb",
+      "updatedAt": "2026-11-09T22:39:01Z",
+      "closedAt": "2026-11-09T22:39:01Z",
+      "mergedAt": "2026-11-09T22:39:01Z",
+      "headSha": "6c19516413d129e2d7f269eada1e67e1074d4dfc",
       "baseRef": "main",
-      "mergeCommitSha": "cb05f3c7be59454288eb3bb923b63a17ab0db442"
+      "mergeCommitSha": "6493855400808ca93c8595815aa7f3539a528689"
     },
     {
       "id": 4914440392,
       "number": 17,
       "title": "TZ-12: iOS listening application",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/17",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:12:36Z",
-      "updatedAt": "2026-11-01T18:21:33Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "85669b56322e557bb0184fe33597df1e59c951e1",
+      "updatedAt": "2026-11-09T22:34:21Z",
+      "closedAt": "2026-11-09T22:34:21Z",
+      "mergedAt": "2026-11-09T22:34:21Z",
+      "headSha": "fd0203b2ec02752d4fb9ff6da2a0f6a59b5297e1",
       "baseRef": "main",
-      "mergeCommitSha": "a077e9dd319ea1919d7a9843eb881f20b71345ce"
+      "mergeCommitSha": "add89dbeb83ae3ebe50627571b873413748c5082"
     },
     {
       "id": 4914428308,
       "number": 16,
       "title": "TZ-11: Android listening application",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/16",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:10:56Z",
-      "updatedAt": "2026-11-01T18:18:32Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "c7241d275e2d5295c7a7d26c85e8e730efe0bace",
+      "updatedAt": "2026-11-09T22:28:06Z",
+      "closedAt": "2026-11-09T22:28:06Z",
+      "mergedAt": "2026-11-09T22:28:06Z",
+      "headSha": "01071564ad1e70e758259414cad897ab2c557369",
       "baseRef": "main",
-      "mergeCommitSha": "af2a297ba09fb773477fb90aa2ea9b02278a2172"
+      "mergeCommitSha": "c26a4f6a987064820199bf33deb2e46de54c078d"
     },
     {
       "id": 4914406001,
       "number": 15,
       "title": "TZ-10: Guest web player and album pages",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/15",
-      "state": "open",
-      "draft": true,
+      "state": "closed",
+      "draft": false,
       "createdAt": "2026-10-19T01:07:51Z",
-      "updatedAt": "2026-11-01T18:15:22Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "505e64509c7f206a682b273dfa3a6b15f358352d",
+      "updatedAt": "2026-11-09T22:21:38Z",
+      "closedAt": "2026-11-09T22:21:38Z",
+      "mergedAt": "2026-11-09T22:21:38Z",
+      "headSha": "febc95e9dfb8cbb46f49000511b7f51781190585",
       "baseRef": "main",
-      "mergeCommitSha": "9c557a7a8cf380d7f4786d8f47b87af4ac384cea"
+      "mergeCommitSha": "930ad47e967bbcf0871f1e8b0ff7437655adbe32"
     },
     {
       "id": 4914387499,
