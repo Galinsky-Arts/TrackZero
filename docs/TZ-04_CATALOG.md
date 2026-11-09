@@ -1,0 +1,7 @@
+# TZ-04 catalog and complete-album management
+
+The catalog projection accepts complete-album public metadata only after trusted adapters approve every album. Client-supplied rights or availability flags grant no authority. Album artwork is limited to configured HTTPS origins, and station offer matching reuses the accepted TZ-03 storefront contract while rejecting duplicate or unavailable offers.
+
+The DRE-04 adapter binds tenant and publisher scope server-side and verifies every declared album track through the upstream RadioCatalog.get-compatible lookup. Every item must be tenant- and publisher-matched music with an opaque ciphertext asset reference. A distinct trusted rights source must approve the whole album and its public artwork. Missing or duplicate tracks, rights denial, cross-tenant or cross-publisher records, non-music media, plaintext references and either provider's interruption fail closed. DRE-04 is merged through neophilism/Distributed-Radio-Engine PR #5.
+
+Run `node --test tests/*.test.mjs` on Node 24. Planning CI runs the registry contract and all product tests. Coverage includes normal projection, TZ-03 offer integration, album artwork policy, malformed and duplicate input, rights denial, cross-scope/cross-role media and interrupted DRE/rights lookups. This is not checkout, entitlement, payment, live provider, deployed storage, hardware or production-release evidence.
