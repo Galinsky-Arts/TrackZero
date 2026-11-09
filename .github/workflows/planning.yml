@@ -14,4 +14,25 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24.19.0'
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Galinsky-Arts/Distributed-Radio-Engine
+          ref: 8a70cde14878910ed9e60fe7b744b09030adbba9
+          path: .deps/radio
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Galinsky-Arts/Distributed-Audio-Engine
+          ref: b49fa569ea49663182bffdcef319ec48222c40c7
+          path: .deps/audio-core
+          persist-credentials: false
+      - run: npm ci --ignore-scripts
+        working-directory: .deps/audio-core
+      - run: npm run build
+        working-directory: .deps/audio-core
       - run: node scripts/check-roadmap.mjs
+      - run: node scripts/validate-pr-registry.mjs
+      - run: node --test registry/pr-contract.test.mjs tests/*.test.mjs
+        env:
+          AUDIO_ENGINE_MODULE: ${{ github.workspace }}/.deps/audio-core/dist/src/index.js
+          DRE_PLAYBACK_MODULE: ${{ github.workspace }}/.deps/radio/src/radio-playback.mjs
