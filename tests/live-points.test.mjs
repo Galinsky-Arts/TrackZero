@@ -34,3 +34,17 @@ test('renderer escapes creator ID and avoids client-side grant claims',()=>{
   assert.throws(()=>renderLivePoints({...model.view('a1'),spendable:'100'}));
   assert.throws(()=>renderLivePoints({...model.view('a1'),phase:'VESTED'}));
 });
+
+test('inconsistent interruption and completion phases cannot imply vested points',()=>{
+ const base={artistId:'a',occurrenceId:'o',sequence:1,phase:'VESTED',speakerVerified:true,
+  outroComplete:true,interrupted:true,provisional:'0',spendable:'100'};
+ assert.throws(()=>new LivePointsView().ingestTrusted(base),/inconsistent/);
+ assert.throws(()=>new LivePointsView().ingestTrusted({...base,phase:'ITEM_ACTIVE',interrupted:false}),/inconsistent/);
+});
+test('bounded projections retain replay tombstones instead of evicting them for fresh claims',()=>{
+ const view=new LivePointsView({maxOccurrences:1,maxArtists:1});
+ const event={artistId:'a',occurrenceId:'o',sequence:1,phase:'ITEM_ACTIVE',speakerVerified:false,
+  outroComplete:false,interrupted:false,provisional:'0',spendable:'0'};
+ view.ingestTrusted(event);assert.throws(()=>view.ingestTrusted({...event,sequence:2,occurrenceId:'other'}),/capacity/);
+ assert.equal(view.view('a').occurrenceId,'o');
+});

@@ -4,20 +4,25 @@ const transitions={ITEM_ACTIVE:new Set(['ITEM_ACTIVE','OUTRO_ACTIVE','FORFEITED'
   OUTRO_ACTIVE:new Set(['OUTRO_ACTIVE','VESTED','FORFEITED']),VESTED:new Set(['VESTED']),FORFEITED:new Set(['FORFEITED'])};
 function amount(v){if(typeof v!=='string'||!/^(0|[1-9][0-9]*)$/.test(v)||v.length>80)throw Error('invalid points');return BigInt(v);}
 function validate(v){
-  if(!v||typeof v!=='object'||![v.artistId,v.occurrenceId].every(x=>typeof x==='string'&&id.test(x))||
+  if(!v||typeof v!=='object'||Array.isArray(v)||![v.artistId,v.occurrenceId].every(x=>typeof x==='string'&&id.test(x))||
     !Number.isSafeInteger(v.sequence)||v.sequence<1||!states.has(v.phase)||
     typeof v.speakerVerified!=='boolean'||typeof v.outroComplete!=='boolean'||
     typeof v.interrupted!=='boolean')throw Error('invalid issuer event');
   const provisional=amount(v.provisional),spendable=amount(v.spendable);
   if((v.phase==='VESTED'&&(!v.outroComplete||provisional!==0n))||
     (v.phase==='FORFEITED'&&(!v.interrupted||provisional!==0n))||
-    (!v.speakerVerified&&provisional!==0n))
+    (!v.speakerVerified&&provisional!==0n)||(v.interrupted&&v.phase!=='FORFEITED')||
+    (v.outroComplete&&['ITEM_ACTIVE','OUTRO_ACTIVE'].includes(v.phase)))
     throw Error('inconsistent issuer event');
   return {provisional,spendable};
 }
 /** Display projection only; an authenticated DRE-18 issuer owns accrual and atomic spend. */
 export class LivePointsView{
-  constructor(){this.byArtist=new Map();this.occurrences=new Map();}
+  constructor({maxOccurrences=10000,maxArtists=1000}={}){
+    if(!Number.isSafeInteger(maxOccurrences)||maxOccurrences<1||maxOccurrences>100000||
+      !Number.isSafeInteger(maxArtists)||maxArtists<1||maxArtists>10000)throw Error('invalid view capacity');
+    this.maxOccurrences=maxOccurrences;this.maxArtists=maxArtists;this.byArtist=new Map();this.occurrences=new Map();
+  }
   ingestTrusted(event){
     const {provisional,spendable}=validate(event);
     const key=`${event.artistId}\0${event.occurrenceId}`;
@@ -26,6 +31,8 @@ export class LivePointsView{
       throw Error('stale or invalid point transition');
     const priorWallet=this.byArtist.get(event.artistId);
     if(priorWallet&&event.sequence<=priorWallet.sequence)throw Error('stale artist wallet');
+    if((!previous&&this.occurrences.size>=this.maxOccurrences)||(!priorWallet&&this.byArtist.size>=this.maxArtists))
+      throw Error('point view capacity reached');
     this.occurrences.set(key,{phase:event.phase,sequence:event.sequence});
     this.byArtist.set(event.artistId,Object.freeze({artistId:event.artistId,occurrenceId:event.occurrenceId,
       phase:event.phase,provisional:provisional.toString(),spendable:spendable.toString(),
