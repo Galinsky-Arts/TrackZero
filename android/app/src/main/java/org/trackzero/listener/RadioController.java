@@ -2,6 +2,7 @@ package org.trackzero.listener;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /** UI-independent boundary for a DAE-09 endpoint-encrypted live radio session. */
@@ -17,12 +18,17 @@ public final class RadioController {
 
     private final Engine engine;
     private final Consumer<State> listener;
+    private final Executor dispatcher;
     private long epoch;
     private Session session;
     private boolean closeUncertain;
     private State state = State.STOPPED;
 
     public RadioController(Engine engine, Consumer<State> listener) {
+        this(engine, listener, Runnable::run);
+    }
+    public RadioController(Engine engine, Consumer<State> listener, Executor dispatcher) {
+        this.dispatcher = Objects.requireNonNull(dispatcher);
         this.engine = Objects.requireNonNull(engine);
         this.listener = Objects.requireNonNull(listener);
     }
@@ -41,7 +47,7 @@ public final class RadioController {
         final CompletableFuture<Session> pending;
         try { pending = Objects.requireNonNull(engine.joinLive(stationId)); }
         catch (RuntimeException error) { setState(State.INTERRUPTED); return; }
-        pending.whenComplete((joined, error) -> {
+        pending.whenCompleteAsync((joined, error) -> {
             synchronized (RadioController.this) {
                 if (request != epoch) {
                     if (joined != null) { try { joined.close(); }
@@ -56,7 +62,7 @@ public final class RadioController {
                     session = null; setState(State.INTERRUPTED);
                 }
             }
-        });
+        }, dispatcher);
     }
     public synchronized void stop() {
         epoch++;

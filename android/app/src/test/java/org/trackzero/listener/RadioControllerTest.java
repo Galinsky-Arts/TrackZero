@@ -81,4 +81,16 @@ public final class RadioControllerTest {
         assertEquals(1, joins.get());
         assertEquals(RadioController.State.INTERRUPTED, controller.state());
     }
+    @Test public void completionUsesInjectedDispatcher() {
+        List<Runnable> tasks = new ArrayList<>();
+        FakeSession session = new FakeSession();
+        RadioController controller = new RadioController(id -> CompletableFuture.completedFuture(session), state -> {}, tasks::add);
+        controller.play("s1");
+        assertEquals(RadioController.State.CONNECTING, controller.state());
+        assertEquals(0, session.starts);
+        tasks.remove(0).run();
+        assertEquals(RadioController.State.PLAYING, controller.state());
+        assertEquals(1, session.starts);
+        controller.stop();
+    }
 }

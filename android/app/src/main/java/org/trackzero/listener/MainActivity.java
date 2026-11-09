@@ -44,7 +44,7 @@ public final class MainActivity extends Activity {
                 state == RadioController.State.INTERRUPTED ? "Playback interrupted" : "Stopped");
             play.setEnabled(state == RadioController.State.STOPPED || state == RadioController.State.INTERRUPTED);
             stop.setEnabled(state != RadioController.State.STOPPED);
-        }));
+        }), this::runOnUiThread);
         stop.setEnabled(false);
         // The station ID must come from the verified station catalog in the host application.
         String stationId = getIntent().getStringExtra("stationId");
@@ -54,6 +54,10 @@ public final class MainActivity extends Activity {
             catch (IllegalArgumentException error) { status.setText("Invalid station"); }
         });
         stop.setOnClickListener(view -> controller.stop());
+    }
+    @Override protected void onPause() {
+        if (controller != null) controller.stop();
+        super.onPause();
     }
     @Override protected void onDestroy() {
         if (controller != null) controller.stop();
