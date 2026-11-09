@@ -23,11 +23,13 @@ export class ContributionSetup{
       const route=await this.verifiedRoute();
       if(request!==this.epoch){stream.getTracks().forEach(track=>track.stop());return;}
       // A route declaration from the page or a connected-but-unused speaker is not evidence.
-      if(!route||route.verified!==true||route.active!==true||route.output!=='bluetooth_speaker'){
+      if(!route||route.verified!==true||route.active!==true||!['bluetooth_speaker','wired_speaker'].includes(route.output)){
         stream.getTracks().forEach(track=>track.stop());this.state='UNSUPPORTED';this.notify();return;
       }
       this.stream=stream;
-      for(const track of stream.getTracks())track.addEventListener?.('ended',()=>this.interrupt());
+      for(const track of stream.getTracks())track.addEventListener?.('ended',()=>{
+        if(request===this.epoch&&this.stream===stream)this.interrupt();
+      });
       this.state='READY';this.notify();
     }catch(error){
       stream?.getTracks?.().forEach(track=>track.stop());
@@ -41,7 +43,7 @@ export class ContributionSetup{
     try{
       const route=await this.verifiedRoute();
       if(request!==this.epoch||this.state!=='READY')return;
-      if(!route||route.verified!==true||route.active!==true||route.output!=='bluetooth_speaker')
+      if(!route||route.verified!==true||route.active!==true||!['bluetooth_speaker','wired_speaker'].includes(route.output))
         this.interrupt();
     }catch{
       if(request===this.epoch&&this.state==='READY')this.interrupt();

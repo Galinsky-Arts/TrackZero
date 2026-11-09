@@ -81,3 +81,14 @@ test('UI controls bind opt-in and stop capture on disposal',async()=>{
   dispose();assert.equal(mic.tracks[0].stops,1);assert.equal(enable.handlers.size,0);
   assert.equal(unsubscribed,1);
 });
+
+test('a retired capture cannot interrupt a later explicit capture',async()=>{
+ const captures=[];
+ const setup=new ContributionSetup({requestMic:async()=>{
+  let ended;const track={stop(){},addEventListener(_type,callback){ended=callback;}};
+  const capture={getTracks:()=>[track],end:()=>ended?.()};captures.push(capture);return capture;
+ },verifiedRoute:async()=>({verified:true,active:true,output:'wired_speaker'}),onChange:()=>{}});
+ await setup.enable();setup.disable();await setup.enable();
+ assert.equal(setup.state,'READY');captures[0].end();assert.equal(setup.state,'READY');
+ captures[1].end();assert.equal(setup.state,'INTERRUPTED');
+});
