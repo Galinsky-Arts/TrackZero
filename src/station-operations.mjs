@@ -12,12 +12,16 @@ function engine(value){
     value.role!=='station_engine')throw new OperationsError('ENGINE_AUTH_REQUIRED',403);
   return {tenant:value.tenant,application:value.application,engineId:value.engineId};
 }
+function clock(nowMs){
+  if(!Number.isSafeInteger(nowMs)||nowMs<0)throw new OperationsError('INVALID_CLOCK');
+}
 function event(value,nowMs){
+  clock(nowMs);
   if(!value||typeof value!=='object'||Array.isArray(value)||
     typeof value.stationId!=='string'||!id.test(value.stationId)||
     !Number.isSafeInteger(value.sequence)||value.sequence<1||
     !Number.isSafeInteger(value.scheduleVersion)||value.scheduleVersion<0||
-    !Number.isSafeInteger(value.observedAtMs)||value.observedAtMs>nowMs+5000||
+    !Number.isSafeInteger(value.observedAtMs)||value.observedAtMs<0||value.observedAtMs>nowMs+5000||
     value.observedAtMs<nowMs-300_000||!Object.hasOwn(transitions,value.mode)||
     Object.keys(value).sort().join(',')!=='mode,observedAtMs,scheduleVersion,sequence,stationId')
     throw new OperationsError('INVALID_ENGINE_EVENT');
@@ -32,6 +36,7 @@ export class StationOperations{
       throw new Error('Store, engine authorizer and bounded stale threshold required');
     this.authorizeEngine=authorizeEngine;this.staleAfterMs=staleAfterMs;
     this.db=new DatabaseSync(filename);
+    this.db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;');
     this.db.exec(`CREATE TABLE IF NOT EXISTS station_operations(
       tenant TEXT NOT NULL,application TEXT NOT NULL,station_id TEXT NOT NULL,
       engine_id TEXT NOT NULL,sequence INTEGER NOT NULL,schedule_version INTEGER NOT NULL,
@@ -63,6 +68,7 @@ export class StationOperations{
     }catch(error){this.db.exec('ROLLBACK');throw error;}
   }
   status({tenant,application,stationId},nowMs=Date.now()){
+    clock(nowMs);
     if(![tenant,application,stationId].every(value=>typeof value==='string'&&id.test(value)))
       throw new OperationsError('INVALID_STATION');
     const row=this.db.prepare('SELECT sequence,schedule_version,mode,observed_at_ms FROM station_operations WHERE tenant=? AND application=? AND station_id=?')
@@ -87,20 +93,25 @@ export function renderStationStatus(status){
     `<p>Schedule version: ${status.scheduleVersion===null?'unknown':String(status.scheduleVersion)}</p></section>`;
 }
 
-export function createStationOperationsHandler(store,authenticate){
-  if(!(store instanceof StationOperations)||typeof authenticate!=='function')throw new Error('Authenticated operations store required');
+export function createStationOperationsHandler(store,authenticate,{authorizeViewer=()=>false}={}){
+  if(!(store instanceof StationOperations)||typeof authenticate!=='function'||typeof authorizeViewer!=='function')throw new Error('Authenticated operations store required');
   return async function handle(request){
     const url=new URL(request.url),headers={'content-type':'application/json','cache-control':'no-store'};
     const respond=(status,body)=>new Response(JSON.stringify(body),{status,headers});
     try{
       if(request.method==='GET'&&url.pathname.startsWith('/v1/stations/')&&url.pathname.endsWith('/status')){
         const stationId=url.pathname.slice('/v1/stations/'.length,-'/status'.length);
-        return respond(200,store.status({stationId,tenant:url.searchParams.get('tenant'),application:url.searchParams.get('application')}));
+        const viewer=await authenticate(request);
+        if(!viewer||!['tenant','application'].every(k=>typeof viewer[k]==='string'&&id.test(viewer[k])))
+          throw new OperationsError('UNAUTHENTICATED',401);
+        if([...url.searchParams.keys()].some(k=>['tenant','application'].includes(k))||
+          await authorizeViewer(viewer,stationId)!==true)throw new OperationsError('STATION_ACCESS_DENIED',403);
+        return respond(200,store.status({stationId,tenant:viewer.tenant,application:viewer.application}));
       }
       if(request.method!=='POST'||url.pathname!=='/v1/station-engine/events')return respond(404,{error:'NOT_FOUND'});
       if(request.headers.get('origin')!==url.origin)throw new OperationsError('ORIGIN_DENIED',403);
       const source=await authenticate(request),text=await request.text();
-      if(text.length>4096)throw new OperationsError('BODY_TOO_LARGE',413);
+      if(Buffer.byteLength(text,'utf8')>4096)throw new OperationsError('BODY_TOO_LARGE',413);
       let body;try{body=JSON.parse(text);}catch{throw new OperationsError('INVALID_JSON');}
       if(!body||typeof body!=='object'||Array.isArray(body)||
         ['tenant','application','engineId','role'].some(key=>key in body))

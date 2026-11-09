@@ -55,7 +55,8 @@ test('status markup is accessible and rejects injected fields',()=>{
 });
 test('HTTP accepts only server-authenticated engine events and same-origin writes',async()=>{
  const f=fixture();try{
-  const handle=createStationOperationsHandler(f.store,async request=>request.headers.get('x-fixture-engine')==='yes'?source:null);
+  const handle=createStationOperationsHandler(f.store,async request=>request.headers.get('x-fixture-engine')==='yes'?source:null,
+   {authorizeViewer:(viewer,station)=>viewer.tenant===source.tenant&&station===first.stationId});
   const current=Date.now(),event={...first,observedAtMs:current};
   const post=(body,auth='yes',origin='https://app.example.test')=>new Request('https://app.example.test/v1/station-engine/events',
    {method:'POST',headers:{origin,'x-fixture-engine':auth},body:JSON.stringify(body)});
@@ -63,7 +64,19 @@ test('HTTP accepts only server-authenticated engine events and same-origin write
   assert.equal((await handle(post({...event,engineId:source.engineId}))).status,403);
   assert.equal((await handle(post(event,'no'))).status,403);
   assert.equal((await handle(post(event))).status,200);
-  const response=await handle(new Request('https://app.example.test/v1/stations/station-001/status?tenant=tenant-a&application=trackzero'));
+  const statusUrl='https://app.example.test/v1/stations/station-001/status';
+  assert.equal((await handle(new Request(statusUrl))).status,401);
+  assert.equal((await handle(new Request(statusUrl+'?tenant=other',{headers:{'x-fixture-engine':'yes'}}))).status,403);
+  const response=await handle(new Request(statusUrl,{headers:{'x-fixture-engine':'yes'}}));
   assert.equal((await response.json()).state,'PRIMARY');
+ }finally{f.cleanup();}
+});
+
+test('invalid clock never accepts events or reports fresh state',()=>{
+ const f=fixture();try{
+  for(const clock of [NaN,Infinity,-1,1.2]){
+   assert.throws(()=>f.store.ingest(source,first,clock),/INVALID_CLOCK/);
+   assert.throws(()=>f.store.status({...source,stationId:first.stationId},clock),/INVALID_CLOCK/);
+  }
  }finally{f.cleanup();}
 });
