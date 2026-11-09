@@ -1,3 +1,4 @@
+import {createPrivateBoundary} from './private-endpoint.mjs';
 const ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const SOURCES={output:'OUTPUT_ISSUER',transactions:'PAYMENT_PROCESSOR',campaign:'CAMPAIGN_ISSUER'};
 const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]));
@@ -20,7 +21,7 @@ export function renderReport(report){
     if(typeof metric!=='object'||metric.source!==SOURCES[name]||
         !validId(metric.evidenceId)||typeof metric.count!=='string'||
         !/^(0|[1-9][0-9]*)$/.test(metric.count)||metric.count.length>40||
-        typeof metric.observedAt!=='string'||!Number.isFinite(Date.parse(metric.observedAt)))
+        typeof metric.observedAt!=='string'||metric.observedAt.length>40||!Number.isFinite(Date.parse(metric.observedAt))||Date.parse(metric.observedAt)>Date.now())
       throw Error('unverified metric');
     rows.push(`<li>${label}: ${esc(metric.count)} (verified ${esc(metric.observedAt)})</li>`);
   }
@@ -31,9 +32,10 @@ export function renderReport(report){
 
 /** The host must authenticate a local account, authorize this report's exact
  * subject scope, and load evidence from trusted issuers. */
-export function createReportHandler({authenticate,authorizeReport,loadReport}){
+export function createReportHandler({authenticate,authorizeReport,loadReport,encodeResponse}){
   if([authenticate,authorizeReport,loadReport].some(fn=>typeof fn!=='function'))
     throw Error('Trusted identity, authorization and report providers required');
+  const boundary=createPrivateBoundary({decodeControl:async()=>{throw Error('Read-only report');},encodeResponse});
   return async request=>{
     const url=new URL(request.url);
     const match=/^\/v1\/reports\/(artist|sponsor)\/([A-Za-z0-9][A-Za-z0-9._:-]{0,127})$/.exec(url.pathname);
@@ -49,10 +51,7 @@ export function createReportHandler({authenticate,authorizeReport,loadReport}){
       const report=await loadReport(scope);
       if(!report||report.tenant!==scope.tenant||report.application!==scope.application||
           report.kind!==kind||report.subjectId!==subjectId)throw Error('report scope mismatch');
-      return new Response(renderReport(report),{status:200,headers:{
-        'content-type':'text/html; charset=utf-8','cache-control':'no-store',
-        'content-security-policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
-        'x-content-type-options':'nosniff'}});
+      return await boundary.respond(200,identity,{html:renderReport(report)},{action:'private-report',kind,subjectId});
     }catch{return new Response('Report unavailable',{status:503,headers:{'cache-control':'no-store'}});}
   };
 }
