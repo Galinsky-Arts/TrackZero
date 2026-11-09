@@ -5,10 +5,12 @@ const audio=process.env.AUDIO_ENGINE_MODULE;
 test('actual DAE settlement and DRE whole-work purchase compose through the scoped TrackZero boundary',
  {skip:!audio&&'Set AUDIO_ENGINE_MODULE to the pinned actual DAE build'},async t=>{
  const core=await import(pathToFileURL(audio)),node=await import(new URL('./node/index.js',pathToFileURL(audio)));
+ const {RecordingChannelRegistry}=await import(new URL('./recording-channels.mjs',pathToFileURL(process.env.DRE_PLAYBACK_MODULE)));
  const {WholeWorkCommerce}=await import(new URL('./whole-work-commerce.mjs',pathToFileURL(process.env.DRE_PLAYBACK_MODULE)));
  const dir=mkdtempSync(join(tmpdir(),'tz-album-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));
  const store=new node.SqliteCommerceStore(join(dir,'commerce.sqlite')),entitlementStore=new node.SqliteEntitlementStore(join(dir,'entitlements.sqlite'));
  t.after(()=>{store.close();entitlementStore.close();});
+ const registry=new RecordingChannelRegistry(join(dir,'channels.sqlite'));t.after(()=>registry.close());
  const scope={tenantId:'tenant',application:'distributed-radio',identityId:'merchant'};
  const manager={...scope,deviceId:'device',expiresAtMs:100000,permissions:['commerce:manage','rights:write','entitlements:manage']};
  const buyer={...manager,identityId:'buyer',permissions:['commerce:buy','assets:read']};
@@ -19,7 +21,7 @@ test('actual DAE settlement and DRE whole-work purchase compose through the scop
   requests++;return {providerId:'fixture',merchantAccountId:'account',providerPaymentId:'payment',currency:request.currency,amountMinor:request.amountMinor};
  }},{verify:async()=>event},store);
  const ledger=new core.EntitlementLedger(scope,entitlementStore);
- const whole=new WholeWorkCommerce({scope:{tenantId:'tenant',applicationId:'trackzero',merchantId:'merchant'},checkout:engine,entitlements:ledger,
+ const whole=new WholeWorkCommerce({scope:{tenantId:'tenant',applicationId:'trackzero',merchantId:'merchant'},recordingRegistry:registry,checkout:engine,entitlements:ledger,
   commerceDigest:core.commerceDigest,resolveCompleteWork:async()=>({kind:'complete-album',creatorId:'artist',completeAssetIds:['complete-recording'],
    product:{id:'album',revision:1,assets:[{assetId:'complete-recording',rightsLayers:['recording']}],currency:{code:'USD',minorUnit:2},priceMinor:'1000',validUntilMs:100000}}),
   verifyCompleteWork:async()=>true,resolveBuyer:async()=>buyer,resolveMerchant:async()=>manager,authorizePurchase:async()=>true,
