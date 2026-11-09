@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:label="TrackZero" android:usesCleartextTraffic="false">
+        <activity android:name="org.trackzero.listener.MainActivity" android:exported="false" />
+    </application>
+</manifest>
