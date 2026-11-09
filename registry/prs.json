@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-09T23:53:38Z",
+  "observedAt": "2026-11-09T23:54:56Z",
   "units": [
     {
       "id": "TZ-01",
@@ -580,12 +580,12 @@
       "state": "open",
       "draft": true,
       "createdAt": "2026-11-01T18:41:26Z",
-      "updatedAt": "2026-11-01T18:41:26Z",
+      "updatedAt": "2026-11-09T23:53:42Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "c29ff82c878ba8c2e4fc48d15c3c30909bdd1204",
+      "headSha": "4ef09c53fe6be3e28de77147481b079a3a2c4233",
       "baseRef": "main",
-      "mergeCommitSha": "b066bcc61369c5bf0707ee41a5a04be2dad1c3fb"
+      "mergeCommitSha": "87c19d3d5786c311880de0c576b69eca95f94284"
     },
     {
       "id": 5110372883,

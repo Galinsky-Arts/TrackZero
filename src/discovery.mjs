@@ -32,17 +32,19 @@ export function renderDiscovery(stations,{publicOrigin}){
     `<ul>${cards}</ul></main></html>`;
 }
 
-export function createDiscoveryHandler({listStations,publicOrigin}){
-  if(typeof listStations!=='function')throw Error('Public station provider required');
+export function createDiscoveryHandler({listStations,authorizePublicStation,publicOrigin}){
+  if(typeof listStations!=='function'||typeof authorizePublicStation!=='function')throw Error('Public station provider required');
   origin(publicOrigin);
   return async request=>{
     const url=new URL(request.url);
     if(request.method!=='GET'||url.pathname!=='/v1/discover')
       return new Response('Not found',{status:404});
     try{
-      const html=renderDiscovery(await listStations(),{publicOrigin});
+      const stations=validate(await listStations()),publicStations=[];
+      for(const station of stations)if(await authorizePublicStation(Object.freeze({id:station.id}))===true)publicStations.push(station);
+      const html=renderDiscovery(publicStations,{publicOrigin});
       return new Response(html,{status:200,headers:{'content-type':'text/html; charset=utf-8',
-        'cache-control':'public, max-age=60','content-security-policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+        'cache-control':'no-store','content-security-policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
         'x-content-type-options':'nosniff'}});
     }catch{return new Response('Discovery unavailable',{status:503});}
   };
