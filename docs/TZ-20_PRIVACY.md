@@ -1,0 +1,9 @@
+# TZ-20 private complaints and decisions
+
+The default-private visibility preference is an intentional public-disclosure choice. Private complaint target/reason and decision outcome/explanation/operator are stored only as bounded opaque endpoint ciphertext; scoped routing IDs, case IDs, timestamps and the preference are required local metadata. Approved seal/open adapters must authenticate domain, record kind, ID, scope and creation time; no codec or plaintext fallback is supplied. Storage requires an owner-private ordinary file/directory, WAL/FULL and bounded retained records. Legacy plaintext tables require an explicit authorized endpoint migration.
+
+Complaint retries bind a stable per-owner operation ID and reject changed content. Moderator decisions require a separate trusted authorizer, matching tenant/application and authorization recheck after sealing. Public HTTP offers no moderator path. History returns at most two complaints and two decisions with owner/kind-bound cursors. Retention is capped at 1000 records per kind per owner; a real deployment must supply approved archival/deletion policy before reaching capacity.
+
+The HTTP handler requires approved authenticated E2EE codecs for inputs and private success responses, same-origin mutations and trusted identity. Errors disclose stable codes. Production codecs, keys, identity, retention jobs and public profile renderer integration remain configuration/integration work; fixtures do not establish a deployed privacy service.
+
+Six focused tests cover opaque fixture persistence/reopen, scope isolation, ciphertext swaps, moderator denial, safe file/schema handling, byte bounds, pagination and encrypted HTTP framing. The fixture codec is explicitly an in-memory test double, not an encryption implementation or production protocol.
