@@ -26,16 +26,22 @@ private struct FakeEngine: LiveRadioEngine {
 }
 
 @MainActor final class LiveRadioModelTests: XCTestCase {
+    private func waitUntil(_ predicate: () -> Bool, file: StaticString = #filePath, line: UInt = #line) async {
+        for _ in 0..<2000 {
+            if predicate() { return }
+            try? await Task.sleep(nanoseconds: 1_000_000)
+        }
+        XCTFail("Expected asynchronous state was not reached", file: file, line: line)
+    }
     func testExplicitStartAndStop() async {
         let session = FakeSession()
         let model = LiveRadioModel(engine: FakeEngine(join: { _ in session }))
         XCTAssertEqual(model.state, .stopped)
         model.play(stationId: "s1")
-        await Task.yield()
-        await Task.yield()
+        await waitUntil { model.state == .playing }
         XCTAssertEqual(model.state, .playing)
         model.stop()
-        await Task.yield()
+        await waitUntil { session.closes == 1 }
         XCTAssertEqual(model.state, .stopped)
         XCTAssertEqual(session.starts, 1)
         XCTAssertEqual(session.closes, 1)
@@ -53,8 +59,8 @@ private struct FakeEngine: LiveRadioEngine {
         enum Offline: Error { case unavailable }
         let model = LiveRadioModel(engine: FakeEngine(join: { _ in throw Offline.unavailable }))
         model.play(stationId: "s1")
-        await Task.yield()
-        XCTAssertNotEqual(model.state, .playing)
+        await waitUntil { model.state == .interrupted }
+        XCTAssertEqual(model.state, .interrupted)
     }
     func testNextStationWaitsForPreviousSessionClose() async {
         let first = FakeSession(), second = FakeSession(), gate = CloseGate()
@@ -65,13 +71,13 @@ private struct FakeEngine: LiveRadioEngine {
             return joins == 1 ? first : second
         }))
         model.play(stationId: "station-a")
-        for _ in 0..<10 { await Task.yield() }
+        await waitUntil { joins == 1 }
         XCTAssertEqual(joins, 1)
         model.play(stationId: "station-b")
-        for _ in 0..<10 { await Task.yield() }
+        await waitUntil { first.closes == 1 }
         XCTAssertEqual(joins, 1)
         await gate.release()
-        for _ in 0..<10 { await Task.yield() }
+        await waitUntil { joins == 2 }
         XCTAssertEqual(joins, 2)
         XCTAssertEqual(first.closes, 1)
     }
@@ -82,9 +88,9 @@ private struct FakeEngine: LiveRadioEngine {
         var joins = 0
         let model = LiveRadioModel(engine: FakeEngine(join: { _ in joins += 1; return first }))
         model.play(stationId: "s1")
-        for _ in 0..<100 { await Task.yield() }
+        await waitUntil { model.state == .playing }
         model.stop()
-        for _ in 0..<100 { await Task.yield() }
+        await waitUntil { model.state == .interrupted }
         XCTAssertEqual(model.state, .interrupted)
         model.play(stationId: "s2")
         for _ in 0..<100 { await Task.yield() }
@@ -95,7 +101,7 @@ private struct FakeEngine: LiveRadioEngine {
         first.onStart = { await gate.wait() }
         let model = LiveRadioModel(engine: FakeEngine(join: { _ in first }))
         model.play(stationId: "s1")
-        for _ in 0..<100 { await Task.yield() }
+        await waitUntil { first.starts == 1 }
         XCTAssertEqual(first.starts, 1)
         model.stop()
         for _ in 0..<100 { await Task.yield() }
