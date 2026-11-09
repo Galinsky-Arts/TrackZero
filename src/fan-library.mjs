@@ -1,3 +1,4 @@
+import {encryptedControlEnvelope} from './http-boundary.mjs';
 const id=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /** Renders only trusted, viewer-scoped entitlements. No client-side grant or raw media URL. */
@@ -26,14 +27,14 @@ export function renderFanLibrary(viewer,grants){
 /** Trusted account lookup and entitlement issuer are injected by the host.
  * This endpoint discloses no media URL or download capability.
  */
-export function createFanLibraryHandler({authenticate,getGrants}){
-  if(typeof authenticate!=='function'||typeof getGrants!=='function')
+export function createFanLibraryHandler({authenticate,getGrants,encodeResponse}){
+  if(![authenticate,getGrants,encodeResponse].every(fn=>typeof fn==='function'))
     throw Error('Trusted identity and entitlement providers required');
   return async request=>{
     const url=new URL(request.url);
     if(request.method!=='GET'||url.pathname!=='/v1/library')
       return new Response('Not found',{status:404});
-    const headers={'content-type':'text/html; charset=utf-8','cache-control':'no-store',
+    const headers={'content-type':'application/json; charset=utf-8','cache-control':'no-store',
       'content-security-policy':"default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
       'x-content-type-options':'nosniff'};
     try{
@@ -42,10 +43,14 @@ export function createFanLibraryHandler({authenticate,getGrants}){
         typeof v==='string'&&id.test(v))||!Array.isArray(account.roles)||
         !account.roles.includes('listener'))return new Response('Unauthorized',{status:403});
       const viewer={userId:account.userId,tenant:account.tenant,application:account.application};
-      const grants=await getGrants(viewer);
+      const after=url.searchParams.get('after');
+      if(after!==null&&(typeof after!=='string'||!id.test(after)))return new Response('Invalid cursor',{status:400,headers});
+      const loaded=await getGrants(viewer,{limit:10,after});
+      const grants=Array.isArray(loaded)?loaded:loaded?.items,nextCursor=Array.isArray(loaded)?null:loaded?.nextCursor;
+      if(!Array.isArray(grants)||grants.length>10||(nextCursor!==null&&(typeof nextCursor!=='string'||!id.test(nextCursor))))throw Error('Invalid bounded library page');
       const body=renderFanLibrary(viewer,grants);
-      return new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Your library</title>${body}</html>`,
-        {status:200,headers});
+      const packet=encryptedControlEnvelope(await encodeResponse(viewer,{html:`<!doctype html><html lang="en"><meta charset="utf-8"><title>Your library</title>${body}</html>`,nextCursor},{action:'fan-library'}));
+      return new Response(JSON.stringify(packet),{status:200,headers});
     }catch{return new Response('Library unavailable',{status:503,
       headers:{'cache-control':'no-store'}});}
   };

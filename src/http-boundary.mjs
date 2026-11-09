@@ -35,6 +35,6 @@ export function encryptedControlEnvelope(packet){
     packet.body.epoch<1||packet.body.sequence<1||packet.body.expiresAtMs<=packet.body.issuedAtMs||
     typeof packet.body.payloadCiphertextBase64!=='string'||!packet.body.payloadCiphertextBase64||
     packet.body.payloadCiphertextBase64.length>65536||typeof packet.signatureHex!=='string'||!/^[a-f0-9]{128}$/.test(packet.signatureHex)||
-    Buffer.byteLength(JSON.stringify(packet),'utf8')>8192)throw new BoundaryError('ENCRYPTED_CONTROL_REQUIRED');
+    new TextEncoder().encode(JSON.stringify(packet)).byteLength>8192)throw new BoundaryError('ENCRYPTED_CONTROL_REQUIRED');
   return packet;
 }
