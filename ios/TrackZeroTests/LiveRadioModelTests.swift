@@ -4,9 +4,10 @@ import XCTest
 private final class FakeSession: LiveRadioSession {
     var starts = 0
     var closes = 0
-    var onClose: (() async -> Void)?
-    func start() async throws { starts += 1 }
-    func close() async { closes += 1; await onClose?() }
+    var onClose: (() async throws -> Void)?
+    var onStart: (() async -> Void)?
+    func start() async throws { starts += 1; await onStart?() }
+    func close() async throws { closes += 1; try await onClose?() }
 }
 private actor CloseGate {
     private var released = false
@@ -73,5 +74,34 @@ private struct FakeEngine: LiveRadioEngine {
         for _ in 0..<10 { await Task.yield() }
         XCTAssertEqual(joins, 2)
         XCTAssertEqual(first.closes, 1)
+    }
+    func testFailedClosePreventsAnotherJoin() async {
+        enum Cleanup: Error { case failed }
+        let first = FakeSession()
+        first.onClose = { throw Cleanup.failed }
+        var joins = 0
+        let model = LiveRadioModel(engine: FakeEngine(join: { _ in joins += 1; return first }))
+        model.play(stationId: "s1")
+        for _ in 0..<100 { await Task.yield() }
+        model.stop()
+        for _ in 0..<100 { await Task.yield() }
+        XCTAssertEqual(model.state, .interrupted)
+        model.play(stationId: "s2")
+        for _ in 0..<100 { await Task.yield() }
+        XCTAssertEqual(joins, 1)
+    }
+    func testStopDuringStartClosesExactlyOnce() async {
+        let first = FakeSession(), gate = CloseGate()
+        first.onStart = { await gate.wait() }
+        let model = LiveRadioModel(engine: FakeEngine(join: { _ in first }))
+        model.play(stationId: "s1")
+        for _ in 0..<100 { await Task.yield() }
+        XCTAssertEqual(first.starts, 1)
+        model.stop()
+        for _ in 0..<100 { await Task.yield() }
+        await gate.release()
+        for _ in 0..<100 { await Task.yield() }
+        XCTAssertEqual(first.closes, 1)
+        XCTAssertEqual(model.state, .stopped)
     }
 }
