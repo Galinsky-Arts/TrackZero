@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LiveRadioView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @ObservedObject var model: LiveRadioModel
     let stationId: String?
     var body: some View {
@@ -17,5 +18,6 @@ struct LiveRadioView: View {
         }
         .padding()
         .onDisappear { model.stop() }
+        .onChange(of: scenePhase) { phase in if phase != .active { model.stop() } }
     }
 }
