@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: Galinsky-Arts/Distributed-Radio-Engine
-          ref: e7f05d6cc0cfb464ca2ad4d48f09b41ab0e6f26a
+          ref: 8a70cde14878910ed9e60fe7b744b09030adbba9
           path: .deps/radio
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
