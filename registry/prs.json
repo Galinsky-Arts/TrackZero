@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-10T00:07:43Z",
+  "observedAt": "2026-11-10T00:10:31Z",
   "units": [
     {
       "id": "TZ-01",
@@ -443,7 +443,9 @@
       "id": "TZ-22",
       "title": "Accessibility and battery/recovery qualification",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        32
+      ],
       "dependsOn": [
         "TZ-21"
       ],
@@ -547,34 +549,49 @@
   ],
   "pullRequests": [
     {
+      "id": 5233350506,
+      "number": 32,
+      "title": "TZ-22: repeatable browser qualification and honest pilot/rollout readiness",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/32",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-10T00:09:41Z",
+      "updatedAt": "2026-11-10T00:09:41Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "45f69001a429a0cf10ecfe98f56b6011baddbe1b",
+      "baseRef": "main",
+      "mergeCommitSha": null
+    },
+    {
       "id": 5233292524,
       "number": 31,
       "title": "TZ-26: accessible once-per-grant Groove reveal at shared transitions",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/31",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-10T00:04:41Z",
-      "updatedAt": "2026-11-10T00:05:33Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-11-10T00:07:46Z",
+      "closedAt": "2026-11-10T00:07:46Z",
+      "mergedAt": "2026-11-10T00:07:46Z",
       "headSha": "cac260d0af60de81dabc31be1b3f2a20bec86b41",
       "baseRef": "main",
-      "mergeCommitSha": "96d96338f1fb7aa6bf2c37e60cd42ee1a0cd38dc"
+      "mergeCommitSha": "206562cc2f53157332ceb5c2f0fcd87d0f89f105"
     },
     {
       "id": 5233282136,
       "number": 30,
       "title": "TZ-25: private Groove settings with atomic DRE publication",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/30",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-10T00:03:41Z",
-      "updatedAt": "2026-11-10T00:05:14Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-11-10T00:07:42Z",
+      "closedAt": "2026-11-10T00:07:42Z",
+      "mergedAt": "2026-11-10T00:07:42Z",
       "headSha": "4eeac7eab98415c789bbbac4652501781bf99726",
       "baseRef": "main",
-      "mergeCommitSha": "6fe857024acfcdc917985af469d1a57661b4ade0"
+      "mergeCommitSha": "8dee9b4cedc5dab39546975cfb66467758196229"
     },
     {
       "id": 5233218424,
