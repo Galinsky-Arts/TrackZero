@@ -1,0 +1,23 @@
+{
+  "browser": "156.0.8078.79",
+  "viewport": "390x844",
+  "normalAnimation": "groove-unlock",
+  "reducedMotion": {
+    "animation": "none",
+    "live": "polite",
+    "atomic": "true"
+  },
+  "focusRetained": true,
+  "mobileOverflow": false,
+  "forcedColors": true,
+  "pageErrors": 0,
+  "axeViolations": 0,
+  "scope": "DOM fixture only; no media/provider/hardware qualification",
+  "observedAt": "2026-11-10",
+  "playwrightCore": "1.57.0",
+  "axeCorePlaywright": "4.11.1",
+  "sourceFiles": {
+    "src/groove-reveal.mjs": "5865c28a676b1d6b9784534d5238e0a2c31a175f794ccbe8d5674ccdad037dfa",
+    "scripts/browser-qualification.mjs": "4c4d99470ef6a8842cdc949f32e096366dd3f2327ec5a5adaf0c0eff348034d1"
+  }
+}

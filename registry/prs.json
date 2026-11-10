@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-10T00:05:12Z",
+  "observedAt": "2026-11-10T00:07:43Z",
   "units": [
     {
       "id": "TZ-01",
@@ -554,12 +554,12 @@
       "state": "open",
       "draft": false,
       "createdAt": "2026-11-10T00:04:41Z",
-      "updatedAt": "2026-11-10T00:04:41Z",
+      "updatedAt": "2026-11-10T00:05:33Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "4fe753425a20448089e673ffc64fbba905829acc",
+      "headSha": "cac260d0af60de81dabc31be1b3f2a20bec86b41",
       "baseRef": "main",
-      "mergeCommitSha": null
+      "mergeCommitSha": "96d96338f1fb7aa6bf2c37e60cd42ee1a0cd38dc"
     },
     {
       "id": 5233282136,
@@ -569,12 +569,12 @@
       "state": "open",
       "draft": false,
       "createdAt": "2026-11-10T00:03:41Z",
-      "updatedAt": "2026-11-10T00:03:41Z",
+      "updatedAt": "2026-11-10T00:05:14Z",
       "closedAt": null,
       "mergedAt": null,
-      "headSha": "01e7639b8a86fd5b267c6e60ba94502de8942df6",
+      "headSha": "4eeac7eab98415c789bbbac4652501781bf99726",
       "baseRef": "main",
-      "mergeCommitSha": null
+      "mergeCommitSha": "6fe857024acfcdc917985af469d1a57661b4ade0"
     },
     {
       "id": 5233218424,
@@ -614,7 +614,7 @@
       "state": "closed",
       "draft": false,
       "createdAt": "2026-11-01T18:43:37Z",
-      "updatedAt": "2026-11-10T00:03:11Z",
+      "updatedAt": "2026-11-10T00:05:15Z",
       "closedAt": "2026-11-10T00:03:11Z",
       "mergedAt": "2026-11-10T00:03:11Z",
       "headSha": "d1cce8528995942e569192e29d42700ececbca7f",
@@ -629,7 +629,7 @@
       "state": "closed",
       "draft": false,
       "createdAt": "2026-11-01T18:41:26Z",
-      "updatedAt": "2026-11-09T23:55:16Z",
+      "updatedAt": "2026-11-10T00:05:12Z",
       "closedAt": "2026-11-09T23:55:16Z",
       "mergedAt": "2026-11-09T23:55:16Z",
       "headSha": "4ef09c53fe6be3e28de77147481b079a3a2c4233",

@@ -1,17 +1,7 @@
-# Implementation and evidence status
+# TrackZero implementation and evidence
 
-The first fourteen implementation/hardening PRs are merged. They cover thirteen roadmap IDs: DAE-01 through DAE-07, DAE-24, DAE-25, DAE-27, DAE-28, DAE-33 and DAE-34. DAE-33 also includes hardening PR #14. All 57 portable tests pass; source/boundary, strict typecheck, roadmap DAG and build checks pass. GitHub PR CI was checked at each exact head before merging.
+The repository now contains scoped onboarding, creator catalog/rights/program controls, station operations, guest playback adapters, tested Android/Swift listener shells, opt-in contribution UI, actual DRE reward pricing/redemption, complete-album commerce, a private fan library/reporting/support boundary, endpoint-sealed complaints and moderated discovery. TZ-25 adds actual DRE-backed atomic Groove settings; TZ-26 adds an accessible shared-transition reveal with durable once-per-opportunity checkpoints.
 
-| Area | Current scope | Outstanding evidence or integration |
-|---|---|---|
-| Encryption | Endpoint AES-GCM chunks, private manifests, integrity/context and size checks | Authenticated parent key channel, range streaming, independent crypto review |
-| Controls | Endpoint signatures, scope, atomic replay interface, leases and emergency supersession | Durable checkpoint store, E2EE control payload integration, native output enforcement |
-| Identity | Tenant/app policy evaluator and root-authorized device event chain | Provider provisioning, root/hardware storage, recovery and real agreement protocol |
-| Ingestion | Resumable ciphertext-only orchestrator, quota/digest/expiry checks | Durable state/storage adapters and deployed cleanup/restore drills |
-| Rights | Explicit layers, uses, validity, territory and revocation | Authorized record provisioning, confidential persistence and production review |
-| Media | RIFF/WAVE PCM/float32 parsing, PCM16 encoding, exact frames, digital peak/RMS, fresh-key renditions | Compressed/extended codecs, integrated loudness analysis and native sinks |
-| Timing | Common sample clock, current-position joins and transition markers | Device clock discipline, Bluetooth output measurements and acoustic qualification |
-| Spatial | Scene contracts, mono mixtures, bounded source/speaker gains, fixed/object tracking | Resampling, topology choreography, actual positioning hardware and field pilots |
-| Acoustic harness | Short-capture latency and trial report calculations | Real reference captures, source attribution, calibrated levels and independent assessment |
+The current full development suite has 144 passing tests against the actual pinned DAE/DRE modules. Native hosted CI compiles/tests its implemented shells; browser qualification exercises the reveal in Chromium with reduced motion, focus, mobile overflow, forced colors and automated WCAG checks. Current PR snapshots and dependency links are in registry/prs.json. Individual docs describe the supported slices and unresolved host integrations.
 
-No service is deployed by these merges. No physical speaker trial, independent release review or production certification has been performed. SceneSignal, Distributed Radio Engine and TrackZero currently receive specifications and plans; application implementation follows the requested build order.
+These are application components and tested boundaries, not a finished deployed app. Actual approved identity/key/codec provisioning and composition, native encrypted endpoint bootstrap, recording upload/rights operations, Stripe sandbox delivery, live multi-merchant payout/refund/support flows, persistent hosting/restore and real phone/acoustic/pilot evidence remain incomplete. TZ-22 through TZ-24 and DRE-27/DRE-28 cannot honestly be closed as real qualification/rollout without those results. See RELEASE_READINESS.md for concrete steps and evidence. No certification or independent human review is claimed; external review is deferred by owner policy.
