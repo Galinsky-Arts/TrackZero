@@ -15,5 +15,7 @@ jobs:
         with:
           node-version: '24.19.0'
       - run: npm ci --ignore-scripts --prefix tools/browser-qualification
+      - run: npm audit --audit-level=high --prefix tools/browser-qualification
+      - run: python3 scripts/check-current-secrets.py
       - run: node tools/browser-qualification/node_modules/playwright-core/cli.js install --with-deps chromium
       - run: node scripts/browser-qualification.mjs
