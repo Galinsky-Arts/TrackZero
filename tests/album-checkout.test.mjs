@@ -18,7 +18,7 @@ const post=(headers={},body={albumId:'a1',offerVersion:2})=>{decodedBody=body;re
 test('verified complete album starts idempotent provider checkout without card data',async()=>{
   const {handler,calls}=setup(),res=await handler(post());assert.equal(res.status,200);
   assert.deepEqual(calls,[{userId:'u1',...scope,albumId:'a1',offerVersion:2,idempotencyKey:'request-123456789012345',proof:'fixture-consent'}]);
-  assert.deepEqual(encoded.at(-1),{checkoutId:'c1',state:'PENDING',fulfillmentPending:false});assert.deepEqual(await res.json(),packet);
+  assert.deepEqual(encoded.at(-1),{checkoutId:'c1',state:'PENDING',fulfillmentPending:false,checkoutUrl:null});assert.deepEqual(await res.json(),packet);
 });
 test('rejects stale offer, forged price/card fields, origin and cross-role',async()=>{
   assert.equal((await setup().handler(post({}, {albumId:'a1',offerVersion:1}))).status,409);
@@ -46,4 +46,14 @@ test('private checkout never accepts a plaintext control or exposes an unencrypt
  assert.equal((await handler(raw)).status,400);
  const response=await handler(post());assert.equal(response.status,200);
  const payload=await response.text();assert.doesNotMatch(payload,/checkoutId|receiptId|fulfillmentPending/);
+});
+
+test('hosted Stripe URL stays inside the encrypted buyer response and rejects untrusted payment origins',async()=>{
+ const options={authenticate:async()=>({...scope,userId:'u1',role:'listener'}),getOffer:async()=>offer,
+  decodeControl:async()=>({albumId:'a1',offerVersion:2}),encodeResponse:async(_actor,value)=>{encoded.push(value);return packet;},authorizePurchase:async()=> 'fixture-consent'};
+ let url='https://checkout.stripe.com/c/pay/cs_test_fixture';
+ const handler=createAlbumCheckout({...options,commerce:{startCheckout:async()=>({checkoutId:'c1',state:'PENDING',checkoutUrl:url}),getReceipt:async()=>null}});
+ const response=await handler(post());assert.equal(response.status,200);assert.equal(encoded.at(-1).checkoutUrl,url);
+ assert.doesNotMatch(await response.text(),/checkout.stripe.com|cs_test_fixture/);
+ url='https://checkout.stripe.com.evil.test/steal';assert.equal((await handler(post())).status,503);
 });

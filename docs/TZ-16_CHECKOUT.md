@@ -20,3 +20,5 @@ rights-verified fulfillment is reported as pending, without another provider cha
 The actual production identity/enrollment, merchant/provider configuration,
 signed provider sandbox and payout/refund workflows remain pending. This software
 merge cannot establish a working merchant account or production acceptance.
+
+The Stripe integration exposes only a validated `https://checkout.stripe.com` payment URL inside the encrypted authenticated pending response. Completed receipts clear the URL. Arbitrary redirect origins are rejected. CI pins DRE's sandbox Stripe adapter and the DAE quote-lifetime fix. Sandbox account setup/webhook delivery and real browser checkout remain pending credentials and deployment.

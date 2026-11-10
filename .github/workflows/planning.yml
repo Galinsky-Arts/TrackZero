@@ -17,13 +17,13 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: Galinsky-Arts/Distributed-Radio-Engine
-          ref: 8a70cde14878910ed9e60fe7b744b09030adbba9
+          ref: a1a5b48f794377003c617a56da810eee4038b578
           path: .deps/radio
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: Galinsky-Arts/Distributed-Audio-Engine
-          ref: b49fa569ea49663182bffdcef319ec48222c40c7
+          ref: feaf485beb25f25ce222b3bc7a57c09392cc57a6
           path: .deps/audio-core
           persist-credentials: false
       - run: npm ci --ignore-scripts
