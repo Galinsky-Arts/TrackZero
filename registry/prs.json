@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-09T23:57:11Z",
+  "observedAt": "2026-11-10T00:05:12Z",
   "units": [
     {
       "id": "TZ-01",
@@ -497,7 +497,9 @@
       "id": "TZ-25",
       "title": "Unlocked Groove creator settings and separate bonus catalog",
       "origin": "addition",
-      "prs": [],
+      "prs": [
+        30
+      ],
       "dependsOn": [
         "TZ-14"
       ],
@@ -524,7 +526,9 @@
       "id": "TZ-26",
       "title": "LOCKED to UNLOCKED GROOVE reveal",
       "origin": "addition",
-      "prs": [],
+      "prs": [
+        31
+      ],
       "dependsOn": [
         "TZ-17",
         "TZ-25"
@@ -542,6 +546,51 @@
     }
   ],
   "pullRequests": [
+    {
+      "id": 5233292524,
+      "number": 31,
+      "title": "TZ-26: accessible once-per-grant Groove reveal at shared transitions",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/31",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-10T00:04:41Z",
+      "updatedAt": "2026-11-10T00:04:41Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "4fe753425a20448089e673ffc64fbba905829acc",
+      "baseRef": "main",
+      "mergeCommitSha": null
+    },
+    {
+      "id": 5233282136,
+      "number": 30,
+      "title": "TZ-25: private Groove settings with atomic DRE publication",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/30",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-10T00:03:41Z",
+      "updatedAt": "2026-11-10T00:03:41Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "01e7639b8a86fd5b267c6e60ba94502de8942df6",
+      "baseRef": "main",
+      "mergeCommitSha": null
+    },
+    {
+      "id": 5233218424,
+      "number": 29,
+      "title": "Keep hosted Stripe checkout URL inside encrypted buyer responses",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/29",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-09T23:57:21Z",
+      "updatedAt": "2026-11-10T00:03:29Z",
+      "closedAt": "2026-11-10T00:03:29Z",
+      "mergedAt": "2026-11-10T00:03:29Z",
+      "headSha": "31c711e959ae94d72d64caf3edeeff0ae322ae33",
+      "baseRef": "main",
+      "mergeCommitSha": "b20f63546003be9cc2a81213c520c62637ae9171"
+    },
     {
       "id": 5113085766,
       "number": 28,
@@ -562,15 +611,15 @@
       "number": 27,
       "title": "TZ-21: Discovery and station sharing",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/27",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-01T18:43:37Z",
-      "updatedAt": "2026-11-09T23:56:34Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "f3e2b9aa86ad55c522f86989faa7113d9843d3c9",
+      "updatedAt": "2026-11-10T00:03:11Z",
+      "closedAt": "2026-11-10T00:03:11Z",
+      "mergedAt": "2026-11-10T00:03:11Z",
+      "headSha": "d1cce8528995942e569192e29d42700ececbca7f",
       "baseRef": "main",
-      "mergeCommitSha": "dd2e3b831965e0fec792617103fe9313cca507fb"
+      "mergeCommitSha": "eb3d1a51d922d51582d32e91728729cc828dff43"
     },
     {
       "id": 5110394173,
