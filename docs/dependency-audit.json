@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-11-10",
+  "tool": "npm audit",
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "lockfile": "tools/browser-qualification/package-lock.json",
+  "lockfileSha256": "5ee2c9bd449b475518553f9a1dc1ad60926b8e7e514d6d103ddfa48f8d2afb53",
+  "scope": "current locked npm dependency graph only; not a comprehensive security assessment"
+}

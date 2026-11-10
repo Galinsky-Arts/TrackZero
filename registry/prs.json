@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-10T00:05:12Z",
+  "observedAt": "2026-11-10T00:10:31Z",
   "units": [
     {
       "id": "TZ-01",
@@ -443,7 +443,9 @@
       "id": "TZ-22",
       "title": "Accessibility and battery/recovery qualification",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        32
+      ],
       "dependsOn": [
         "TZ-21"
       ],
@@ -547,34 +549,49 @@
   ],
   "pullRequests": [
     {
+      "id": 5233350506,
+      "number": 32,
+      "title": "TZ-22: repeatable browser qualification and honest pilot/rollout readiness",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/32",
+      "state": "open",
+      "draft": false,
+      "createdAt": "2026-11-10T00:09:41Z",
+      "updatedAt": "2026-11-10T00:09:41Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headSha": "45f69001a429a0cf10ecfe98f56b6011baddbe1b",
+      "baseRef": "main",
+      "mergeCommitSha": null
+    },
+    {
       "id": 5233292524,
       "number": 31,
       "title": "TZ-26: accessible once-per-grant Groove reveal at shared transitions",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/31",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-10T00:04:41Z",
-      "updatedAt": "2026-11-10T00:04:41Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "4fe753425a20448089e673ffc64fbba905829acc",
+      "updatedAt": "2026-11-10T00:07:46Z",
+      "closedAt": "2026-11-10T00:07:46Z",
+      "mergedAt": "2026-11-10T00:07:46Z",
+      "headSha": "cac260d0af60de81dabc31be1b3f2a20bec86b41",
       "baseRef": "main",
-      "mergeCommitSha": null
+      "mergeCommitSha": "206562cc2f53157332ceb5c2f0fcd87d0f89f105"
     },
     {
       "id": 5233282136,
       "number": 30,
       "title": "TZ-25: private Groove settings with atomic DRE publication",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/30",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-10T00:03:41Z",
-      "updatedAt": "2026-11-10T00:03:41Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "01e7639b8a86fd5b267c6e60ba94502de8942df6",
+      "updatedAt": "2026-11-10T00:07:42Z",
+      "closedAt": "2026-11-10T00:07:42Z",
+      "mergedAt": "2026-11-10T00:07:42Z",
+      "headSha": "4eeac7eab98415c789bbbac4652501781bf99726",
       "baseRef": "main",
-      "mergeCommitSha": null
+      "mergeCommitSha": "8dee9b4cedc5dab39546975cfb66467758196229"
     },
     {
       "id": 5233218424,
@@ -614,7 +631,7 @@
       "state": "closed",
       "draft": false,
       "createdAt": "2026-11-01T18:43:37Z",
-      "updatedAt": "2026-11-10T00:03:11Z",
+      "updatedAt": "2026-11-10T00:05:15Z",
       "closedAt": "2026-11-10T00:03:11Z",
       "mergedAt": "2026-11-10T00:03:11Z",
       "headSha": "d1cce8528995942e569192e29d42700ececbca7f",
@@ -629,7 +646,7 @@
       "state": "closed",
       "draft": false,
       "createdAt": "2026-11-01T18:41:26Z",
-      "updatedAt": "2026-11-09T23:55:16Z",
+      "updatedAt": "2026-11-10T00:05:12Z",
       "closedAt": "2026-11-09T23:55:16Z",
       "mergedAt": "2026-11-09T23:55:16Z",
       "headSha": "4ef09c53fe6be3e28de77147481b079a3a2c4233",
