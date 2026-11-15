@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-15T01:00:00Z",
+  "observedAt": "2026-11-15T01:30:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -503,7 +503,8 @@
       "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
       "gate": "Actual field evidence for hardware/production claims",
       "contributingPrs": [
-        33
+        33,
+        34
       ]
     },
     {
@@ -559,6 +560,21 @@
     }
   ],
   "pullRequests": [
+    {
+      "id": 5317880710,
+      "number": 34,
+      "title": "Fix engine build on Render and record PRs #33/#3",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/34",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-15T00:34:49Z",
+      "updatedAt": "2026-11-15T00:45:04Z",
+      "closedAt": "2026-11-15T00:45:04Z",
+      "mergedAt": "2026-11-15T00:45:04Z",
+      "headSha": "047a58f13f6075f88cd64f72ab91361d1c09b5fe",
+      "baseRef": "main",
+      "mergeCommitSha": "32763598442cebdbdceff3aac85d5b66b345f62b"
+    },
     {
       "id": 5317852298,
       "number": 33,
