@@ -231,6 +231,7 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
     function serveStatic(url) {
       let path = null;
       if (url.pathname === '/' || url.pathname === '/index.html') path = join(PUBLIC_DIR, 'index.html');
+      else if (url.pathname === '/favicon.ico') path = join(PUBLIC_DIR, 'assets/icon.svg');
       else if (/^\/assets\/[A-Za-z0-9_.-]+\.(?:js|css|svg|webmanifest)$/.test(url.pathname)) path = join(PUBLIC_DIR, url.pathname.slice(1));
       else if (url.pathname.startsWith('/modules/') && BROWSER_MODULES.has(url.pathname.slice(9))) path = join(SRC_DIR, url.pathname.slice(9));
       if (!path) return null;
