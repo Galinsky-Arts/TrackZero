@@ -5,13 +5,13 @@
 # persistent disk (paid) and TZ_STORAGE_DURABILITY=persistent.
 services:
   - type: web
-    name: trackzero-preview
+    name: trackzero-galinsky-arts
     runtime: node
     plan: free
     region: virginia
     repo: https://github.com/Galinsky-Arts/TrackZero
     branch: main
-    autoDeployTrigger: 'off'
+    autoDeployTrigger: checksPass
     buildCommand: node scripts/prepare-deps.mjs && npm ci --ignore-scripts
     startCommand: node bin/trackzero.mjs --migrate && node bin/trackzero.mjs
     healthCheckPath: /healthz
