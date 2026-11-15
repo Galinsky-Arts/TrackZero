@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-10T00:10:31Z",
+  "observedAt": "2026-11-15T01:00:00Z",
   "units": [
     {
       "id": "TZ-01",
@@ -471,7 +471,11 @@
           "unitId": "DRE-27"
         }
       ],
-      "externalPrerequisites": [],
+      "externalPrerequisites": [
+        "Approved enrolled DAE endpoints with key/codec provisioning and encrypted media intake",
+        "Stripe sandbox STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and STRIPE_ACCOUNT_ID from the owner",
+        "Real pilot artists, listeners, phones and speakers"
+      ],
       "scope": "Validate creator programming, listening, rewards and commerce together.",
       "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
       "gate": "Actual field evidence for hardware/production claims"
@@ -490,10 +494,17 @@
           "unitId": "DRE-28"
         }
       ],
-      "externalPrerequisites": [],
+      "externalPrerequisites": [
+        "Owner decision on paid persistent disk hosting for application SQLite stores",
+        "Stripe sandbox keys and later live-transaction approval from the owner",
+        "Operational ownership, backup/restore drill and real pilot evidence"
+      ],
       "scope": "Deliver launch evidence and clear creator/support procedures.",
       "acceptance": "Exercise the stated workflow plus denial, interruption and cross-role cases; publish supported scope and real validation status.",
-      "gate": "Actual field evidence for hardware/production claims"
+      "gate": "Actual field evidence for hardware/production claims",
+      "contributingPrs": [
+        33
+      ]
     },
     {
       "id": "TZ-25",
@@ -548,6 +559,21 @@
     }
   ],
   "pullRequests": [
+    {
+      "id": 5317852298,
+      "number": 33,
+      "title": "Compose TrackZero into a deployable app with accounts and web UI",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/33",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-15T00:31:35Z",
+      "updatedAt": "2026-11-15T00:33:15Z",
+      "closedAt": "2026-11-15T00:33:15Z",
+      "mergedAt": "2026-11-15T00:33:15Z",
+      "headSha": "fff85c10f1747f81669c482ca57c44e456fb9d52",
+      "baseRef": "main",
+      "mergeCommitSha": "07a33f20b50090e7bad3de7ce97fac5bfd40fbdf"
+    },
     {
       "id": 5233350506,
       "number": 32,
@@ -982,21 +1008,6 @@
       "headSha": "caaab2ae3221e2a82276a702ad41bef6eca53454",
       "baseRef": "main",
       "mergeCommitSha": "663203938587cb81144c5caab2feab3808d0ffd5"
-    },
-    {
-      "id": 4832051661,
-      "number": 3,
-      "title": "Port TrackZero roadmap and E2EESA integrity checks to CircleCI",
-      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/3",
-      "state": "open",
-      "draft": false,
-      "createdAt": "2026-10-12T16:12:49Z",
-      "updatedAt": "2026-10-12T16:12:49Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "79b2c77f8b9127c5d676376b9f745674d1a928c2",
-      "baseRef": "main",
-      "mergeCommitSha": "8bd9bcd764eac711ad305d6fddfce1093513f1ef"
     },
     {
       "id": 4830266059,

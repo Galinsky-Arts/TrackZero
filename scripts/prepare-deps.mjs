@@ -25,7 +25,8 @@ for (const [name, pin] of Object.entries(pins)) {
   const {stdout: revision} = await run('git', ['-C', source, 'rev-parse', 'HEAD']);
   if (revision.trim() !== pin.commit) throw new Error('DEPENDENCY_PIN_MISMATCH');
   if (pin.build) {
-    await run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], {cwd: source});
+    // Engine builds need their devDependencies (tsc, @types) even when NODE_ENV=production.
+    await run('npm', ['ci', '--ignore-scripts', '--include=dev', '--no-audit', '--no-fund'], {cwd: source});
     await run('npm', ['run', 'build'], {cwd: source});
   }
   // Normalize file modes so a restrictive umask and a hosted runner pack identical bytes.
