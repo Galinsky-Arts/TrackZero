@@ -26,9 +26,11 @@ DOM automation covers the Groove live-region semantics, retained keyboard focus,
 
 ## TZ-23 / DRE-27: integrated pilot
 
-A real pilot needs a deployed authenticated artist/listener endpoint and approved key enrollment, authorized encrypted complete albums/interstitials, actual current station clock, persistent endpoint stores and a configured Stripe sandbox webhook. Exercise creator publication, guest current-position listening, headphone completion, speaker contribution only with authenticated physical evidence, points/outro vesting/redemption, shared Groove grant/reconnect, complete-album Checkout, signed webhook replay and private receipt/library recovery. No on-demand radio insertion is permitted. The automated suites compose these APIs with explicit verifiers/fixtures; they do not establish that the deployed flow works.
+A real pilot needs a deployed authenticated artist/listener endpoint and approved key enrollment, authorized encrypted complete albums/interstitials, actual current station clock, persistent endpoint stores and a configured Stripe sandbox webhook. Exercise creator publication, guest current-position listening, headphone completion, speaker contribution only with authenticated physical evidence, points/outro vesting/redemption, shared Groove grant/reconnect, complete-album Checkout, signed webhook replay and private receipt/library recovery. No on-demand radio insertion is permitted. The automated suites compose these APIs with explicit verifiers/fixtures; they do not establish that the deployed flow works. `node scripts/pilot-dry-run.mjs` rehearses the software path end to end and is explicitly labelled non-field evidence (TZ-23-DRY-RUN.md).
 
 ## TZ-24 / DRE-28: rollout and creator/support procedure
+
+A fuller draft is in TZ-24-RUNBOOK.md (backup/restore with bin/data-transfer.mjs, configuration inventory, incidents).
 
 1. Provision identity introspection settings from TZ-02-RUNBOOK.md and an owner-private persistent endpoint volume. Accounts alone do not grant decrypting/device authority.
 2. Bind actual approved DAE enrollment/key storage, private-control and response codecs, current recording rights, publication/moderation and transaction authorizers. Never enable a plaintext/dev fallback.

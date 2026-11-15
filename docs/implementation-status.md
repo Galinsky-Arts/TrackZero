@@ -1,5 +1,18 @@
 # TrackZero implementation and evidence
 
+## November 15, 2026 — data transfer, pilot dry run and runbook draft
+
+- `bin/data-transfer.mjs` exports, verifies and imports the application SQLite stores
+  (SQLite backup API, SHA-256 + row-count manifest, owner-only files, no silent
+  overwrite, rollback on failed import). Server must be stopped.
+- `scripts/pilot-dry-run.mjs` runs a nine-stage TZ-23 software dry run against the
+  real composed app with fixture identity; reports are labelled
+  `software-dry-run-with-fixture-verifiers`, `fieldEvidence: false` ([details](TZ-23-DRY-RUN.md)).
+- [TZ-24-RUNBOOK.md](TZ-24-RUNBOOK.md) is a draft rollout/creator/support runbook.
+- Galinsky Arts development deployment: Render `trackzero-galinsky-arts`
+  (`srv-dbsvq9l6e07s73b1lgjg`) with accounts in Neon project `trackzero`
+  (`wandering-union-47737865`). Stripe remains unset (payments not configured).
+
 The repository now contains scoped onboarding, creator catalog/rights/program controls, station operations, guest playback adapters, tested Android/Swift listener shells, opt-in contribution UI, actual DRE reward pricing/redemption, complete-album commerce, a private fan library/reporting/support boundary, endpoint-sealed complaints and moderated discovery. TZ-25 adds actual DRE-backed atomic Groove settings; TZ-26 adds an accessible shared-transition reveal with durable once-per-opportunity checkpoints.
 
 The current full development suite has 153 passing tests against the actual pinned DAE/DRE modules (DAE 6c5b21d6, DRE f7b8456f, pinned in dependency-pins.json), including the composed server, the Better Auth/PostgreSQL account service with RFC 7662 introspection, and a Chromium creator/listener journey with automated WCAG checks at phone width. Native hosted CI compiles/tests its implemented shells; browser qualification exercises the reveal in Chromium with reduced motion, focus, mobile overflow, forced colors and automated WCAG checks. Current PR snapshots and dependency links are in registry/prs.json. Individual docs describe the supported slices and unresolved host integrations.
