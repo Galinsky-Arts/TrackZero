@@ -10,7 +10,7 @@
   "scopeNote": "Units filtered by this repository prefix from the multi-repository shared roadmap. Other repository units are not counted here.",
   "schemaVersion": 1,
   "roadmapVersion": 3,
-  "observedAt": "2026-11-15T01:30:00Z",
+  "observedAt": "2026-11-15T18:36:11.000Z",
   "units": [
     {
       "id": "TZ-01",
@@ -504,7 +504,8 @@
       "gate": "Actual field evidence for hardware/production claims",
       "contributingPrs": [
         33,
-        34
+        34,
+        35
       ]
     },
     {
@@ -561,6 +562,21 @@
   ],
   "pullRequests": [
     {
+      "id": 5324093543,
+      "number": 35,
+      "title": "Record verified live preview and PR #34",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/35",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-11-15T15:14:02Z",
+      "updatedAt": "2026-11-15T15:15:55Z",
+      "closedAt": "2026-11-15T15:15:54Z",
+      "mergedAt": "2026-11-15T15:15:54Z",
+      "headSha": "7356ff2ece996288ef37458f421a75327b841d5d",
+      "baseRef": "main",
+      "mergeCommitSha": "f7826f7e3f1c5cd9512e016f90bd3d48e6e3a22f"
+    },
+    {
       "id": 5317880710,
       "number": 34,
       "title": "Fix engine build on Render and record PRs #33/#3",
@@ -595,15 +611,15 @@
       "number": 32,
       "title": "TZ-22: repeatable browser qualification and honest pilot/rollout readiness",
       "url": "https://github.com/Galinsky-Arts/TrackZero/pull/32",
-      "state": "open",
+      "state": "closed",
       "draft": false,
       "createdAt": "2026-11-10T00:09:41Z",
-      "updatedAt": "2026-11-10T00:09:41Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "headSha": "45f69001a429a0cf10ecfe98f56b6011baddbe1b",
+      "updatedAt": "2026-11-10T00:15:53Z",
+      "closedAt": "2026-11-10T00:15:53Z",
+      "mergedAt": "2026-11-10T00:15:52Z",
+      "headSha": "6368e0c4d9779ffa58a79f52f6050f8f896ffcdc",
       "baseRef": "main",
-      "mergeCommitSha": null
+      "mergeCommitSha": "641296c2939ba5fe08fb82523e6767ca78a9c983"
     },
     {
       "id": 5233292524,
@@ -1024,6 +1040,21 @@
       "headSha": "caaab2ae3221e2a82276a702ad41bef6eca53454",
       "baseRef": "main",
       "mergeCommitSha": "663203938587cb81144c5caab2feab3808d0ffd5"
+    },
+    {
+      "id": 4832051661,
+      "number": 3,
+      "title": "Port TrackZero roadmap and E2EESA integrity checks to CircleCI",
+      "url": "https://github.com/Galinsky-Arts/TrackZero/pull/3",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-12T16:12:49Z",
+      "updatedAt": "2026-11-15T00:31:49Z",
+      "closedAt": "2026-11-15T00:31:49Z",
+      "mergedAt": null,
+      "headSha": "79b2c77f8b9127c5d676376b9f745674d1a928c2",
+      "baseRef": "main",
+      "mergeCommitSha": "e8767ad251e674e77927c910bc95b3d22dc78576"
     },
     {
       "id": 4830266059,

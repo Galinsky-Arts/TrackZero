@@ -1,14 +1,14 @@
 {
   "audio": {
     "repository": "Galinsky-Arts/Distributed-Audio-Engine",
-    "commit": "6c5b21d6b8ca456f1e331a4370b8238448ea79d8",
+    "commit": "c6fd5fa6c9a1a5cf3e8a3a72f60f515083661430",
     "package": "@neophilism/distributed-audio-engine",
     "build": true,
     "archive": ".deps/audio-core.tgz"
   },
   "radio": {
     "repository": "Galinsky-Arts/Distributed-Radio-Engine",
-    "commit": "f7b8456f5c13fe96869ddd9dfa23856d25c30113",
+    "commit": "b1d81c9be071ed03910faf746746f27ecd12eb51",
     "package": "@neophilism/distributed-radio-engine",
     "build": false,
     "archive": ".deps/radio.tgz"
