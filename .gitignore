@@ -4,3 +4,6 @@ android/**/build/
 ios/.build/
 
 node_modules/
+.build/
+.env
+data/
