@@ -7,32 +7,33 @@ permissions:
   contents: read
 jobs:
   validate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16.10
+        env:
+          POSTGRES_USER: trackzero_ci
+          POSTGRES_PASSWORD: trackzero_ci_only
+          POSTGRES_DB: trackzero_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U trackzero_ci" --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '24.19.0'
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          repository: Galinsky-Arts/Distributed-Radio-Engine
-          ref: a9842bb5b8486754dfb8ba2286f4d00f2c045de7
-          path: .deps/radio
-          persist-credentials: false
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-        with:
-          repository: Galinsky-Arts/Distributed-Audio-Engine
-          ref: feaf485beb25f25ce222b3bc7a57c09392cc57a6
-          path: .deps/audio-core
-          persist-credentials: false
+      # Fetches, verifies, builds and packs the engine commits in dependency-pins.json.
+      - run: node scripts/prepare-deps.mjs
       - run: npm ci --ignore-scripts
-        working-directory: .deps/audio-core
-      - run: npm run build
-        working-directory: .deps/audio-core
+      - run: npm audit --audit-level=high
       - run: node scripts/check-roadmap.mjs
       - run: node scripts/validate-pr-registry.mjs
-      - run: node --test registry/pr-contract.test.mjs tests/*.test.mjs
+      - run: python3 scripts/validate_e2eesa_status.py
+      - run: python3 scripts/check-current-secrets.py
+      - run: node node_modules/playwright-core/cli.js install --with-deps chromium
+      - run: node scripts/run-tests.mjs
         env:
-          AUDIO_ENGINE_MODULE: ${{ github.workspace }}/.deps/audio-core/dist/src/index.js
-          DRE_PLAYBACK_MODULE: ${{ github.workspace }}/.deps/radio/src/radio-playback.mjs
+          TZ_TEST_DATABASE_URL: postgres://trackzero_ci:trackzero_ci_only@127.0.0.1:5432/trackzero_ci
+          TZ_REQUIRE_FULL_SUITE: '1'

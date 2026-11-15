@@ -1,12 +1,24 @@
-# TrackZero release readiness — November 10, 2026
+# TrackZero release readiness — November 15, 2026
 
 Development merges are authorized. Production rollout is not yet qualified. This record replaces the earlier copied audio-engine status: automated fixtures, native host tests and browser checks are development evidence, not real customers, provider transactions, measured speaker output or phone battery results.
 
 ## Repeatable software validation
 
-Use Node 24.19+ (24.x). Build the pinned Distributed Audio Engine (`npm ci --ignore-scripts && npm run build`), and check out the DRE revision in `.github/workflows/planning.yml`. Set AUDIO_ENGINE_MODULE to the absolute DAE dist/src/index.js and DRE_PLAYBACK_MODULE to the absolute DRE src/radio-playback.mjs. Run `node --test registry/pr-contract.test.mjs tests/*.test.mjs`, the registry/roadmap validators and `python3 scripts/validate_e2eesa_status.py`.
+Use Node 24.19+ (24.x). Run `npm run deps:prepare` (fetches, verifies, builds and packs the exact DAE/DRE commits in dependency-pins.json into reproducible archives), then `npm ci --ignore-scripts` and `npm run check` (roadmap/registry/E2EESA/secret validators and every node:test suite). Set `TZ_TEST_DATABASE_URL` to a disposable PostgreSQL database and, if needed, `CHROMIUM_PATH` to run the account-service and browser-journey suites; CI (planning.yml) runs them with a PostgreSQL service. `npm audit` reports zero known vulnerabilities for the root lockfile at this revision.
 
 Run `npm ci --ignore-scripts --prefix tools/browser-qualification`, then `node tools/browser-qualification/node_modules/playwright-core/cli.js install --with-deps chromium` and `node scripts/browser-qualification.mjs`. Alternatively set CHROMIUM_PATH to an installed Chrome/Chromium executable. The browser fixture uses no media, credentials or provider. Source-hashed local results are in qualification/browser-dom.json; CI repeats the checks. Android compile/lint/JUnit and macOS Swift XCTest run in native-listener.yml.
+
+## Deployable application
+
+The repository now builds one deployable server and web UI (docs/APPLICATION.md, render.yaml). A free preview is a development environment only: its application SQLite data is ephemeral and endpoint-encrypted features are disabled. A free Neon project `trackzero` exists in the Galinsky Labs organization for preview accounts. As of this record no TrackZero Render service has been created and no live URL has been verified.
+
+### What the owner must supply
+
+1. **Hosting decision:** a persistent disk for the application SQLite stores (paid Render plan or equivalent), then `TZ_STORAGE_DURABILITY=persistent`, backups and a restore drill. Without it every restart loses stations, rights, programs and grants.
+2. **Stripe sandbox:** `STRIPE_SECRET_KEY` (sk_test_…), `STRIPE_WEBHOOK_SECRET` (whsec_…) and `STRIPE_ACCOUNT_ID` (acct_…) in secret settings; a registered webhook endpoint once checkout is composed. Live keys, payouts, refunds and disputes need separate approval.
+3. **Approved endpoint integration:** enrolled DAE endpoints with approved key establishment, private-control/response codecs and seal/open storage codecs, an encrypted media intake (interstitials, sponsor audio, albums), and DRE issuers (points, Groove grants, entitlements). Until then the endpoint-encrypted features remain unavailable.
+4. **Real devices and people:** phones with screen readers, wired/Bluetooth speakers and headphones for TZ-22; pilot artists/listeners for TZ-23; an operator who verifies station ownership out of band and runs provisioning.
+5. **Email verification/recovery provider** if account recovery is required (not configured; never server custody of media keys).
 
 ## TZ-22: accessibility, battery and recovery
 
@@ -27,4 +39,4 @@ A real pilot needs a deployed authenticated artist/listener endpoint and approve
 
 If readiness or identity/key/provider verification fails, stop issuing new purchases/rewards and leave private endpoints unavailable. Preserve durable evidence and entitlements, continue only authorized public discovery, and surface an unavailable/retry state. Do not turn a payment redirect into settlement or a fixture into field evidence. External human review is deferred under AGENTS.md and is not the blocker; missing operational integrations, credentials and actual qualification are.
 
-Current locked npm graphs report zero known vulnerabilities on November 10; docs/dependency-audit.json binds that result to the lockfile hash. CI repeats npm audit at high/critical failure threshold. scripts/check-current-secrets.py scans tracked current source for embedded Stripe keys/private PEM blocks without printing values; history and other secret formats remain outside that narrow check.
+Current locked npm graphs (root and tools/browser-qualification) report zero known vulnerabilities on November 15; docs/dependency-audit.json binds that result to the lockfile hash. CI repeats npm audit at high/critical failure threshold. scripts/check-current-secrets.py scans tracked current source for embedded Stripe keys/private PEM blocks without printing values; history and other secret formats remain outside that narrow check.
