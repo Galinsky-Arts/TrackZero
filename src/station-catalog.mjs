@@ -77,6 +77,38 @@ export class StationCatalog {
       {artworkOrigins: this.artworkOrigins});
   }
 
+  /** Read-only claim lookup for trusted station authorizers. */
+  claimOwner({tenant, application, id}) {
+    if (![tenant, application, id].every(value => typeof value === 'string' && identityPattern.test(value))) return null;
+    return this.db.prepare('SELECT owner_subject FROM station_claims WHERE tenant=? AND application=? AND station_id=?')
+      .get(tenant, application, id)?.owner_subject ?? null;
+  }
+
+  claimsFor({tenant, application, subject}) {
+    if (![tenant, application, subject].every(value => typeof value === 'string' && identityPattern.test(value))) return [];
+    return this.db.prepare(`SELECT c.station_id AS id, s.name AS name FROM station_claims c
+      LEFT JOIN stations s ON s.tenant=c.tenant AND s.application=c.application AND s.id=c.station_id
+      WHERE c.tenant=? AND c.application=? AND c.owner_subject=? ORDER BY c.station_id LIMIT 100`)
+      .all(tenant, application, subject).map(row => ({id: row.id, published: row.name !== null, name: row.name}));
+  }
+
+  /** Public metadata of published stations, bounded for discovery. */
+  list({tenant, application}, {limit = 100} = {}) {
+    if (![tenant, application].every(value => typeof value === 'string' && identityPattern.test(value)) ||
+        !Number.isSafeInteger(limit) || limit < 1 || limit > 100) throw new CatalogError('INVALID_STATION');
+    return this.db.prepare('SELECT id,name,description FROM stations WHERE tenant=? AND application=? ORDER BY published_at DESC, id LIMIT ?')
+      .all(tenant, application, limit).map(row => ({id: row.id, name: row.name, description: row.description.slice(0, 500)}));
+  }
+
+  findOffer({tenant, application, offerId}) {
+    if (![tenant, application, offerId].every(value => typeof value === 'string' && identityPattern.test(value))) return null;
+    const row = this.db.prepare(`SELECT o.id AS id, o.title AS title, s.id AS station_id, s.name AS station_name, s.artwork_url AS artwork_url
+      FROM station_offers o JOIN stations s ON s.tenant=o.tenant AND s.application=o.application AND s.id=o.station_id
+      WHERE o.tenant=? AND o.application=? AND o.id=? ORDER BY s.published_at LIMIT 1`).get(tenant, application, offerId);
+    return row ? {id: row.id, title: row.title, stationId: row.station_id, stationName: row.station_name,
+      artworkUrl: row.artwork_url ?? null} : null;
+  }
+
   async publish(verifiedIdentity, record) {
     const publisher = verifiedPublisher(verifiedIdentity);
     let station;

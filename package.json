@@ -1,0 +1,30 @@
+{
+  "name": "trackzero",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "description": "TrackZero creator and listener radio application",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24.19.0 <25"
+  },
+  "scripts": {
+    "deps:prepare": "node scripts/prepare-deps.mjs",
+    "start": "node --env-file-if-exists=.env bin/trackzero.mjs",
+    "db:migrate": "node --env-file-if-exists=.env bin/trackzero.mjs --migrate",
+    "operator": "node --env-file-if-exists=.env bin/operator.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:browser": "node scripts/app-browser-test.mjs",
+    "check": "node scripts/check-roadmap.mjs && node scripts/validate-pr-registry.mjs && python3 scripts/validate_e2eesa_status.py && python3 scripts/check-current-secrets.py && node scripts/run-tests.mjs"
+  },
+  "dependencies": {
+    "@neophilism/distributed-audio-engine": "file:.deps/audio-core.tgz",
+    "@neophilism/distributed-radio-engine": "file:.deps/radio.tgz",
+    "better-auth": "1.7.18",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.1",
+    "playwright-core": "1.57.0"
+  }
+}

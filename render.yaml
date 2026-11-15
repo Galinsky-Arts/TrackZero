@@ -1,0 +1,46 @@
+# $0 development preview only (Render free web service + Neon free PostgreSQL).
+# Free Render instances have NO persistent disk: TrackZero's application SQLite
+# stores (stations, rights, programs, grants) are EPHEMERAL and are lost on every
+# restart, spin-down or deploy. Accounts persist in Neon. Production needs a
+# persistent disk (paid) and TZ_STORAGE_DURABILITY=persistent.
+services:
+  - type: web
+    name: trackzero-preview
+    runtime: node
+    plan: free
+    region: virginia
+    repo: https://github.com/Galinsky-Arts/TrackZero
+    branch: main
+    autoDeployTrigger: 'off'
+    buildCommand: node scripts/prepare-deps.mjs && npm ci --ignore-scripts
+    startCommand: node bin/trackzero.mjs --migrate && node bin/trackzero.mjs
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: NODE_ENV
+        value: production
+      - key: TZ_DATA_DIR
+        value: /opt/render/project/src/.data
+      - key: TZ_STORAGE_DURABILITY
+        value: ephemeral
+      - key: TZ_TRUSTED_PROXY_HOPS
+        value: '1'
+      - key: TZ_IDENTITY
+        value: builtin
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: TZ_INTROSPECTION_CLIENT_SECRET
+        generateValue: true
+      - key: TZ_OPERATOR_TOKEN
+        generateValue: true
+      # Neon connection string (sslmode=require); set in the dashboard or API, never in source.
+      - key: DATABASE_URL
+        sync: false
+      # Owner-supplied Stripe sandbox settings. Unset means "payments not configured".
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_ACCOUNT_ID
+        sync: false
