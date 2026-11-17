@@ -17,6 +17,8 @@ try {
     console.log(`Export verified\n${summary(verifyExport(dir))}`);
   } else if (command === 'import') {
     if (!dataDir) throw new DataTransferError('TZ_DATA_DIR_REQUIRED');
+    // PostgreSQL is authoritative in postgres mode; restore with a Neon branch/point-in-time restore instead.
+    if (process.env.TZ_STORAGE_DURABILITY === 'postgres') throw new DataTransferError('IMPORT_UNSUPPORTED_IN_POSTGRES_MODE');
     if (flag !== undefined && flag !== '--replace') throw new DataTransferError('UNKNOWN_OPTION');
     const result = importStores({exportDir: dir, dataDir, replace: flag === '--replace'});
     console.log(`Imported ${result.restored.join(', ')}` + (result.preserved ? `\nPrevious stores preserved in ${result.preserved}` : ''));

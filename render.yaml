@@ -1,8 +1,7 @@
-# $0 development preview only (Render free web service + Neon free PostgreSQL).
-# Free Render instances have NO persistent disk: TrackZero's application SQLite
-# stores (stations, rights, programs, grants) are EPHEMERAL and are lost on every
-# restart, spin-down or deploy. Accounts persist in Neon. Production needs a
-# persistent disk (paid) and TZ_STORAGE_DURABILITY=persistent.
+# $0 development preview (Render free web service + Neon free PostgreSQL).
+# Free Render instances have no persistent disk, so TZ_STORAGE_DURABILITY=postgres:
+# the application stores (stations, rights, programs, grants, ...) are written to
+# Neon before every response and restored on start. Accounts also live in Neon.
 services:
   - type: web
     name: trackzero-galinsky-arts
@@ -23,7 +22,7 @@ services:
       - key: TZ_DATA_DIR
         value: /opt/render/project/src/.data
       - key: TZ_STORAGE_DURABILITY
-        value: ephemeral
+        value: postgres
       - key: TZ_TRUSTED_PROXY_HOPS
         value: '1'
       - key: TZ_IDENTITY
@@ -36,6 +35,11 @@ services:
         generateValue: true
       # Neon connection string (sslmode=require); set in the dashboard or API, never in source.
       - key: DATABASE_URL
+        sync: false
+      # Password recovery email; OFF until both are set (Resend key + verified sender address).
+      - key: RESEND_API_KEY
+        sync: false
+      - key: TZ_MAIL_FROM
         sync: false
       # Owner-supplied Stripe sandbox settings. Unset means "payments not configured".
       - key: STRIPE_SECRET_KEY

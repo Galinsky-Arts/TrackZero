@@ -37,7 +37,12 @@ export function readConfig(env = process.env) {
   const dataDir = required(env, 'TZ_DATA_DIR');
   if (!isAbsolute(dataDir)) throw new Error('TZ_DATA_DIR must be absolute');
   const durability = required(env, 'TZ_STORAGE_DURABILITY');
-  if (!['ephemeral', 'persistent'].includes(durability)) throw new Error('TZ_STORAGE_DURABILITY must be ephemeral or persistent');
+  if (!['ephemeral', 'persistent', 'postgres'].includes(durability))
+    throw new Error('TZ_STORAGE_DURABILITY must be ephemeral, persistent or postgres');
+  // postgres: application stores are persisted to PostgreSQL before each response
+  // (TZ_STORE_DATABASE_URL, defaulting to DATABASE_URL); see store-durability.mjs.
+  const storeDatabase = durability === 'postgres'
+    ? databaseOptions(env.TZ_STORE_DATABASE_URL?.trim() || required(env, 'DATABASE_URL')) : null;
   const port = Number(env.PORT ?? 3000);
   if (!Number.isSafeInteger(port) || port < 1 || port > 65535) throw new Error('Valid PORT required');
   const hops = Number(env.TZ_TRUSTED_PROXY_HOPS ?? 0);
@@ -62,6 +67,8 @@ export function readConfig(env = process.env) {
   if (!/^[A-Z]{2}$/.test(region)) throw new Error('TZ_RIGHTS_REGION must be an ISO 3166-1 alpha-2 code');
   const stripe = {secretKey: env.STRIPE_SECRET_KEY?.trim() || null, webhookSecret: env.STRIPE_WEBHOOK_SECRET?.trim() || null,
     accountId: env.STRIPE_ACCOUNT_ID?.trim() || null};
-  return Object.freeze({publicOrigin, dataDir, durability, port, trustedProxyHops: hops, ...scope, identity,
+  const mail = {apiKey: env.RESEND_API_KEY?.trim() || null, from: env.TZ_MAIL_FROM?.trim() || null};
+  if (mail.from && !/^(?:[^<>\r\n]{1,80} )?<?[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+>?$/.test(mail.from)) throw new Error('TZ_MAIL_FROM must be an email address');
+  return Object.freeze({publicOrigin, dataDir, durability, storeDatabase, mail, port, trustedProxyHops: hops, ...scope, identity,
     operatorToken, artworkOrigins, region, stripe});
 }

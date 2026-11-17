@@ -21,6 +21,8 @@ import {createIdentity} from './identity.mjs';
 import {createOperatorHandler, createOperatorOperations} from './operator.mjs';
 import {createPaymentsStatus} from './payments.mjs';
 import {createNodeListener} from './node-adapter.mjs';
+import {createMailer} from './mail.mjs';
+import {createPostgresStoreDurability} from './store-durability.mjs';
 
 const PUBLIC_DIR = resolve(import.meta.dirname, '../../public');
 const SRC_DIR = resolve(import.meta.dirname, '..');
@@ -68,7 +70,8 @@ function decorateGuestHtml(html) {
  * under config.dataDir. Returns {handle, server, ready, close, ...}.
  * Options exist for tests: pool, fetchImpl, accountService, endpointCodecs, now.
  */
-export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpointCodecs = null, stripeInspect} = {}) {
+export async function createTrackZeroApp(config, {pool, storePool, fetchImpl = fetch, endpointCodecs = null, stripeInspect,
+  mailFetch} = {}) {
   const scope = {tenant: config.tenant, application: config.application};
   privateDirectory(config.dataDir);
   const file = name => join(config.dataDir, name);
@@ -77,13 +80,14 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
   try {
     // ---- identity -------------------------------------------------------
     let accounts = null, ownPool = null, authenticate;
+    const mailer = createMailer(config.mail ?? {}, mailFetch ? {fetchImpl: mailFetch} : {});
     const basic = () => ({authorization: 'Basic ' + Buffer.from(
       `${encodeURIComponent(config.identity.clientId)}:${encodeURIComponent(config.identity.clientSecret)}`).toString('base64')});
     if (config.identity.mode === 'builtin') {
       if (!pool) { ownPool = pool = new pg.Pool(config.identity.database); closers.push(() => ownPool.end()); }
       accounts = createAccountService({pool, baseURL: config.publicOrigin + '/', secret: config.identity.secret,
         tenant: config.tenant, issuer: config.identity.issuer, audience: config.identity.audience,
-        clients: [{id: config.identity.clientId, secret: config.identity.clientSecret}]});
+        clients: [{id: config.identity.clientId, secret: config.identity.clientSecret}], mailer});
       // RFC 7662 over an in-process call: same contract and client authentication
       // as an external IdP, without a network round trip to our own origin.
       const internal = new URL('/oauth2/introspect', config.publicOrigin);
@@ -99,6 +103,15 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
     }
 
     // ---- durable stores -------------------------------------------------
+    // postgres mode: rebuild the working SQLite files from PostgreSQL before any
+    // store opens, then persist every committed change before each response.
+    let durability = null;
+    if (config.durability === 'postgres') {
+      if (!storePool) { const own = storePool = new pg.Pool({...config.storeDatabase, max: 3}); closers.push(() => own.end()); }
+      durability = createPostgresStoreDurability({pool: storePool, dataDir: config.dataDir,
+        deployment: `${config.tenant}/${config.application}`});
+      await durability.restore();
+    }
     const onboarding = open(new OnboardingStore(file('onboarding.sqlite')));
     const rights = open(new RightsRegistry(file('rights.sqlite')));
     const grants = open(new GrantStore(file('grants.sqlite')));
@@ -133,6 +146,8 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
     if (endpointCodecs?.seal && endpointCodecs?.open) privacy = open(new PrivacyStore(file('privacy.sqlite'), {
       seal: endpointCodecs.seal, open: endpointCodecs.open,
       authorizeDecision: actor => grants.roles(actor).includes('moderator')}));
+
+    if (durability) { closers.push(() => durability.close()); durability.attach(); await durability.flush(); }
 
     // ---- handlers ---------------------------------------------------------
     const onboardingHandler = createOnboardingHandler(onboarding, authenticate);
@@ -178,22 +193,27 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
         rewardPricePreview: {state: 'available'},
         contributeSound: {state: 'requires_enrolled_endpoint', needs: 'verified speaker-route evidence from a native DAE endpoint'},
         payments: payments.snapshot(),
+        passwordRecovery: config.identity.mode !== 'builtin' ? {state: 'external_identity_provider'} : mailer.snapshot(),
         operatorApi: {state: config.operatorToken ? 'available' : 'disabled'}
       };
       for (const {feature, needs} of ENDPOINT_FEATURES)
         result[feature] = feature === 'privacy' && privacyHandler ? {state: 'available'} : {state: 'requires_enrolled_endpoint', needs};
       return result;
     }
-    const storageNotice = config.durability === 'persistent'
+    const storageNotice = config.durability === 'postgres'
+      ? 'Application stores (stations, rights, programs, grants) are written to PostgreSQL before every response and restored on start.'
+      : config.durability === 'persistent'
       ? 'Application SQLite stores are on a volume the operator declared persistent.'
       : 'Preview only: application SQLite data (stations, rights, programs, grants) is EPHEMERAL and is lost on every restart or redeploy. Production requires a persistent disk (a paid hosting decision).';
     async function readiness() {
       const checks = {storage: 'ok', accounts: 'ok'};
       try { onboarding.db.prepare('SELECT 1').get(); grants.db.prepare('SELECT 1').get(); } catch { checks.storage = 'unavailable'; }
+      if (durability) { try { await durability.flush(); } catch {} if (!durability.healthy()) checks.storage = 'unavailable'; }
       if (accounts) { try { await accounts.ping(); } catch { checks.accounts = 'unavailable'; } }
       const ok = Object.values(checks).every(value => value === 'ok');
       return {status: ok ? 'ready' : 'not_ready', production: false, checks,
-        storage: {durability: config.durability, notice: storageNotice}, features: features(),
+        storage: {durability: config.durability, notice: storageNotice, ...(durability ? {persistence: durability.status()} : {})},
+        features: features(),
         notice: 'Development preview. Endpoint-encrypted features stay disabled until approved endpoints are enrolled; no field, device or pilot qualification is implied.'};
     }
 
@@ -280,6 +300,20 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
       let response;
       try { response = await route(request); }
       catch { response = json(503, {error: 'SERVICE_UNAVAILABLE'}); }
+      // No change is acknowledged before it is durable in PostgreSQL. Reads are
+      // still answered (readiness reports the failed persistence); a write
+      // request whose changes could not be stored answers 503.
+      if (durability) {
+        try { await durability.flush(); }
+        catch (error) {
+          if (request.method === 'GET' || request.method === 'HEAD') return finish(response);
+          try { await response.body?.cancel(); } catch {}
+          response = json(503, {error: error?.code === 'STORE_SUPERSEDED' ? 'STORAGE_SUPERSEDED' : 'STORAGE_NOT_DURABLE'});
+        }
+      }
+      return finish(response);
+    }
+    function finish(response) {
       const headers = new Headers(response.headers);
       headers.set('x-content-type-options', 'nosniff');
       headers.set('referrer-policy', 'no-referrer');
@@ -298,7 +332,7 @@ export async function createTrackZeroApp(config, {pool, fetchImpl = fetch, endpo
     server.headersTimeout = 15_000;
     let closed = false;
     return {
-      handle, server, readiness, accounts, operator: operatorOps, stores: {onboarding, catalog, rights, grants, programs,
+      handle, server, readiness, accounts, durability, mailer, operator: operatorOps, stores: {onboarding, catalog, rights, grants, programs,
         interstitials, sponsors, operations, privacy},
       async close() {
         if (closed) return;

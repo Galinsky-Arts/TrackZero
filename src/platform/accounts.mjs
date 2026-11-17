@@ -1,6 +1,7 @@
 import {betterAuth} from 'better-auth';
 import {getMigrations} from 'better-auth/db/migration';
 import {createHash, randomBytes, timingSafeEqual} from 'node:crypto';
+import {passwordResetMessage} from './mail.mjs';
 
 const ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 export const CLIENT_IP_HEADER = 'x-trackzero-client-ip';
@@ -26,8 +27,10 @@ function sameSecret(a, b) {
  * a short-lived opaque access token (memory only) and resource handlers verify
  * it through RFC 7662 introspection, exactly as with an external IdP.
  * Provider data never grants roles: local TrackZero grants stay authoritative. */
+export const RESET_TOKEN_MINUTES = 30;
+
 export function createAccountService({pool, baseURL, secret, tenant, issuer, audience, clients,
-  accessTokenTtlSeconds = 600}) {
+  accessTokenTtlSeconds = 600, mailer = null}) {
   const base = loopbackOrHttps(baseURL, 'ACCOUNT_SERVICE_HTTPS_REQUIRED');
   if (typeof secret !== 'string' || secret.length < 32 || secret.length > 256) throw new Error('ACCOUNT_SERVICE_SECRET_REQUIRED');
   if (![tenant, audience].every(value => typeof value === 'string' && ID.test(value)) ||
@@ -38,7 +41,16 @@ export function createAccountService({pool, baseURL, secret, tenant, issuer, aud
     throw new Error('INVALID_ACCESS_TOKEN_TTL');
   const configuration = {
     appName: 'TrackZero', baseURL: base.origin, secret, database: pool, trustedOrigins: [base.origin],
-    emailAndPassword: {enabled: true, minPasswordLength: 10, maxPasswordLength: 128},
+    emailAndPassword: {enabled: true, minPasswordLength: 10, maxPasswordLength: 128,
+      // Password recovery is OFF unless a mailer is configured (RESEND_API_KEY + TZ_MAIL_FROM).
+      // Sending is not awaited so response timing does not reveal whether an account exists.
+      ...(mailer?.configured ? {
+        resetPasswordTokenExpiresIn: RESET_TOKEN_MINUTES * 60, revokeSessionsOnPasswordReset: true,
+        sendResetPassword: async ({user, token}) => {
+          const message = passwordResetMessage({origin: base.origin, token, minutes: RESET_TOKEN_MINUTES});
+          mailer.send({to: user.email, ...message}).catch(error =>
+            console.error(`TrackZero password-reset email not sent (${String(error?.message ?? 'error').slice(0, 40)})`));
+        }} : {})},
     session: {expiresIn: 86400, updateAge: 3600, cookieCache: {enabled: false}},
     rateLimit: {enabled: true, window: 60, max: 60, storage: 'database'},
     advanced: {cookiePrefix: 'trackzero', useSecureCookies: base.protocol === 'https:',
@@ -106,7 +118,14 @@ export function createAccountService({pool, baseURL, secret, tenant, issuer, aud
   async function handle(request) {
     const url = new URL(request.url);
     try {
-      if (url.pathname.startsWith('/api/auth/')) return await auth().handler(request);
+      if (url.pathname.startsWith('/api/auth/')) {
+        // The emailed link targets the web UI (#/reset/<token>); the server-side
+        // redirect endpoint would place the token in a query string, so it is closed.
+        if (url.pathname.startsWith('/api/auth/reset-password/')) return json(404, {error: 'not_found'});
+        if (!mailer?.configured && url.pathname === '/api/auth/request-password-reset')
+          return json(503, {error: 'password_recovery_not_configured', needs: 'RESEND_API_KEY and TZ_MAIL_FROM'});
+        return await auth().handler(request);
+      }
       if (url.pathname === '/api/account/token' && request.method === 'POST') return await mint(request);
       if (url.pathname === '/api/account/session' && request.method === 'GET') {
         const current = await currentSession(request);
@@ -121,7 +140,7 @@ export function createAccountService({pool, baseURL, secret, tenant, issuer, aud
   }
 
   return {
-    handle, introspect,
+    handle, introspect, passwordRecovery: Boolean(mailer?.configured),
     get auth() { return auth(); },
     async ping() { await pool.query('SELECT 1 FROM "user","session",trackzero_access_token LIMIT 0'); },
     async migrate() {

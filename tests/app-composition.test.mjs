@@ -49,7 +49,9 @@ test('configuration fails closed without identity, durable path or secure transp
   assert.throws(() => readConfig({}), /TZ_PUBLIC_ORIGIN|RENDER_EXTERNAL_URL/);
   assert.throws(() => readConfig({...baseEnv(dir), TZ_PUBLIC_ORIGIN: 'http://example.com'}), /HTTPS/);
   assert.throws(() => readConfig({...baseEnv(dir), TZ_DATA_DIR: 'relative'}), /absolute/);
-  assert.throws(() => readConfig({...baseEnv(dir), TZ_STORAGE_DURABILITY: 'maybe'}), /ephemeral or persistent/);
+  assert.throws(() => readConfig({...baseEnv(dir), TZ_STORAGE_DURABILITY: 'maybe'}), /ephemeral, persistent or postgres/);
+  assert.throws(() => readConfig({...baseEnv(dir), TZ_STORAGE_DURABILITY: 'postgres'}), /DATABASE_URL/);
+  assert.throws(() => readConfig({...baseEnv(dir), TZ_MAIL_FROM: 'not an address'}), /TZ_MAIL_FROM/);
   assert.throws(() => readConfig({...baseEnv(dir), TZ_IDENTITY: 'builtin'}), /TZ_INTROSPECTION_CLIENT_SECRET/);
   assert.throws(() => readConfig({...baseEnv(dir), TZ_OPERATOR_TOKEN: 'short'}), /TZ_OPERATOR_TOKEN/);
   assert.throws(() => databaseOptions('postgres://u:p@db.example.com/x'), /TLS/);

@@ -162,8 +162,8 @@ function accountView() {
       if (!response.ok) return show(box, response.data?.message || describe(response.status, response.data), 'error');
       await refreshSession(); render();
     }}, nameField, field('Email', email), field('Password', password, 'At least 10 characters.'), h('div', {class: 'row'}, submit, toggle));
-    return [heading, h('section', {class: 'card'}, form, box),
-      h('p', {class: 'muted'}, 'Passwords and sessions are handled by the TrackZero account service. Email ownership is not verified in this preview.')];
+    return [heading, h('section', {class: 'card'}, form, box), recoveryCard(),
+      h('p', {class: 'muted'}, 'Passwords and sessions are handled by the TrackZero account service. Email ownership is not verified at sign-up.')];
   }
   const box = resultBox();
   const onboard = async (role, invitation) => {
@@ -187,6 +187,49 @@ function accountView() {
       h('form', {onsubmit: event => { event.preventDefault(); onboard(inviteRole.value, invite.value.trim()); }},
         field('Role', inviteRole), field('Invitation code', invite), h('button', {type: 'submit'}, 'Redeem invitation'))),
     box];
+}
+
+/** Forgot-password request. Off (with the settings to set) until email is configured. */
+function recoveryCard() {
+  const recovery = feature('passwordRecovery');
+  if (recovery.state !== 'configured')
+    return card('Account recovery', h('p', {id: 'recovery-state'}, recovery.state === 'not_configured'
+      ? `Password recovery by email is not configured on this server: the operator must ${recovery.needs ?? 'configure email'}.`
+      : 'Password recovery is handled by your identity provider.'));
+  const box = resultBox();
+  const email = input({type: 'email', name: 'recovery-email', autocomplete: 'email', required: true});
+  const submit = h('button', {type: 'submit', class: 'secondary'}, 'Email me a reset link');
+  return card('Account recovery', h('form', {onsubmit: async event => {
+    event.preventDefault(); submit.disabled = true;
+    const response = await api('/api/auth/request-password-reset', {method: 'POST', auth: false, body: {email: email.value.trim()}});
+    submit.disabled = false;
+    if (!response.ok) return show(box, response.data?.message || describe(response.status, response.data), 'error');
+    show(box, 'If an account uses that address, a reset link is on its way. It works once and expires in 30 minutes.', 'success');
+  }}, field('Account email', email), submit), box);
+}
+
+function resetView() {
+  const resetToken = decodeURIComponent(location.hash.replace(/^#\/?reset\/?/, ''));
+  // Drop the token from the address bar and history as soon as it is read.
+  history.replaceState(null, '', '#/reset');
+  if (resetToken) state.resetToken = resetToken;
+  if (!state.resetToken) return [h('h1', {}, 'Reset password'), card('Link needed', h('p', {}, 'Open the link from your reset email. '), h('a', {href: '#/account'}, 'Back to sign in'))];
+  const box = resultBox();
+  const password = input({type: 'password', name: 'new-password', autocomplete: 'new-password', minlength: 10, maxlength: 128, required: true});
+  const confirm = input({type: 'password', name: 'confirm-password', autocomplete: 'new-password', minlength: 10, maxlength: 128, required: true});
+  const submit = h('button', {type: 'submit'}, 'Set new password');
+  return [h('h1', {}, 'Choose a new password'), card('New password', h('form', {onsubmit: async event => {
+    event.preventDefault();
+    if (password.value !== confirm.value) return show(box, 'The passwords do not match.', 'error');
+    submit.disabled = true;
+    const response = await api('/api/auth/reset-password', {method: 'POST', auth: false, body: {token: state.resetToken, newPassword: password.value}});
+    password.value = ''; confirm.value = ''; submit.disabled = false;
+    if (!response.ok) return show(box, response.data?.code === 'INVALID_TOKEN' || response.data?.message === 'Invalid token'
+      ? 'This reset link is invalid, already used or expired. Request a new one.' : (response.data?.message || describe(response.status, response.data)), 'error');
+    state.resetToken = null;
+    show(box, 'Password changed. Every earlier session was signed out; sign in with the new password.', 'success');
+  }}, field('New password', password, 'At least 10 characters.'), field('Repeat new password', confirm), submit), box,
+  h('p', {}, h('a', {href: '#/account'}, 'Back to sign in')))];
 }
 
 function stationOptions() {
@@ -490,8 +533,8 @@ function operatorView() {
 
 // ---------------------------------------------------------------- router
 const cleanups = [];
-const routes = {'': homeView, discover: discoverView, account: accountView, studio: studioView, listen: listenView, review: reviewView, operator: operatorView};
-const titles = {'': 'Home', discover: 'Discover', account: 'Account', studio: 'Studio', listen: 'Listen', review: 'Rights review', operator: 'Operator'};
+const routes = {'': homeView, discover: discoverView, account: accountView, reset: resetView, studio: studioView, listen: listenView, review: reviewView, operator: operatorView};
+const titles = {'': 'Home', discover: 'Discover', account: 'Account', reset: 'Reset password', studio: 'Studio', listen: 'Listen', review: 'Rights review', operator: 'Operator'};
 let rendering = 0;
 async function render() {
   const ticket = ++rendering;

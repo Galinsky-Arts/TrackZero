@@ -14,6 +14,11 @@ import {createOperatorOperations} from '../src/platform/operator.mjs';
 
 const dataDir = process.env.TZ_DATA_DIR;
 if (!dataDir) { console.error('TZ_DATA_DIR required'); process.exit(1); }
+if (process.env.TZ_STORAGE_DURABILITY === 'postgres') {
+  // Local files are only the server's working copy in postgres mode; edits here would be overwritten.
+  console.error('TZ_STORAGE_DURABILITY=postgres: use the operator console or /operator/v1 API (Bearer TZ_OPERATOR_TOKEN) instead');
+  process.exit(1);
+}
 const scope = {tenant: process.env.TZ_TENANT || 'trackzero', application: process.env.TZ_APPLICATION || 'trackzero'};
 const onboarding = new OnboardingStore(join(dataDir, 'onboarding.sqlite'));
 // Read/claim access only; offers are never published from the CLI.
