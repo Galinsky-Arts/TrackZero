@@ -10,6 +10,11 @@
   grants, engine credentials and the other application stores survive restarts and deploys. SQLite
   (`ephemeral`/`persistent`) remains the local/dev default. A Neon backup branch
   `backup-pre-durable-stores-20261117` was taken before the switch.
+- **Live verification.** Deploy `dep-dbtrlqmk1f9s739ia68g` (commit `a6f033a`) first ran postgres mode and
+  uploaded the stores; the next deploy `dep-dbtrn33rjlhs73b13kl0` (commit `935091a`) booted on a fresh
+  instance and logged `postgres durability, epoch 4, 8 restored from PostgreSQL, 8 tracked` before
+  serving — the restart-restore path works on Render. (Stores from the earlier ephemeral preview were
+  already lost by then.) HTTP checks of the live URL are not possible from this environment.
 - **Password recovery.** Emailed reset through Resend (`RESEND_API_KEY` + `TZ_MAIL_FROM`), off and
   labelled "not configured" in the UI and `/readyz` until both are set. Fragment-only reset link,
   30-minute single-use token, all sessions and access tokens revoked, same answer for unknown addresses.
