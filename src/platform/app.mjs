@@ -48,6 +48,20 @@ export const ENDPOINT_FEATURES = Object.freeze([
   {feature: 'privacy', prefixes: ['/v1/privacy', '/v1/complaints'], needs: 'approved endpoint seal/open storage codecs'}
 ]);
 
+/** Why no endpoint can be enrolled yet. Source-bound to the pinned engines and
+ * docs/implementation-status.md ("Endpoint enrollment"); it changes only when an
+ * approved key-establishment binding exists for that endpoint class. */
+export const ENDPOINT_ENROLLMENT = Object.freeze({
+  state: 'unavailable',
+  browser: Object.freeze({state: 'not_supported', reason: 'The only approved E2EE parent/control channel is the Signal ' +
+    'protocol through @signalapp/libsignal-client 0.105.0 (Audio Engine signal-parent), a Node native library with no ' +
+    'supported browser build. The browser-capable engine primitives (Ed25519 control signatures, AES-256-GCM attachment ' +
+    'decryption) need keys delivered over that channel; composing a browser key exchange from WebCrypto would be a ' +
+    'home-grown key-establishment protocol, which the project rules forbid.'}),
+  native: Object.freeze({state: 'pending', reason: 'Android (WebView) and iOS (JavaScriptCore) audio hosts exist, but no ' +
+    'mobile Signal binding, root-pinned device enrollment or protected endpoint state is integrated yet.'})
+});
+
 const json = (status, body, headers = {}) => new Response(JSON.stringify(body), {status,
   headers: {'content-type': 'application/json', 'cache-control': 'no-store', ...headers}});
 
@@ -213,7 +227,7 @@ export async function createTrackZeroApp(config, {pool, storePool, fetchImpl = f
       const ok = Object.values(checks).every(value => value === 'ok');
       return {status: ok ? 'ready' : 'not_ready', production: false, checks,
         storage: {durability: config.durability, notice: storageNotice, ...(durability ? {persistence: durability.status()} : {})},
-        features: features(),
+        features: features(), endpointEnrollment: ENDPOINT_ENROLLMENT,
         notice: 'Development preview. Endpoint-encrypted features stay disabled until approved endpoints are enrolled; no field, device or pilot qualification is implied.'};
     }
 
@@ -284,7 +298,8 @@ export async function createTrackZeroApp(config, {pool, storePool, fetchImpl = f
       if (path === '/v1/discover') return discoveryHandler ? discoveryHandler(request) : json(503, {error: 'HTTPS_ORIGIN_REQUIRED'});
       if (privacyHandler && (path.startsWith('/v1/privacy') || path === '/v1/complaints')) return privacyHandler(request);
       const gated = ENDPOINT_FEATURES.find(entry => entry.prefixes.some(prefix => path === prefix || path.startsWith(prefix)));
-      if (gated) return json(503, {error: 'ENDPOINT_ENROLLMENT_REQUIRED', feature: gated.feature, needs: gated.needs});
+      if (gated) return json(503, {error: 'ENDPOINT_ENROLLMENT_REQUIRED', feature: gated.feature, needs: gated.needs,
+        enrollment: {browser: ENDPOINT_ENROLLMENT.browser.state, native: ENDPOINT_ENROLLMENT.native.state}});
       if (path.startsWith('/stations/') || path.startsWith('/albums/')) {
         const response = await guestHandler(request);
         if (response.status !== 200) return response;

@@ -119,5 +119,8 @@ test('a tampered snapshot stops startup', {skip}, async t => {
   t.after(() => rmSync(dir, {recursive: true, force: true}));
   const durability = createPostgresStoreDurability({pool, dataDir: dir, deployment: 'trackzero/trackzero'});
   await assert.rejects(durability.restore(), /STORE_SNAPSHOT_DIGEST_MISMATCH/);
+  // A failed restore never makes the instance writable (its epoch is not adopted).
+  await assert.rejects(durability.flush(), /STORE_NOT_RESTORED/);
+  assert.equal(durability.healthy(), false);
   assert.throws(() => createPostgresStoreDurability({pool, dataDir: dir, deployment: 'bad deployment'}), /INVALID_DEPLOYMENT/);
 });

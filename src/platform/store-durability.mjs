@@ -78,11 +78,12 @@ export function createPostgresStoreDurability({pool, dataDir, deployment, now = 
 
   async function restore() {
     await migrateStoreTables(pool);
+    let claimedEpoch = null;
     const rows = await transaction(pool, async client => {
       const claimed = await client.query(`INSERT INTO trackzero_store_epoch(deployment, epoch) VALUES ($1, 1)
         ON CONFLICT (deployment) DO UPDATE SET epoch = trackzero_store_epoch.epoch + 1, claimed_at = now()
         RETURNING epoch`, [deployment]);
-      epoch = String(claimed.rows[0].epoch);
+      claimedEpoch = String(claimed.rows[0].epoch);
       return (await client.query(`SELECT name, sha256, bytes FROM trackzero_store_snapshot WHERE deployment=$1`,
         [deployment])).rows;
     });
@@ -100,7 +101,9 @@ export function createPostgresStoreDurability({pool, dataDir, deployment, now = 
         remote.set(row.name, row.sha256);
       }
     }
+    // Only a fully verified and rebuilt restore makes this instance writable.
     restored = known.length;
+    epoch = claimedEpoch;
     return {epoch, restored};
   }
 

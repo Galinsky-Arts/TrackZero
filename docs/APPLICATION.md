@@ -20,7 +20,7 @@ own security logic is unchanged; `src/platform/` only wires identity, durable st
 | `/v1/interstitials…`, `/v1/sponsor-campaigns…` | TZ-07/08 drafts and campaigns (publication/approval need verified encrypted media) |
 | `/v1/station-engine/events`, `/v1/stations/:id/status` | TZ-09 engine reports (operator-issued engine credential) and owner status |
 | `/v1/discover` | TZ-21 shareable discovery page (HTTPS origin) |
-| `/v1/album-checkouts`, `/v1/support/…`, `/v1/grooves/…`, `/v1/reports/…`, `/v1/point-redemptions`, `/v1/library`, `/v1/privacy`, `/v1/complaints` | Endpoint-encrypted features: answer `503 ENDPOINT_ENROLLMENT_REQUIRED` until approved endpoint codecs are composed. No plaintext fallback. |
+| `/v1/album-checkouts`, `/v1/support/…`, `/v1/grooves/…`, `/v1/reports/…`, `/v1/point-redemptions`, `/v1/library`, `/v1/privacy`, `/v1/complaints` | Endpoint-encrypted features: answer `503 ENDPOINT_ENROLLMENT_REQUIRED` (with `enrollment: {browser: 'not_supported', native: 'pending'}`) until approved endpoint codecs are composed; browsers cannot be enrolled with the approved protocol (see implementation-status.md). No plaintext fallback. |
 | `/operator/v1/…` | Operator provisioning (invitations, station claims, role grants, engine credentials), Bearer `TZ_OPERATOR_TOKEN` |
 | `/healthz`, `/readyz` | Liveness; honest readiness with storage durability, feature states and payment configuration |
 

@@ -75,12 +75,26 @@ test('health, honest readiness and fail-closed endpoint-encrypted routes', async
   assert.equal(ready.data.features.payments.state, 'not_configured');
   assert.deepEqual(ready.data.features.payments.missing, ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_ACCOUNT_ID']);
   for (const {feature} of ENDPOINT_FEATURES) assert.equal(ready.data.features[feature].state, 'requires_enrolled_endpoint');
+  assert.equal(ready.data.endpointEnrollment.browser.state, 'not_supported');
+  assert.match(ready.data.endpointEnrollment.browser.reason, /libsignal-client 0\.105\.0/);
   for (const path of ['/v1/album-checkouts', '/v1/album-checkouts/x/receipt', '/v1/support/intents', '/v1/grooves/preview',
     '/v1/grooves/publish', '/v1/reports/artist/a', '/v1/point-redemptions', '/v1/library', '/v1/privacy', '/v1/privacy/preferences', '/v1/complaints']) {
     // A plaintext body is never accepted in place of an endpoint-encrypted envelope.
     const response = await call(path, {method: 'POST', as: 'listener-1', body: {albumId: 'a', offerVersion: 1, plaintext: true}});
     assert.equal(response.status, 503, path);
     assert.equal(response.data.error, 'ENDPOINT_ENROLLMENT_REQUIRED', path);
+    assert.deepEqual(response.data.enrollment, {browser: 'not_supported', native: 'pending'}, path);
+    // A structurally valid but unenrolled (self-signed, self-encrypted) envelope is
+    // refused the same way, as are its replay and an expired copy: nothing decodes it.
+    const now = Date.now();
+    const envelope = expiresAtMs => ({body: {version: '1.0.0', scope: {tenantId: 'trackzero', application: 'distributed-radio',
+      sessionId: 'browser-1'}, keyId: 'self-made-key', algorithm: 'ALG-ED25519', epoch: 1, sequence: 1, issuedAtMs: now - 1000,
+      expiresAtMs, action: 'redeem-points', payloadCiphertextBase64: 'AAAA'}, signatureHex: 'ab'.repeat(64)});
+    for (const body of [envelope(now + 30_000), envelope(now + 30_000), envelope(now - 1)]) {
+      const forged = await call(path, {method: 'POST', as: 'listener-1', body});
+      assert.equal(forged.status, 503, path);
+      assert.equal(forged.data.error, 'ENDPOINT_ENROLLMENT_REQUIRED', path);
+    }
   }
 });
 

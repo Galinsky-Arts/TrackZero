@@ -1,5 +1,42 @@
 # TrackZero implementation and evidence
 
+## November 17, 2026 — endpoint enrollment: why the browser cannot be enrolled
+
+The endpoint-encrypted features (album checkout, voluntary support, Groove settings, reports,
+point redemption, fan library, privacy/complaints, live playback, speaker contribution) stay gated
+with `ENDPOINT_ENROLLMENT_REQUIRED`. This was re-examined against the pinned engines:
+
+- **What "enrollment" and "approved codecs" mean in code.** Each gated handler requires injected
+  `decodeControl`/`encodeResponse` (and `seal`/`open` for privacy) that authenticate *and decrypt*
+  the `DAE-CONTROL-v1` envelope (`src/http-boundary.mjs`). In the Audio Engine the envelope's
+  Ed25519 signature is integrity only; its `payloadCiphertextBase64` must come from "an authenticated
+  E2EE control channel" (`src/controls.ts`, `docs/security.md`), and attachment keys/manifests must
+  arrive over "an authenticated E2EESA pairwise/group channel" the object codec does not implement.
+- **The only approved channel** is the Signal protocol through `@signalapp/libsignal-client` 0.105.0
+  (`integrations/signal-parent`), which provides prekey establishment, ratcheting and device
+  membership. It is a Node native library ("not an Android or iOS executable"); there is no
+  supported browser build, and no other key-establishment library is approved in any repository.
+- **DAE-08's WebCrypto primitives are not enough on their own.** They give Ed25519 control signatures
+  and AES-256-GCM attachment decryption, i.e. what happens *after* keys are delivered. Enrolling a
+  browser would require composing a key exchange from WebCrypto (X25519/ECDH + HKDF) or adopting an
+  unreviewed JavaScript Signal port; both are a home-grown or unapproved key-establishment protocol,
+  which AGENTS.md forbids. The pinned `client-web-hardened` profile additionally needs release
+  closure, SRI and update transparency, none of which exist yet.
+- **Result.** No browser enrollment was built and nothing was switched on. `/readyz` now reports
+  `endpointEnrollment` (browser `not_supported`, native `pending`, with the reason) and each gated
+  answer carries `enrollment: {browser: 'not_supported', native: 'pending'}`; the UI says browsers
+  cannot be enrolled yet. New adversarial tests confirm structurally valid self-signed envelopes,
+  their replays and expired copies are refused on every gated route (no decoding path exists).
+- **What would unblock it.** An approved browser-capable implementation of the pinned Signal
+  protocol (or another standard protocol the E2EESA profile and owner approve, from an audited
+  library), or a native endpoint: the Audio Engine now has Android (WebView) and iOS
+  (JavaScriptCore) audio hosts, but a mobile Signal binding, root-pinned device enrollment and
+  protected state are still missing. Payments additionally need `STRIPE_*`.
+
+Also in this change: a failed store restore no longer adopts its ownership epoch (it stays
+unwritable), engine pins moved to DAE `292b564` and DRE `392b3d3`, and the suite has 164 passing
+cases locally with PostgreSQL and Chromium.
+
 ## November 17, 2026 — durable application stores and password recovery
 
 - **Durable stores in Neon.** `TZ_STORAGE_DURABILITY=postgres` (`src/platform/store-durability.mjs`)

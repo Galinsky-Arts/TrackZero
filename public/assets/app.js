@@ -31,7 +31,7 @@ const card = (title, ...body) => h('section', {class: 'card', 'aria-label': titl
 const resultBox = () => h('div', {class: 'result', role: 'status', 'aria-live': 'polite', hidden: true});
 function show(box, text, kind = '') { box.hidden = false; box.className = `result ${kind}`; box.textContent = text; }
 const messages = {
-  ENDPOINT_ENROLLMENT_REQUIRED: 'Requires an enrolled endpoint. This operation exchanges endpoint-encrypted payloads; TrackZero has no plaintext fallback, so it stays unavailable until an approved endpoint is enrolled.',
+  ENDPOINT_ENROLLMENT_REQUIRED: 'Requires an enrolled endpoint. This operation exchanges endpoint-encrypted payloads; TrackZero has no plaintext fallback, so it stays unavailable until an approved endpoint is enrolled. Web browsers cannot be enrolled yet: the approved key-establishment protocol (Signal) has no supported browser implementation, and TrackZero will not substitute a home-made one.',
   UNAUTHENTICATED: 'Sign in first.', STATION_CLAIM_REQUIRED: 'An operator must verify and provision your station claim first.',
   PUBLISHER_ROLE_REQUIRED: 'Artist or label onboarding (by invitation) is required.', RIGHTS_NOT_VERIFIED: 'Every offer needs approved sale rights from a different rights reviewer.',
   PROGRAM_ITEM_DENIED: 'An item is not authorized: songs need approved broadcast rights; ads need an approved campaign; intros need a published clip.',
