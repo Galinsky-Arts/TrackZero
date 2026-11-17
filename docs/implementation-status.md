@@ -1,5 +1,26 @@
 # TrackZero implementation and evidence
 
+## November 17, 2026 — durable application stores and password recovery
+
+- **Durable stores in Neon.** `TZ_STORAGE_DURABILITY=postgres` (`src/platform/store-durability.mjs`)
+  keeps SQLite as the in-process query engine and writes every committed store change to PostgreSQL
+  before the response is sent; on start the stores are rebuilt from PostgreSQL (SHA-256 checked) under a
+  new ownership epoch that fences any older instance. Failed persistence answers 503, never a silent
+  acknowledgement. The Galinsky Arts service now runs in this mode, so stations, rights, programs,
+  grants, engine credentials and the other application stores survive restarts and deploys. SQLite
+  (`ephemeral`/`persistent`) remains the local/dev default. A Neon backup branch
+  `backup-pre-durable-stores-20261117` was taken before the switch.
+- **Password recovery.** Emailed reset through Resend (`RESEND_API_KEY` + `TZ_MAIL_FROM`), off and
+  labelled "not configured" in the UI and `/readyz` until both are set. Fragment-only reset link,
+  30-minute single-use token, all sessions and access tokens revoked, same answer for unknown addresses.
+- **Tests.** 164 cases pass locally with PostgreSQL and Chromium (four new durability cases: restart
+  with an empty data directory, superseded-instance fencing, failed-write 503, tampered snapshot; two
+  recovery cases).
+- **Still not built (by design or blocked):** endpoint-encrypted features (checkout, support, Groove
+  settings, reports, redemption, fan library, privacy, interstitial/sponsor publication, live playback,
+  speaker contribution) need approved enrolled-endpoint codecs; payments need `STRIPE_*`; email
+  verification at sign-up is not implemented; device/pilot evidence (TZ-22/23) is pending.
+
 ## November 15, 2026 — data transfer, pilot dry run and runbook draft
 
 - `bin/data-transfer.mjs` exports, verifies and imports the application SQLite stores

@@ -14,11 +14,11 @@ The repository now builds one deployable server and web UI (docs/APPLICATION.md,
 
 ### What the owner must supply
 
-1. **Hosting decision:** a persistent disk for the application SQLite stores (paid Render plan or equivalent), then `TZ_STORAGE_DURABILITY=persistent`, backups and a restore drill. Without it every restart loses stations, rights, programs and grants.
+1. **Hosting:** resolved on the free plan — `TZ_STORAGE_DURABILITY=postgres` persists the application stores to Neon before every response (docs/APPLICATION.md). Remaining owner decision: Neon history-retention/backup policy beyond the free window, and a recorded production restore drill.
 2. **Stripe sandbox:** `STRIPE_SECRET_KEY` (sk_test_…), `STRIPE_WEBHOOK_SECRET` (whsec_…) and `STRIPE_ACCOUNT_ID` (acct_…) in secret settings; a registered webhook endpoint once checkout is composed. Live keys, payouts, refunds and disputes need separate approval.
 3. **Approved endpoint integration:** enrolled DAE endpoints with approved key establishment, private-control/response codecs and seal/open storage codecs, an encrypted media intake (interstitials, sponsor audio, albums), and DRE issuers (points, Groove grants, entitlements). Until then the endpoint-encrypted features remain unavailable.
 4. **Real devices and people:** phones with screen readers, wired/Bluetooth speakers and headphones for TZ-22; pilot artists/listeners for TZ-23; an operator who verifies station ownership out of band and runs provisioning.
-5. **Email verification/recovery provider** if account recovery is required (not configured; never server custody of media keys).
+5. **Email provider:** password recovery is built; set `RESEND_API_KEY` and `TZ_MAIL_FROM` (a Resend-verified sender) to turn it on. Email-ownership verification at sign-up is not implemented. Recovery never involves server custody of media keys.
 
 ## TZ-22: accessibility, battery and recovery
 

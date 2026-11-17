@@ -16,6 +16,12 @@ if (process.argv.includes('--migrate')) {
   await app.close();
 } else {
   if (app.accounts && process.env.TZ_MIGRATE_ON_START === 'true') await app.accounts.migrate();
+  if (app.durability) {
+    // Counts and epoch only; never store contents.
+    const status = app.durability.status();
+    console.log(`TrackZero application stores: postgres durability, epoch ${status.epoch}, ` +
+      `${status.restoredStores} restored from PostgreSQL, ${status.trackedStores} tracked`);
+  }
   app.server.listen(config.port, '0.0.0.0', () => console.log(`TrackZero listening on port ${config.port} (${config.publicOrigin})`));
   for (const signal of ['SIGINT', 'SIGTERM'])
     process.once(signal, () => { app.close().then(() => { process.exitCode = 0; }, () => { process.exitCode = 1; }); });

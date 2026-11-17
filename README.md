@@ -18,7 +18,7 @@ All projects adopt the pinned End To End Everywhere architecture as their defaul
 
 ## Run TrackZero
 
-TrackZero is a runnable Node 24 web application: `npm run deps:prepare && npm ci --ignore-scripts && npm run db:migrate && npm start`. It serves the creator studio, listener features, guest station/album pages, a first-party account service and an operator console on one origin. See [docs/APPLICATION.md](docs/APPLICATION.md) for configuration, the free preview Blueprint (render.yaml) and its ephemeral-storage limitation. Endpoint-encrypted features stay disabled until approved endpoints are enrolled.
+TrackZero is a runnable Node 24 web application: `npm run deps:prepare && npm ci --ignore-scripts && npm run db:migrate && npm start`. It serves the creator studio, listener features, guest station/album pages, a first-party account service and an operator console on one origin. See [docs/APPLICATION.md](docs/APPLICATION.md) for configuration and the free preview Blueprint (render.yaml). Application stores persist to PostgreSQL (`TZ_STORAGE_DURABILITY=postgres`) on the preview; local development defaults to SQLite. Emailed password recovery is built and stays off until `RESEND_API_KEY` and `TZ_MAIL_FROM` are set. Endpoint-encrypted features stay disabled until approved endpoints are enrolled.
 
 Implemented development slices and remaining release work: [implementation status](docs/implementation-status.md), [release readiness and creator runbook](docs/RELEASE_READINESS.md). The repository is a runnable development application, not yet a qualified production deployment.
 

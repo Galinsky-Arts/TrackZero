@@ -2,6 +2,8 @@
 
 The exact upstream E2EESA commit and profile IDs are pinned in security-baseline.json. Media and private derivatives are prepared, probed and encrypted at the artist/operator's authorized endpoint. Ciphertext-only storage, CDNs, relays and schedulers route opaque records and must never possess private manifests, media keys or plaintext. Uploaded waveform images, transcodes, previews and caches are separate encrypted objects with fresh keys.
 
+Application-store durability (`TZ_STORAGE_DURABILITY=postgres`) copies the server's own business stores (stations, rights, programs, grants, digests of operator-issued credentials, endpoint-sealed privacy ciphertext) to PostgreSQL over certificate-verified TLS. These stores never contain endpoint keys, private manifests or protected media, so persisting them adds no plaintext exposure; the snapshots are integrity-checked (SHA-256) on restore and logs carry counts only.
+
 Recorded media uses attachment-chunked-aead@0.1.0. Its private manifest/key must be distributed through an authenticated E2EESA pairwise/group channel; the object codec does not implement that channel or invent a substitute. Live audio will use RFC 9605 SFrame with one of the two exact upstream profiles after interoperability and counter-persistence qualification. Signature-only controls are integrity protection; private control payloads also require an E2EE control channel.
 
 Account authentication and endpoint/device authority are separate. Relays cannot add recipients. Guest free-listening endpoints can be deliberately authorized under the artist's broadcast policy without an audience account; the endpoint key/authorization protocol remains explicit. This is access control, not a promise that an authorized listener cannot copy sound.
